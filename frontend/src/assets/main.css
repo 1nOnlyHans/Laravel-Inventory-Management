@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-brand: #323232;
+  --color-button: #422ac7;
+  --color-button-hovered: #2f227c;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -10,19 +10,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json([
                 'message' => [
                     'icon' => 'error',
                     'title' => 'Registration Error',
                     'html' => implode('<br>', $validator->errors()->all())
-                ], Response::HTTP_UNPROCESSABLE_ENTITY
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
             ]);
         } else {
             $user = User::create([
@@ -31,34 +33,64 @@ class AuthController extends Controller
                 'password' => bcrypt($request->password)
             ]);
 
-            if($user) {
+            if ($user) {
                 return response()->json([
                     'message' => [
                         'icon' => 'success',
                         'title' => 'Success',
                         'text' => 'User created successfully'
-                    ], Response::HTTP_OK
+                    ],
+                    Response::HTTP_OK
                 ]);
             }
         }
     }
-    public function login(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required'
+    public function login(Request $request)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'username' => 'required',
+        //     'password' => 'required'
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'message' => [
+        //             'icon' => 'error',
+        //             'title' => 'Login Error',
+        //             'html' => implode('<br>', $validator->errors()->all())
+        //         ],
+        //     ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        // }
+
+        // if (!Auth::attempt($request->only('email', 'password'))) {
+        //     return response()->json([
+        //         'message' => [
+        //             'icon' => 'error',
+        //             'title' => 'Error',
+        //             'text' => 'Invalid Credentials'
+        //         ]
+        //     ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        // }
+
+        // $user = Auth::user();
+        // $token = $user->createToken('auth_token', [$request->ip()])->plainTextToken;
+
+        // return response()->json([
+        //     'user' => $user,
+        //     'token' => $token,
+        //     'message' => [
+        //         'icon' => 'success',
+        //         'title' => 'Success',
+        //         'text' => 'User created successfully'
+        //     ],
+        // ], Response::HTTP_OK);
+
+        $validate = $request->validate([
+            'username' => ['required'],
+            'password' => ['required']
         ]);
 
-        if($validator->fails()) {
-            return response()->json([
-                'message' => [
-                    'icon' => 'error',
-                    'title' => 'Login Error',
-                    'html' => implode('<br>', $validator->errors()->all())
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($validate)) {
             return response()->json([
                 'message' => [
                     'icon' => 'error',
@@ -67,23 +99,35 @@ class AuthController extends Controller
                 ]
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        
+
         $user = Auth::user();
-        $token = $user->createToken('auth_token', [ $request->ip() ])->plainTextToken;
+
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
             'token' => $token,
             'message' => [
                 'icon' => 'success',
                 'title' => 'Success',
-                'text' => 'User created successfully'
+                'text' => 'User authenticated successfully'
             ],
         ], Response::HTTP_OK);
     }
-    public function logout(Request $request) {
+
+    public function getAuthUser(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'status' => 'success',
+            'user' => $user,
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
         $request->user()->tokens()->delete();
-        
+
         return response()->json([
             'message' => [
                 'icon' => 'success',
