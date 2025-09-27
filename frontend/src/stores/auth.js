@@ -18,11 +18,10 @@ export const useAuthStore = defineStore("auth", {
         });
 
         if (response.status === 200) {
+          this.user = response.data.user;
           this.token = response.data.token;
           this.isAuthenticated = true;
-
           localStorage.setItem("token", this.token);
-          this.fetchUser();
         }
         return response;
       }
@@ -32,6 +31,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         const response = await axios.get("/api/getAuthUser");
         if (response.status === 200) {
+          this.isAuthenticated = true;
           this.user = response.data.user;
         }
       } catch (error) {

@@ -9,7 +9,7 @@ import { useAuthStore } from "@/stores/auth";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faL, faLock } from "@fortawesome/free-solid-svg-icons";
-import { VueSpinnerRings } from "vue3-spinners";
+
 const userData = ref({
     username: '',
     password: '',
@@ -49,7 +49,7 @@ const handleLogin = async () => {
                                 <FontAwesomeIcon :icon="faUser" />
                             </label>
                             <Input type="text" placeholder="Enter Employee ID" id="username" name="username"
-                                class="py-6" v-model="userData.username" />
+                                class="py-6 bg-gray-200" v-model="userData.username" />
                         </div>
 
                         <!-- Password -->
@@ -58,7 +58,7 @@ const handleLogin = async () => {
                                 <FontAwesomeIcon :icon="faLock" />
                             </label>
                             <Input type="password" placeholder="Enter Password" id="password" name="password"
-                                class="py-6" v-model="userData.password" />
+                                class="py-6 bg-gray-200" v-model="userData.password" />
                         </div>
 
                         <!-- Button -->
@@ -76,7 +76,7 @@ const handleLogin = async () => {
 
                 <!-- Info / Image Card -->
                 <div
-                    class="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-center space-y-6">
+                    class="hidden bg-white rounded-2xl shadow-lg p-8 md:flex flex-col items-center justify-center text-center space-y-6">
                     <!-- Placeholder Image -->
                     <div class="w-[350px] h-[350px]rounded-full flex items-center justify-center">
                         <img src="@/assets/images/logo.png" alt="Logo">

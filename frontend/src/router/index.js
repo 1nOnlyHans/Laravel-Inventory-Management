@@ -8,6 +8,9 @@ import Dashboard from "@/views/Pages/Dashboard.vue";
 import GuestStaffLayout from "@/views/Layouts/GuestStaffLayout.vue";
 import StaffLogin from "@/views/Auth/StaffLogin.vue";
 import AdminDashboard from "@/views/Admin/AdminDashboard.vue";
+import AdminLayout from "@/views/Layouts/AdminLayout.vue";
+import Forbidden from "@/views/Pages/Forbidden.vue";
+import NoPage from "@/views/Pages/NoPage.vue";
 
 const routes = [
   // //Guest
@@ -25,11 +28,29 @@ const routes = [
   },
   {
     path: "/admin",
-    component: AdminDashboard,
+    component: AdminLayout,
+    children: [
+      {
+        path: "dashboard",
+        name: "Admin Dashboard",
+        component: AdminDashboard,
+        meta: { requiresAuth: true, role: "Admin" },
+      },
+    ],
     meta: {
       requiresAuth: true,
       role: "Admin",
     },
+  },
+  {
+    path: "/403",
+    name: "Forbidden Page",
+    component: Forbidden,
+  },
+  {
+    path: "/:catchAll(.*)",
+    name: "No Page",
+    component: NoPage,
   },
 ];
 
@@ -41,7 +62,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
   //If not authenticated
-
   if (!auth.isAuthenticated) {
     await auth.fetchUser();
   }
@@ -52,7 +72,7 @@ router.beforeEach(async (to, from, next) => {
 
   //Invalid role
   if (to.meta.role && auth.user.role !== to.meta.role) {
-    next("/login");
+    next("/403");
   }
 
   next();
