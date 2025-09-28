@@ -18,7 +18,7 @@ class EmployeeFactory extends Factory
     {
         return [
             //
-            'unique_employee_id' => random_int(1000, 10000),
+            'unique_employee_id' => 'EMP-' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'email' => fake()->email(),

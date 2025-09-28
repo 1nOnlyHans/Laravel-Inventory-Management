@@ -20,4 +20,5 @@ Route::controller(AuthController::class)->group(function () {
 //Employee Controller
 Route::middleware('auth:sanctum')->controller(EmployeeController::class)->group(function () {
     Route::get('/employees/index', 'index');
+    Route::post('/employees/store', 'store');
 });

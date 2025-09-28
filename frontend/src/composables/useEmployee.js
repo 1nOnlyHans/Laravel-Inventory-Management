@@ -1,7 +1,7 @@
 import axios from "@/axios";
 import Swal from "sweetalert2";
 
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 export function getEmployees() {
   const employees = ref([]);
   const isLoading = ref(false);
@@ -32,4 +32,49 @@ export function getEmployees() {
   };
 
   return { employees, isLoading, fetchEmployees, pagination };
+}
+
+export function manageEmployee() {
+  const employeCred = reactive({
+    firstname: "",
+    middlename: "",
+    lastname: "",
+    email: "",
+    gender: "",
+    dob: "",
+  });
+
+  const errors = ref(null);
+  const resetEmployeeCred = () => {
+    Object.assign(employeCred, {
+      firstname: "",
+      middlename: "",
+      lastname: "",
+      email: "",
+      gender: "",
+      dob: "",
+    });
+    errors.value = null;
+  };
+  const addEmployee = async () => {
+    try {
+      const response = await axios.post("/api/employees/store", employeCred, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        resetEmployeeCred();
+      }
+      return response;
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.errors) {
+        errors.value = error.response.data.errors;
+      }
+      console.log(errors.value);
+    }
+  };
+
+  return { employeCred, addEmployee, errors, resetEmployeeCred };
 }
