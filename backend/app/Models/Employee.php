@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
     //
+    use HasFactory;
     protected $table = 'employees';
 
     protected $fillable = [
@@ -20,6 +22,7 @@ class Employee extends Model
         'status'
     ];
 
+    //One account for employee
     public function user()
     {
         return $this->hasOne(User::class);

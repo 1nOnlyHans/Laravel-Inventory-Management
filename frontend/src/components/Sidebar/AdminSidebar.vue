@@ -7,11 +7,13 @@ import AdminSidebarLinks from "./AdminSidebarLinks.vue";
     <SidebarProvider>
         <AdminSidebarLinks />
         <SidebarTrigger />
+        <section class="container mx-auto p-3">
+            <RouterView />
+        </section>
         <main>
             <slot />
-            <section class="container mx-auto p-3">
-                <RouterView />
-            </section>
+
         </main>
     </SidebarProvider>
+
 </template>

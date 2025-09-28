@@ -11,6 +11,7 @@ import AdminDashboard from "@/views/Admin/AdminDashboard.vue";
 import AdminLayout from "@/views/Layouts/AdminLayout.vue";
 import Forbidden from "@/views/Pages/Forbidden.vue";
 import NoPage from "@/views/Pages/NoPage.vue";
+import AdminStaffManagement from "@/views/Admin/AdminStaffManagement.vue";
 
 const routes = [
   // //Guest
@@ -35,6 +36,15 @@ const routes = [
         name: "Admin Dashboard",
         component: AdminDashboard,
         meta: { requiresAuth: true, role: "Admin" },
+      },
+      {
+        path: "employees",
+        name: "Admin Employee Management",
+        component: AdminStaffManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
       },
     ],
     meta: {

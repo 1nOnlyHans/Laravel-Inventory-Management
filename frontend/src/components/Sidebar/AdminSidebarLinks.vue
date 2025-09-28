@@ -30,7 +30,7 @@ const items = [
   },
   {
     title: "Staff",
-    url: "staffs",
+    url: "employees",
     icon: faUser,
   },
   {
