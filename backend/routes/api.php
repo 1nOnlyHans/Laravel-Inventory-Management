@@ -21,4 +21,6 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware('auth:sanctum')->controller(EmployeeController::class)->group(function () {
     Route::get('/employees/index', 'index');
     Route::post('/employees/store', 'store');
+    Route::get('/employees/show/{employee_id}', 'show');
+    Route::put('/employees/update', 'update');
 });

@@ -1,4 +1,6 @@
 <script setup></script>
 <template>
-    <h1>Admin Dashboard</h1>
+    <div class="container mx-auto">
+        <h1>Admin Dashboard</h1>
+    </div>
 </template>

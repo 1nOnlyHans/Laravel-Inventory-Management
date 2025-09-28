@@ -26,9 +26,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose
 } from '@/components/ui/dialog'
 import Swal from 'sweetalert2';
-
+import { RegularSwal } from '@/components/Swals/useSwals';
 const { employees, isLoading, fetchEmployees, pagination } = getEmployees()
 const { employeCred, addEmployee, errors, resetEmployeeCred } = manageEmployee();
 const searchQuery = ref("");
@@ -64,7 +65,7 @@ const handleAddEmployee = async () => {
     const success = await addEmployee();
     if (success) {
         await fetchEmployees();
-        Swal.fire(success.data);
+        RegularSwal(success.data);
     }
 }
 
@@ -75,40 +76,51 @@ watch(searchQuery, () => {
     }
 })
 </script>
-
 <template>
     <!-- Loading State -->
-    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center">
-        <VueSpinnerHourglass size="100" color="#422ac7" />
-        <h1 class="mt-4 font-bold text-2xl text-button">Fetching Employees...</h1>
+    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+        <VueSpinnerHourglass size="80" color="#422ac7" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-button">
+            Fetching Employees...
+        </h1>
     </section>
 
     <!-- Employees Grid -->
     <section v-else class="container mx-auto p-3">
-        <div class="flex justify-between items-center">
-            <div class="flex justify-center space-x-3">
-                <h1 class="font-bold text-2xl">Staffs</h1>
-                <Input type="text" placeholder="Search Employee ID..." class="bg-gray-300 focus:bg-white"
-                    v-model="searchQuery" />
-                <Button class="bg-button hover:bg-button-hovered" @click="search">
-                    Search
-                </Button>
+        <!-- Header: title + search + add -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <!-- Left: title + search -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                <h1 class="font-bold text-xl sm:text-2xl">Staffs</h1>
 
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <Input type="text" placeholder="Search Employee ID..."
+                        class="bg-gray-300 focus:bg-white w-full sm:w-64" v-model="searchQuery" />
+                    <Button class="bg-button hover:bg-button-hovered w-full sm:w-auto" @click="search"
+                        :disabled="searchQuery === ''">
+                        Search
+                    </Button>
+                </div>
             </div>
+
+            <!-- Right: Add button -->
+            <section class="container mx-auto p-5">
+
+            </section>
             <Dialog>
-                <!-- Trigger -->
                 <DialogTrigger>
-                    <Button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow"
+                    <Button
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
                         @click="resetEmployeeCred">
                         <FontAwesomeIcon :icon="faAdd" class="mr-2" />
                         Add Employee
                     </Button>
                 </DialogTrigger>
 
-                <!-- Content -->
-                <DialogContent class="max-w-2xl">
+                <!-- Dialog Content -->
+                <DialogContent class="max-w-2xl w-full mx-2">
                     <DialogHeader>
-                        <DialogTitle class="text-2xl font-semibold text-gray-800">
+                        <DialogTitle class="text-xl sm:text-2xl font-semibold text-gray-800">
                             Add New Employee
                         </DialogTitle>
                         <p class="text-sm text-gray-500">
@@ -118,7 +130,7 @@ watch(searchQuery, () => {
 
                     <!-- Form -->
                     <form class="mt-6 space-y-8" @submit.prevent="handleAddEmployee">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <!-- Firstname -->
                             <div class="flex flex-col space-y-2">
                                 <Label for="firstname">Firstname</Label>
@@ -179,52 +191,63 @@ watch(searchQuery, () => {
                             <div class="flex flex-col space-y-2">
                                 <Label for="dob">Date of Birth</Label>
                                 <Input type="date" name="dob" id="dob" v-model="employeCred.dob" />
-                                <div v-if="errors && errors.gender">
+                                <div v-if="errors && errors.dob">
                                     <ErrorLabel :error="errors.dob" />
                                 </div>
                             </div>
                         </div>
 
                         <!-- Footer -->
-                        <DialogFooter class="mt-8 flex justify-end space-x-3">
+                        <DialogFooter class="mt-8 flex flex-col sm:flex-row justify-end gap-3">
+                            <DialogClose as-child>
+                                <Button type="button" variant="secondary" @click="resetEmployeeCred">
+                                    Close
+                                </Button>
+                            </DialogClose>
                             <Button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
                                 Add Employee
                             </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
             </Dialog>
-
         </div>
 
+        <!-- Employees Grid -->
         <div v-if="!isSearched && employees.length >= 0"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
             <EmployeeCard v-for="employee in employees" :key="employee.unique_employee_id"
                 :name="`${employee.firstname} ${employee.lastname}`" :gender="employee.gender"
-                :employee_id="employee.unique_employee_id" />
+                :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id" />
         </div>
 
-        <div v-else class="flex justify-center items-center">
+        <!-- Search Results -->
+        <div v-else class="flex justify-center items-center mt-6">
             <div v-if="searchedEmployee.length > 0"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <EmployeeCard v-for="employee in searchedEmployee" :key="employee.unique_employee_id"
                     :name="`${employee.firstname} ${employee.lastname}`" :gender="employee.gender"
-                    :employee_id="employee.unique_employee_id" />
+                    :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id" />
             </div>
             <div v-else>
-                <h1>No employee found</h1>
+                <h1 class="text-gray-500 text-center">No employee found</h1>
             </div>
         </div>
 
-        <div v-if="pagination" class="flex gap-2 mt-4">
+        <!-- Pagination -->
+        <div v-if="pagination" class="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6">
             <Button :disabled="!pagination.prev_page_url" @click="changePage(pagination.current_page - 1)"
-                class="bg-button hover:bg-button-hovered">Prev</Button>
-
-            <span>Page {{ pagination.current_page }} of {{ pagination.last_page }}</span>
-
+                class="bg-button hover:bg-button-hovered w-full sm:w-auto">
+                Prev
+            </Button>
+            <span class="text-sm sm:text-base">
+                Page {{ pagination.current_page }} of {{ pagination.last_page }}
+            </span>
             <Button :disabled="!pagination.next_page_url" @click="changePage(pagination.current_page + 1)"
-                class="bg-button hover:bg-button-hovered">Next</Button>
+                class="bg-button hover:bg-button-hovered w-full sm:w-auto">
+                Next
+            </Button>
         </div>
     </section>
 </template>

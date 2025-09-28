@@ -20,32 +20,32 @@ import { ref } from "vue";
 const items = [
   {
     title: "Dashboard",
-    url: "dashboard",
+    url: "/admin/dashboard",
     icon: faDashboard,
   },
   {
     title: "Stocks",
-    url: "stocks",
+    url: "/admin/stocks",
     icon: faInbox,
   },
   {
     title: "Staff",
-    url: "employees",
+    url: "/admin/employees",
     icon: faUser,
   },
   {
     title: "Users",
-    url: "users",
+    url: "/admin/users",
     icon: faUserCircle,
   },
   {
     title: "Transactions",
-    url: "transactions",
+    url: "/admin/transactions",
     icon: faArrowsLeftRight,
   },
   {
     title: "Audit Logs",
-    url: "logs",
+    url: "/admin/logs",
     icon: faClipboardList,
   },
 ];

@@ -8,6 +8,7 @@ import femaleImg from '@/assets/images/female.png'
 const props = defineProps({
     name: String,
     employee_id: String,
+    uniqid: String,
     gender: String,
     image: String
 })
@@ -18,7 +19,7 @@ const image = props.gender === 'Male' ? maleImg : femaleImg;
 </script>
 
 <template>
-    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 w-[320px]">
+    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 w-[320px] border border-gray-300">
         <div class="flex flex-col items-center space-y-4">
             <!-- Profile Image -->
             <img :src="image" alt="picture"
@@ -34,9 +35,9 @@ const image = props.gender === 'Male' ? maleImg : femaleImg;
 
         <!-- Footer / Actions -->
         <div class="mt-6 flex justify-end">
-            <Button class="bg-button hover:bg-button-hovered text-white px-4 py-2 rounded-lg shadow">
-                Manage
-            </Button>
+            <RouterLink class="bg-button hover:bg-button-hovered text-white px-3 py-2 rounded-lg shadow text-sm"
+                :to="{ name: 'Admin Employee Details', params: { employee_id: props.uniqid } }">Manage
+            </RouterLink>
         </div>
     </div>
 </template>

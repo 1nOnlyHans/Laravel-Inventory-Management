@@ -6,7 +6,7 @@ export function getEmployees() {
   const employees = ref([]);
   const isLoading = ref(false);
   const pagination = ref(null);
-
+  const employeeDetails = ref(null);
   // Fetching of Employees
   const fetchEmployees = async () => {
     isLoading.value = true;
@@ -31,7 +31,33 @@ export function getEmployees() {
     }
   };
 
-  return { employees, isLoading, fetchEmployees, pagination };
+  const fetchEmployeesData = async (id) => {
+    isLoading.value = true;
+    try {
+      const response = await axios.get("/api/employees/show/" + id, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      if (response.status === 200) {
+        employeeDetails.value = response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return {
+    employees,
+    isLoading,
+    fetchEmployees,
+    pagination,
+    fetchEmployeesData,
+    employeeDetails,
+  };
 }
 
 export function manageEmployee() {
@@ -76,5 +102,27 @@ export function manageEmployee() {
     }
   };
 
-  return { employeCred, addEmployee, errors, resetEmployeeCred };
+  const updateEmployee = async (employeeCred) => {
+    try {
+      const response = await axios.put("/api/employees/update", employeeCred, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.errors) {
+        errors.value = error.response.data.errors;
+      }
+      console.log(errors.value);
+    }
+  };
+  return {
+    employeCred,
+    addEmployee,
+    errors,
+    resetEmployeeCred,
+    updateEmployee,
+  };
 }
