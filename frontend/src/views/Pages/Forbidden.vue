@@ -11,7 +11,7 @@ const auth = useAuthStore();
 
             <!-- Left Side (Error Code & Message) -->
             <div class="text-center lg:text-left">
-                <p class="text-6xl font-bold text-indigo-500">403</p>
+                <p class="text-6xl font-bold text-accents">403</p>
                 <h1 class="mt-4 text-4xl sm:text-6xl font-semibold text-white">
                     Forbidden Access
                 </h1>
@@ -19,7 +19,7 @@ const auth = useAuthStore();
                     Sorry, you don’t have permission to access this page.
                 </p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
-                    <RouterLink class="bg-button text-white px-3 py-2 rounded hover:bg-button-hovered"
+                    <RouterLink class="bg-accents text-white px-3 py-2 rounded hover:bg-accents-hover"
                         :to="auth.user.role + '/dashboard'">
                         Go Back Home
                     </RouterLink>

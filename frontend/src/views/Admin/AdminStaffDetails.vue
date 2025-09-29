@@ -20,17 +20,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogClose
-} from '@/components/ui/dialog'
-
 import { RegularSwal } from '@/components/Swals/useSwals';
 const route = useRoute();
 const slider = ref(false);
@@ -86,8 +75,8 @@ onMounted(async () => {
 </script>
 <template>
     <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
-        <VueSpinnerHourglass size="80" color="#422ac7" />
-        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-button">
+        <VueSpinnerOval size="80" color="#3b82f6" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
             Fetching Employee...
         </h1>
     </section>
@@ -109,7 +98,7 @@ onMounted(async () => {
                         'mt-3 px-3 py-1 rounded-full text-xs font-medium',
                         employeeDetails.status === 'Active'
                             ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
+                            : employeeDetails.status === 'Inactive' ? 'bg-red-100 text-red-700' : 'bg-gray-300 text-gray-700'
                     ]">
                         {{ employeeDetails.status }}
                     </span>
@@ -121,7 +110,7 @@ onMounted(async () => {
                             Employee Details
                         </h2>
                         <div class="relative">
-                            <Button @click="toggleSlider">
+                            <Button @click="toggleSlider" class="bg-accents hover:bg-accents-hover">
                                 <FontAwesomeIcon :icon="faSliders" />
                             </Button>
                             <Transition enter-active-class="transition duration-300 ease-in-out"
@@ -278,7 +267,7 @@ onMounted(async () => {
                                     Cancel
                                 </button>
                                 <button type="submit"
-                                    class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                    class="px-4 py-2 rounded-md bg-accents text-white hover:bg-accents-hover">
                                     Save Changes
                                 </button>
                             </div>
@@ -296,7 +285,7 @@ onMounted(async () => {
                         Account Details
                     </h2>
                     <div class="relative">
-                        <Button @click="toggleAccountSlider">
+                        <Button @click="toggleAccountSlider" class="bg-accents hover:bg-accents-hover">
                             <FontAwesomeIcon :icon="faSliders" />
                         </Button>
                         <Transition enter-active-class="transition duration-300 ease-in-out"
@@ -384,7 +373,7 @@ onMounted(async () => {
                                 Cancel
                             </button>
                             <button type="submit"
-                                class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                class="px-4 py-2 rounded-md bg-accents text-white hover:bg-accents-hover">
                                 Save Changes
                             </button>
                         </div>

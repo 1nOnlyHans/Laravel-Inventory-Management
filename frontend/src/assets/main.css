@@ -4,9 +4,28 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-brand: #323232;
+  /* Brand / Primary */
+  --color-brand: #323232; /* Your base brand color */
   --color-button: #422ac7;
   --color-button-hovered: #2f227c;
+
+  /* Neutrals (Backgrounds, text, cards) */
+  --color-bg: #f9fafb; /* Very light gray for backgrounds */
+  --color-surface: #ffffff; /* Pure white for cards/panels */
+  --color-border: #e5e7eb; /* Subtle gray for borders/dividers */
+  --color-text-primary: #111827; /* Almost black text */
+  --color-text-secondary: #6b7280; /* Muted text for labels/hints */
+
+  /* Accent (for buttons, links, highlights) */
+  --color-accents: #3b82f6; /* Modern blue (trustworthy, clean) */
+  --color-accents-hover: #2563eb; /* Slightly darker for hover */
+  --color-accents-active: #1d4ed8; /* Even darker for active click */
+  --color-accents-light: #dbeafe; /* Soft blue background (hover bg, tags, highlights) */
+  /* Semantic (for alerts/status) */
+  --color-success: #10b981; /* Green for success */
+  --color-warning: #f59e0b; /* Amber for warnings */
+  --color-error: #ef4444; /* Red for errors/low stock */
+  --color-info: #0ea5e9; /* Cyan for info/tooltips */
 }
 
 @theme inline {

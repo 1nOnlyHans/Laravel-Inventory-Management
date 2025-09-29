@@ -20,7 +20,19 @@ import {
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faDashboard, faInbox, faUser, faUserCircle, faArrowsLeftRight, faClipboardList, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDashboard,
+  faInbox,
+  faUser,
+  faUserCircle,
+  faArrowsLeftRight,
+  faClipboardList,
+  faBell,
+  faBoxesStacked,
+  faBuilding,
+  faFileAlt,
+  faRightFromBracket
+} from "@fortawesome/free-solid-svg-icons";
 import { ref } from "vue";
 // Menu items.
 const items = [
@@ -34,6 +46,8 @@ const items = [
     group: "Management",
     menus: [
       { title: "Stocks", url: "/admin/stocks", icon: faInbox },
+      { title: "Suppliers", url: "/admin/suppliers", icon: faBuilding },
+      { title: "Categories", url: "/admin/categories", icon: faBoxesStacked },
       { title: "Staff", url: "/admin/employees", icon: faUser },
       { title: "Users", url: "/admin/users", icon: faUserCircle },
     ],
@@ -43,6 +57,8 @@ const items = [
     menus: [
       { title: "Transactions", url: "/admin/transactions", icon: faArrowsLeftRight },
       { title: "Audit Logs", url: "/admin/logs", icon: faClipboardList },
+      { title: "Alerts", url: "/admin/alerts", icon: faBell },
+      { title: "Reports", url: "/admin/reports", icon: faFileAlt },
     ],
   },
 ];

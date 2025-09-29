@@ -35,61 +35,46 @@ const handleLogin = async () => {
 }
 </script>
 <template>
-    <section class="min-h-screen flex items-center justify-center bg-gray-100">
-        <div class="container mx-auto p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <!-- Login Card -->
-                <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col justify-center space-y-8">
-                    <h1 class="text-center font-bold text-3xl">EMPLOYEE LOGIN</h1>
-                    <form @submit.prevent="handleLogin">
-                        <!-- Username -->
-                        <div class="flex flex-col space-y-3 mb-3">
-                            <label for="username" class="font-medium text-2xl">
-                                <FontAwesomeIcon :icon="faUser" />
-                            </label>
-                            <Input type="text" placeholder="Enter Employee ID" id="username" name="username"
-                                class="py-6 bg-gray-200" v-model="userData.username" />
-                        </div>
-
-                        <!-- Password -->
-                        <div class="flex flex-col space-y-3 mb-3">
-                            <label for="password" class="font-medium text-2xl">
-                                <FontAwesomeIcon :icon="faLock" />
-                            </label>
-                            <Input type="password" placeholder="Enter Password" id="password" name="password"
-                                class="py-6 bg-gray-200" v-model="userData.password" />
-                        </div>
-
-                        <!-- Button -->
-                        <div class="flex justify-center my-10">
-                            <Button class="bg-button hover:bg-button-hovered text-white px-10 py-3 rounded-lg">
-                                <span v-if="isLoading">
-                                    <VueSpinner />
-                                </span>
-                                <span v-else>LOGIN</span>
-                            </Button>
-
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Info / Image Card -->
-                <div
-                    class="hidden bg-white rounded-2xl shadow-lg p-8 md:flex flex-col items-center justify-center text-center space-y-6">
-                    <!-- Placeholder Image -->
-                    <div class="w-[350px] h-[350px]rounded-full flex items-center justify-center">
-                        <img src="@/assets/images/logo.png" alt="Logo">
-                    </div>
-
-                    <p class="text-gray-700">
-                        EzeePC — Tech it easy! <br />
-                        No.1 PC seller worldwide offering premium services
-                        and quality products.
-                    </p>
-                </div>
-
+    <section class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+            <!-- Logo -->
+            <div class="flex flex-col items-center mb-8">
+                <img src="@/assets/images/logo.png" class="w-28 h-auto mb-3" />
+                <h1 class="text-xl font-semibold text-gray-800">Staff Login</h1>
+                <p class="text-sm text-gray-500">Enter your credentials to access the system</p>
             </div>
+
+            <!-- Form -->
+            <form @submit.prevent="handleLogin" class="space-y-5">
+                <!-- Username -->
+                <div class="relative">
+                    <FontAwesomeIcon :icon="faUser"
+                        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input type="text" id="username" name="username" v-model="userData.username"
+                        placeholder="Employee ID"
+                        class="w-full pl-10 pr-3 py-3 rounded-lg bg-gray-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+
+                <!-- Password -->
+                <div class="relative">
+                    <FontAwesomeIcon :icon="faLock"
+                        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input type="password" id="password" name="password" v-model="userData.password"
+                        placeholder="Password"
+                        class="w-full pl-10 pr-3 py-3 rounded-lg bg-gray-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+
+                <!-- Button -->
+                <div>
+                    <Button
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg flex justify-center items-center font-medium transition">
+                        <span v-if="isLoading">
+                            <VueSpinner size="20" />
+                        </span>
+                        <span v-else>Login</span>
+                    </Button>
+                </div>
+            </form>
         </div>
     </section>
 </template>

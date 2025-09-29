@@ -59,7 +59,6 @@ onMounted(async () => {
 const search = () => {
     searchedEmployee.value = employees.value.filter((e) => e.unique_employee_id === searchQuery.value.trim());
     isSearched.value = true;
-    console.log(searchedEmployee.value.length)
 }
 const handleAddEmployee = async () => {
     const success = await addEmployee();
@@ -79,8 +78,8 @@ watch(searchQuery, () => {
 <template>
     <!-- Loading State -->
     <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
-        <VueSpinnerHourglass size="80" color="#422ac7" />
-        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-button">
+        <VueSpinnerOval size="80" color="#3b82f6" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
             Fetching Employees...
         </h1>
     </section>
@@ -96,7 +95,7 @@ watch(searchQuery, () => {
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <Input type="text" placeholder="Search Employee ID..."
                         class="bg-gray-300 focus:bg-white w-full sm:w-64" v-model="searchQuery" />
-                    <Button class="bg-button hover:bg-button-hovered w-full sm:w-auto" @click="search"
+                    <Button class="bg-accents hover:bg-accents-hover w-full sm:w-auto" @click="search"
                         :disabled="searchQuery === ''">
                         Search
                     </Button>
@@ -110,7 +109,7 @@ watch(searchQuery, () => {
             <Dialog>
                 <DialogTrigger>
                     <Button
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
+                        class="bg-accents hover:bg-accents-hover text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
                         @click="resetEmployeeCred">
                         <FontAwesomeIcon :icon="faAdd" class="mr-2" />
                         Add Employee
@@ -230,7 +229,7 @@ watch(searchQuery, () => {
                             </Button>
                         </DialogClose>
                         <Button type="submit" form="addEmployeeForm"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
+                            class="bg-accents hover:bg-accents-hover text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
                             Add Employee
                         </Button>
                     </DialogFooter>
@@ -244,7 +243,8 @@ watch(searchQuery, () => {
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
             <EmployeeCard v-for="employee in employees" :key="employee.unique_employee_id"
                 :name="`${employee.firstname} ${employee.lastname}`" :gender="employee.gender"
-                :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id" />
+                :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id"
+                :role="employee.user?.role" />
         </div>
 
         <!-- Search Results -->
@@ -253,7 +253,8 @@ watch(searchQuery, () => {
                 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <EmployeeCard v-for="employee in searchedEmployee" :key="employee.unique_employee_id"
                     :name="`${employee.firstname} ${employee.lastname}`" :gender="employee.gender"
-                    :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id" />
+                    :employee_id="employee.unique_employee_id" :uniqid="employee.encrypted_id"
+                    :role="employee.user?.role" />
             </div>
             <div v-else>
                 <h1 class="text-gray-500 text-center">No employee found</h1>
@@ -263,14 +264,14 @@ watch(searchQuery, () => {
         <!-- Pagination -->
         <div v-if="pagination" class="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6">
             <Button :disabled="!pagination.prev_page_url" @click="changePage(pagination.current_page - 1)"
-                class="bg-button hover:bg-button-hovered w-full sm:w-auto">
+                class="bg-accents hover:bg-accents-hover w-full sm:w-auto">
                 Prev
             </Button>
             <span class="text-sm sm:text-base">
                 Page {{ pagination.current_page }} of {{ pagination.last_page }}
             </span>
             <Button :disabled="!pagination.next_page_url" @click="changePage(pagination.current_page + 1)"
-                class="bg-button hover:bg-button-hovered w-full sm:w-auto">
+                class="bg-accents hover:bg-accents-hover w-full sm:w-auto">
                 Next
             </Button>
         </div>

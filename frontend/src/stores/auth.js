@@ -41,7 +41,6 @@ export const useAuthStore = defineStore("auth", {
 
     async logout() {
       const response = await axios.post("/api/logout");
-
       if (response.status === 200) {
         localStorage.removeItem("token");
         this.$reset();
