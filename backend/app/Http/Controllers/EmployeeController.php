@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $employees = Employee::latest()->paginate(10);
+        $employees = Employee::with('user')->latest()->paginate(10);
 
         // map each employee and replace id with encrypted one
         $employees->getCollection()->transform(function ($employee) {
@@ -42,7 +43,8 @@ class EmployeeController extends Controller
                 'lastname' => ['required'],
                 'email' => ['required', 'email', 'unique:employees'],
                 'gender' => ['required'],
-                'dob' => ['required']
+                'dob' => ['required'],
+                'role' => ['required']
             ]
         );
 
@@ -63,6 +65,19 @@ class EmployeeController extends Controller
         $validated['unique_employee_id'] = $unique_employee_id;
         $employee = Employee::create($validated);
 
+        //Employee Account Creation
+        $username = $employee->unique_employee_id;
+        $password = $validated['role'];
+
+        $user = User::firstOrCreate(
+            [
+                'employee_id' => $employee->id,
+                'username' => $username,
+                'role' => $validated['role'],
+                'password' => $password
+            ]
+        );
+
         return response()->json([
             'icon' => 'success',
             'title' => 'New Employee Registered',
@@ -75,7 +90,13 @@ class EmployeeController extends Controller
         $employee_id = Crypt::decryptString($request->route('employee_id'));
         //QUERY BUILDER
         // $employee = DB::table('employees')->select('unique_employee_id')->where('id', $employee_id)->get();
-        $employee = Employee::findOrFail($employee_id, ['unique_employee_id', 'firstname', 'middlename', 'lastname', 'email', 'gender', 'dob', 'status', 'created_at', 'updated_at']);
+        $employee = Employee::with(['user'])->findOrFail($employee_id);
+        $employee->makeHidden(['id']);          // hides employee id
+        if ($employee->user) {
+            $employee->user->makeHidden(['id']);    // hides user id
+            $employee->user->makeHidden(['employee_id']);
+            $employee->user->encrypted_id = Crypt::encryptString($employee->user->id);
+        }
         $employee->encrypted_id = Crypt::encryptString($employee_id);
         return response()->json($employee, 200);
     }
@@ -102,5 +123,24 @@ class EmployeeController extends Controller
             'title' => 'Update Success',
             'text' => $employee . ' has been updated'
         ], 200);
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $id = Crypt::decryptString($request->encrypted_id);
+        $validated = $request->validate(
+            [
+                'role' => ['required']
+            ]
+        );
+
+        $user = User::with('employee')->where('id', $id)->update(['role' => $validated['role']]);
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Update Success',
+            'text' => $user . ' has been updated'
+        ], 200);
+
+        return response()->json($user, 200);
     }
 }

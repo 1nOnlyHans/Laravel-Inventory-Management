@@ -11,6 +11,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { ChevronDown } from "lucide-vue-next";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -19,36 +25,28 @@ import { ref } from "vue";
 // Menu items.
 const items = [
   {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: faDashboard,
+    group: "System",
+    menus: [
+      { title: "Dashboard", url: "/admin/dashboard", icon: faDashboard },
+    ],
   },
   {
-    title: "Stocks",
-    url: "/admin/stocks",
-    icon: faInbox,
+    group: "Management",
+    menus: [
+      { title: "Stocks", url: "/admin/stocks", icon: faInbox },
+      { title: "Staff", url: "/admin/employees", icon: faUser },
+      { title: "Users", url: "/admin/users", icon: faUserCircle },
+    ],
   },
   {
-    title: "Staff",
-    url: "/admin/employees",
-    icon: faUser,
-  },
-  {
-    title: "Users",
-    url: "/admin/users",
-    icon: faUserCircle,
-  },
-  {
-    title: "Transactions",
-    url: "/admin/transactions",
-    icon: faArrowsLeftRight,
-  },
-  {
-    title: "Audit Logs",
-    url: "/admin/logs",
-    icon: faClipboardList,
+    group: "Records",
+    menus: [
+      { title: "Transactions", url: "/admin/transactions", icon: faArrowsLeftRight },
+      { title: "Audit Logs", url: "/admin/logs", icon: faClipboardList },
+    ],
   },
 ];
+
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -75,24 +73,34 @@ const handleLogout = async () => {
       <h1 class="font-bold text-2xl">EzeePC</h1>
     </SidebarHeader>
     <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel class="text-white">
-          <h1 class="text-lg">Management</h1>
-        </SidebarGroupLabel>
-        <SidebarGroupContent class="mt-3">
-          <SidebarMenu>
-            <SidebarMenuItem v-for="item in items" :key="item.title" class="mb-3">
-              <SidebarMenuButton asChild>
-                <RouterLink :to="item.url">
-                  <FontAwesomeIcon :icon="item.icon" />
-                  <span class="text-lg">{{ item.title }}</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
+      <Collapsible v-for="section in items" :key="section.group" defaultOpen class="group/collapsible">
+        <SidebarGroup>
+          <SidebarGroupLabel class="text-white" asChild>
+            <div class="flex justify-between items-center">
+              <h1 class="text-lg">{{ section.group }}</h1>
+              <CollapsibleTrigger>
+                <ChevronDown class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </div>
+          </SidebarGroupLabel>
+          <CollapsibleContent>
+            <SidebarGroupContent class="mt-3">
+              <SidebarMenu>
+                <SidebarMenuItem v-for="item in section.menus" :key="item.title" class="mb-3">
+                  <SidebarMenuButton asChild>
+                    <RouterLink :to="item.url">
+                      <FontAwesomeIcon :icon="item.icon" />
+                      <span class="text-lg">{{ item.title }}</span>
+                    </RouterLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
     </SidebarContent>
+
     <SidebarFooter>
       <button type="button"
         class="flex justify-start items-center gap-x-3 px-3 py-2 rounded hover:bg-white hover:text-black cursor-pointer"

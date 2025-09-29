@@ -79,6 +79,7 @@ export function manageEmployee() {
       email: "",
       gender: "",
       dob: "",
+      role: "",
     });
     errors.value = null;
   };
@@ -118,11 +119,33 @@ export function manageEmployee() {
       console.log(errors.value);
     }
   };
+
+  const updateEmployeeAccount = async (employeeCred) => {
+    try {
+      const response = await axios.put(
+        "/api/employees/updateAccount",
+        employeeCred,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.errors) {
+        errors.value = error.response.data.errors;
+      }
+      console.log(errors.value);
+    }
+  };
   return {
     employeCred,
     addEmployee,
     errors,
     resetEmployeeCred,
     updateEmployee,
+    updateEmployeeAccount,
   };
 }

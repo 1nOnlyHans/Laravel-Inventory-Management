@@ -28,7 +28,7 @@ import {
     DialogTrigger,
     DialogClose
 } from '@/components/ui/dialog'
-import Swal from 'sweetalert2';
+
 import { RegularSwal } from '@/components/Swals/useSwals';
 const { employees, isLoading, fetchEmployees, pagination } = getEmployees()
 const { employeCred, addEmployee, errors, resetEmployeeCred } = manageEmployee();
@@ -118,100 +118,125 @@ watch(searchQuery, () => {
                 </DialogTrigger>
 
                 <!-- Dialog Content -->
-                <DialogContent class="max-w-2xl w-full mx-2">
-                    <DialogHeader>
+                <DialogContent class="max-w-2xl w-full mx-2 max-h-[85vh] flex flex-col rounded-lg">
+                    <!-- Header (fixed) -->
+                    <DialogHeader class="shrink-0">
                         <DialogTitle class="text-xl sm:text-2xl font-semibold text-gray-800">
                             Add New Employee
                         </DialogTitle>
-                        <p class="text-sm text-gray-500">
-                            Please fill out the form below to register a new employee.
-                        </p>
+                        <DialogDescription>
+                            <p class="text-sm text-gray-500">
+                                Please fill out the form below to register a new employee.
+                            </p>
+                        </DialogDescription>
                     </DialogHeader>
 
-                    <!-- Form -->
-                    <form class="mt-6 space-y-8" @submit.prevent="handleAddEmployee">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <!-- Firstname -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="firstname">Firstname</Label>
-                                <Input type="text" placeholder="Firstname" name="firstname" id="firstname"
-                                    v-model="employeCred.firstname" />
-                                <div v-if="errors && errors.firstname">
-                                    <ErrorLabel :error="errors.firstname" />
+                    <!-- Scrollable Form Body -->
+                    <div class="flex-1 overflow-y-auto mt-4 pr-2">
+                        <form class="space-y-8" @submit.prevent="handleAddEmployee" name="addEmployeeForm"
+                            id="addEmployeeForm">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <!-- Firstname -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="firstname">Firstname</Label>
+                                    <Input type="text" placeholder="Firstname" name="firstname" id="firstname"
+                                        v-model="employeCred.firstname" required />
+                                    <div v-if="errors && errors.firstname">
+                                        <ErrorLabel :error="errors.firstname" />
+                                    </div>
+                                </div>
+
+                                <!-- Middlename -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="middlename">Middlename</Label>
+                                    <Input type="text" placeholder="Middlename" name="middlename" id="middlename"
+                                        v-model="employeCred.middlename" />
+                                </div>
+
+                                <!-- Lastname -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="lastname">Lastname</Label>
+                                    <Input type="text" placeholder="Lastname" name="lastname" id="lastname"
+                                        v-model="employeCred.lastname" required />
+                                    <div v-if="errors && errors.lastname">
+                                        <ErrorLabel :error="errors.lastname" />
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="email">Email</Label>
+                                    <Input type="email" placeholder="Email" name="email" id="email"
+                                        v-model="employeCred.email" required />
+                                    <div v-if="errors && errors.email">
+                                        <ErrorLabel :error="errors.email" />
+                                    </div>
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="gender">Gender</Label>
+                                    <Select id="gender" name="gender" v-model="employeCred.gender" required>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Gender" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="Male">Male</SelectItem>
+                                                <SelectItem value="Female">Female</SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <div v-if="errors && errors.gender">
+                                        <ErrorLabel :error="errors.gender" />
+                                    </div>
+                                </div>
+
+                                <!-- DOB -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="dob">Date of Birth</Label>
+                                    <Input type="date" name="dob" id="dob" v-model="employeCred.dob" required />
+                                    <div v-if="errors && errors.dob">
+                                        <ErrorLabel :error="errors.dob" />
+                                    </div>
+                                </div>
+                                <!-- Role -->
+                                <div class="flex flex-col space-y-2">
+                                    <Label for="role">Role</Label>
+                                    <Select id="role" name="role" v-model="employeCred.role" required>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="Admin">Admin</SelectItem>
+                                                <SelectItem value="Staff">Staff</SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <div v-if="errors && errors.role">
+                                        <ErrorLabel :error="errors.role" />
+                                    </div>
                                 </div>
                             </div>
+                        </form>
+                    </div>
 
-                            <!-- Middlename -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="middlename">Middlename</Label>
-                                <Input type="text" placeholder="Middlename" name="middlename" id="middlename"
-                                    v-model="employeCred.middlename" />
-                            </div>
-
-                            <!-- Lastname -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="lastname">Lastname</Label>
-                                <Input type="text" placeholder="Lastname" name="lastname" id="lastname"
-                                    v-model="employeCred.lastname" />
-                                <div v-if="errors && errors.lastname">
-                                    <ErrorLabel :error="errors.lastname" />
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="email">Email</Label>
-                                <Input type="email" placeholder="Email" name="email" id="email"
-                                    v-model="employeCred.email" />
-                                <div v-if="errors && errors.email">
-                                    <ErrorLabel :error="errors.email" />
-                                </div>
-                            </div>
-
-                            <!-- Gender -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="gender">Gender</Label>
-                                <Select id="gender" name="gender" v-model="employeCred.gender">
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Gender" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="Male">Male</SelectItem>
-                                            <SelectItem value="Female">Female</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                <div v-if="errors && errors.gender">
-                                    <ErrorLabel :error="errors.gender" />
-                                </div>
-                            </div>
-
-                            <!-- DOB -->
-                            <div class="flex flex-col space-y-2">
-                                <Label for="dob">Date of Birth</Label>
-                                <Input type="date" name="dob" id="dob" v-model="employeCred.dob" />
-                                <div v-if="errors && errors.dob">
-                                    <ErrorLabel :error="errors.dob" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Footer -->
-                        <DialogFooter class="mt-8 flex flex-col sm:flex-row justify-end gap-3">
-                            <DialogClose as-child>
-                                <Button type="button" variant="secondary" @click="resetEmployeeCred">
-                                    Close
-                                </Button>
-                            </DialogClose>
-                            <Button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
-                                Add Employee
+                    <!-- Footer (fixed) -->
+                    <DialogFooter class="shrink-0 mt-4 flex flex-col sm:flex-row justify-end gap-3">
+                        <DialogClose as-child>
+                            <Button type="button" variant="secondary" @click="resetEmployeeCred">
+                                Close
                             </Button>
-                        </DialogFooter>
-                    </form>
+                        </DialogClose>
+                        <Button type="submit" form="addEmployeeForm"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
+                            Add Employee
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
+
         </div>
 
         <!-- Employees Grid -->

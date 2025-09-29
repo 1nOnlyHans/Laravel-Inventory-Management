@@ -7,7 +7,7 @@ import Button from '@/components/ui/button/Button.vue';
 import maleImg from '@/assets/images/male.png'
 import femaleImg from '@/assets/images/female.png'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faSliders, faAdd } from '@fortawesome/free-solid-svg-icons';
 import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
 import ErrorLabel from '@/components/Errors/ErrorLabel.vue';
@@ -20,12 +20,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogClose
+} from '@/components/ui/dialog'
+
 import { RegularSwal } from '@/components/Swals/useSwals';
 const route = useRoute();
 const slider = ref(false);
 const edit = ref(false);
+const editAccount = ref(false);
+const accountSlider = ref(false);
 const { fetchEmployeesData, employeeDetails, isLoading } = getEmployees();
-const { updateEmployee, errors } = manageEmployee();
+const { updateEmployee, errors, updateEmployeeAccount } = manageEmployee();
 const image = computed(() => {
     return employeeDetails.value.gender === 'Male' ? maleImg : femaleImg
 })
@@ -33,10 +46,17 @@ const image = computed(() => {
 const toggleSlider = () => {
     slider.value = !slider.value
 }
+const toggleAccountSlider = () => {
+    accountSlider.value = !accountSlider.value
+}
 
 const toggleEditMode = () => {
     edit.value = !edit.value
     toggleSlider();
+}
+const toggleEditAccountMode = () => {
+    editAccount.value = !editAccount.value
+    toggleAccountSlider();
 }
 
 const handleUpdate = async (employeCred) => {
@@ -47,8 +67,20 @@ const handleUpdate = async (employeCred) => {
         edit.value = !edit.value
     }
 }
+const handleUpdateAccount = async (employeCred) => {
+    const success = await updateEmployeeAccount(employeCred);
+    if (success && success.status === 200) {
+        await fetchEmployeesData(route.params.employee_id);
+        RegularSwal(success.data)
+        editAccount.value = !editAccount.value
+    }
+}
+
 onMounted(async () => {
     await fetchEmployeesData(route.params.employee_id);
+    if (!employeeDetails.value.user) {
+        userCred.employee_id = employeeDetails.value.encrypted_id;
+    }
 });
 
 </script>
@@ -82,7 +114,6 @@ onMounted(async () => {
                         {{ employeeDetails.status }}
                     </span>
                 </div>
-
                 <!-- Details Card -->
                 <div class="md:col-span-2 bg-white rounded-xl shadow p-6 border border-gray-300">
                     <div class="flex justify-between items-center border-b mb-6 pb-3">
@@ -252,11 +283,114 @@ onMounted(async () => {
                                 </button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
         </div>
 
+        <section class="container mx-auto p-6">
+            <div v-if="employeeDetails && employeeDetails.user"
+                class="md:col-span-3 bg-white rounded-xl shadow p-6 border border-gray-300 mt-6">
+                <div class="flex justify-between items-center border-b mb-6 pb-3">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Account Details
+                    </h2>
+                    <div class="relative">
+                        <Button @click="toggleAccountSlider">
+                            <FontAwesomeIcon :icon="faSliders" />
+                        </Button>
+                        <Transition enter-active-class="transition duration-300 ease-in-out"
+                            enter-from-class="opacity-0 -translate-y-2 scale-95"
+                            enter-to-class="opacity-100 translate-y-0 scale-100"
+                            leave-active-class="transition duration-200 ease-in-out"
+                            leave-from-class="opacity-100 translate-y-0 scale-100"
+                            leave-to-class="opacity-0 -translate-y-2 scale-95">
+                            <div v-if="accountSlider"
+                                class="absolute right-0 w-48 rounded-xl border border-gray-200 bg-white shadow-lg z-50">
+                                <ul class="py-2 text-sm text-gray-700">
+                                    <li>
+                                        <button type="button" class="block px-4 py-2 hover:bg-gray-100 w-full"
+                                            @click="toggleEditAccountMode">
+                                            {{ editAccount ? 'Read Mode' : 'Edit Mode' }}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </Transition>
+                    </div>
+                </div>
+
+                <!-- Read Mode -->
+                <div v-if="!editAccount" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Username -->
+                    <div>
+                        <span class="block font-semibold text-gray-600">Username</span>
+                        <span class="text-gray-800">{{ employeeDetails.user?.username }}</span>
+                    </div>
+
+                    <!-- Role -->
+                    <div>
+                        <span class="block font-semibold text-gray-600">Role</span>
+                        <span class="text-gray-800">{{ employeeDetails.user?.role }}</span>
+                    </div>
+
+                    <!-- Created -->
+                    <div>
+                        <span class="block font-semibold text-gray-600">Created At</span>
+                        <span class="text-gray-800">
+                            {{ new Date(employeeDetails.user?.created_at).toLocaleString() }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="block font-semibold text-gray-600">Updated At</span>
+                        <span class="text-gray-800">
+                            {{ new Date(employeeDetails.user?.updated_at).toLocaleString() }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <div v-else>
+                    <form @submit.prevent="handleUpdateAccount(employeeDetails.user)">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <!-- Username -->
+                            <div class="space-y-3">
+                                <Label for="username">Username</Label>
+                                <Input type="text" placeholder="Enter Username" name="username" id="username"
+                                    v-model="employeeDetails.user.username" required readonly />
+                            </div>
+                            <!-- Role -->
+                            <div class="space-y-3">
+                                <Label for="role">Role</Label>
+                                <Select id="role" name="role" v-model="employeeDetails.user.role" required>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="Admin">Admin</SelectItem>
+                                            <SelectItem value="Staff">Staff</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <!-- Form Actions -->
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button"
+                                class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                @click="resetForm">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
     </section>
 </template>
