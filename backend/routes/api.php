@@ -2,7 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,11 +19,34 @@ Route::controller(AuthController::class)->group(function () {
 
 // Route::group(['middleware' => ['auth:sanctum']], function () {});
 
-//Employee Controller
+//Employee Controller AND LOGIC
 Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::class)->group(function () {
     Route::get('/employees/index', 'index');
     Route::post('/employees/store', 'store');
     Route::get('/employees/show/{employee_id}', 'show');
     Route::put('/employees/update', 'update');
     Route::put('/employees/updateAccount', 'updateAccount');
+});
+
+//PRODUCT LOGIC
+Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
+    Route::get('/products/index', 'index');
+    //DUE TOMMOROW :>
+});
+
+//SUPPLIER AND CATEGORIES CRUD
+Route::middleware(['auth:sanctum', 'admin'])->controller(SupplierController::class)->group(function () {
+    Route::get('/suppliers/index', 'index');
+    Route::post('/suppliers/store', 'store');
+    Route::get('/suppliers/show', 'show');
+    Route::put('/suppliers/update', 'update');
+    Route::delete('/suppliers/destroy', 'destroy');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::class)->group(function () {
+    Route::get('/categories/index', 'index');
+    Route::post('/categories/store', 'store');
+    Route::get('/categories/show', 'show');
+    Route::put('/categories/update', 'update');
+    Route::delete('/categories/destroy', 'destroy');
 });

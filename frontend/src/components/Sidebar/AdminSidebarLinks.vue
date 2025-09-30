@@ -45,7 +45,7 @@ const items = [
   {
     group: "Management",
     menus: [
-      { title: "Stocks", url: "/admin/stocks", icon: faInbox },
+      { title: "Products", url: "/admin/products", icon: faInbox },
       { title: "Suppliers", url: "/admin/suppliers", icon: faBuilding },
       { title: "Categories", url: "/admin/categories", icon: faBoxesStacked },
       { title: "Staff", url: "/admin/employees", icon: faUser },

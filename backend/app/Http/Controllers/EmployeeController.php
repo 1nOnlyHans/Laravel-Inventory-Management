@@ -15,7 +15,7 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $employees = Employee::with('user') ->latest()->paginate(10);
+        $employees = Employee::with('user')->latest()->paginate(10);
 
         // map each employee and replace id with encrypted one
         $employees->getCollection()->transform(function ($employee) {

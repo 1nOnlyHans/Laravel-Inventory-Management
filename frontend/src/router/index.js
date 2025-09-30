@@ -14,6 +14,9 @@ import NoPage from "@/views/Pages/NoPage.vue";
 import AdminStaffManagement from "@/views/Admin/AdminStaffManagement.vue";
 import AdminStaffDetails from "@/views/Admin/AdminStaffDetails.vue";
 import AdminUserManagement from "@/views/Admin/AdminUserManagement.vue";
+import AdminProductManagement from "@/views/Admin/AdminProductManagement.vue";
+import AdminSupplierManagement from "@/views/Admin/AdminSupplierManagement.vue";
+import AdminCategoriesManagement from "@/views/Admin/AdminCategoriesManagement.vue";
 
 const routes = [
   // //Guest
@@ -61,6 +64,33 @@ const routes = [
         path: "users",
         name: "Admin User Management",
         component: AdminUserManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "products",
+        name: "Admin Products Management",
+        component: AdminProductManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "suppliers",
+        name: "Admin Suppliers Management",
+        component: AdminSupplierManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "categories",
+        name: "Admin Categories Management",
+        component: AdminCategoriesManagement,
         meta: {
           requiresAuth: true,
           role: "Admin",
