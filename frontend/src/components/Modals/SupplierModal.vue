@@ -59,7 +59,7 @@ watch(props, () => {
             <DialogHeader>
                 <DialogTitle>{{ props.name }}'s Details</DialogTitle>
                 <DialogDescription>
-                    View and Make changes for the supplier's details
+                    View or Make Changes
                 </DialogDescription>
             </DialogHeader>
             <form id="updateSupplier" @submit.prevent="handleUpdate(supplierCred)">

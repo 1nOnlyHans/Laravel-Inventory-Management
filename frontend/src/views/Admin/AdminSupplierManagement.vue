@@ -16,16 +16,7 @@ import {
     createColumnHelper,
     getFilteredRowModel,
 } from '@tanstack/vue-table';
-// Dialog
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+
 import SupplierModal from '@/components/Modals/SupplierModal.vue';
 import AddSupplierModal from '@/components/Modals/AddSupplierModal.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -63,7 +54,7 @@ const columns = [
     }),
     columnHelper.accessor('email', {
         id: "Email",
-        header: "Email#",
+        header: "Email",
         cell: info => info.getValue()
     }),
     columnHelper.accessor('address', {
@@ -109,6 +100,7 @@ const columns = [
                         Button,
                         {
                             onClick: () => {
+                                errors.value = null
                                 openUpdateModal.value = true
                                 supplierCred.encrypted_id = row.original.encrypted_id
                                 supplierCred.supplier_name = row.original.supplier_name
@@ -124,6 +116,7 @@ const columns = [
                     , h(
                         Button, {
                         onClick: () => {
+                            errors.value = null
                             handleRemoveSupplier(row.original.encrypted_id);
                         },
                         variant: "none"
@@ -138,6 +131,7 @@ const columns = [
 
 // REFACTOR THIS SHIT 
 const handleAddSupplier = async (supplierCred) => {
+    errors.value = null
     const success = await addSupplier(supplierCred);
     if (success && success.status === 200) {
         openUpdateModal.value = false
@@ -147,6 +141,7 @@ const handleAddSupplier = async (supplierCred) => {
 }
 //====================================================
 const handleUpdateSupplier = async (supplierCred) => {
+    errors.value = null
     const success = await updateSupplier(supplierCred);
     if (success && success.status === 200) {
         openUpdateModal.value = false
@@ -217,7 +212,7 @@ onMounted(() => {
         </div>
         <div class="overflow-x-auto rounded-xl shadow-sm bg-white">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
+                <thead class="text-xs text-white uppercase bg-accents hover:bg-accents-hover">
                     <tr class="text-center">
                         <th v-for="header in suppliersTable.getFlatHeaders()" :key="header.id"
                             class="border p-3 font-semibold tracking-wide">

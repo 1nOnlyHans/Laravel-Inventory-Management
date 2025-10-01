@@ -1,5 +1,4 @@
 <script setup>
-import { manageSupplier } from "@/composables/useSuppliers"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -17,7 +16,7 @@ import Textarea from "../ui/textarea/Textarea.vue"
 import { defineProps, onMounted, reactive, watch, defineEmits, ref } from "vue"
 import ErrorLabel from "../Errors/ErrorLabel.vue"
 import { faAdd } from "@fortawesome/free-solid-svg-icons"
-
+// REFACTOR THE ADDING OF SUPPLIER DI KO TRIP POTA
 const supplierCred = reactive({
     supplier_name: "",
     contact_person: "",
