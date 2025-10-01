@@ -40,7 +40,7 @@ class SupplierController extends Controller
                 'supplier_name' => ['required', Rule::unique('suppliers', 'supplier_name')],
                 'contact_person' => ['required'],
                 'phone' => ['required'],
-                'email' => ['required'],
+                'email' => ['required', Rule::unique('suppliers', 'email')],
                 'address' => ['required']
             ]
         );
@@ -80,7 +80,7 @@ class SupplierController extends Controller
             'supplier_name' => ['required', Rule::unique('suppliers', 'supplier_name')->ignore($id, 'id')],
             'contact_person' => ['required'],
             'phone' => ['required'],
-            'email' => ['required'],
+            'email' => ['required', Rule::unique('suppliers', 'email')->ignore($id, 'id')],
             'address' => ['required']
         ]);
         $supplier = Supplier::where('id', $id)->update(['supplier_name' => $validated['supplier_name'], 'contact_person' => $validated['contact_person'], 'phone' => $validated['phone'], 'email' => $validated['email'], 'address' => $validated['address']]);
@@ -88,7 +88,7 @@ class SupplierController extends Controller
     }
     public function destroy(Request $request)
     {
-        $supplier = Supplier::destroy(Crypt::decryptString($request->supplier_id));
+        $supplier = Supplier::destroy(Crypt::decryptString($request->encrypted_id));
 
         return response()->json(
             [

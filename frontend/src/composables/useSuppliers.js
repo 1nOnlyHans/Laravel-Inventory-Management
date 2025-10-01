@@ -1,5 +1,5 @@
 import axios from "@/axios";
-import { ref } from "vue";
+import { ref, reactive, warn } from "vue";
 
 export function getSuppliers() {
   const suppliers = ref([]);
@@ -25,4 +25,71 @@ export function getSuppliers() {
   };
 
   return { suppliers, isLoading, fetchSuppliers };
+}
+
+export function manageSupplier() {
+  const errors = ref(null);
+
+  const supplierCred = reactive({
+    encrypted_id: "",
+    supplier_name: "",
+    contact_person: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
+
+  const addSupplier = async (supplierCred) => {
+    try {
+      const response = await axios.post("/api/suppliers/store", supplierCred, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.errors) {
+        errors.value = error.response.data.errors;
+      }
+      console.log(errors.value);
+    }
+  };
+
+  const updateSupplier = async (supplierCred) => {
+    try {
+      const response = await axios.put("/api/suppliers/update", supplierCred, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      if (error.response.data.errors) {
+        errors.value = error.response.data.errors;
+      }
+      console.log(errors.value);
+    }
+  };
+
+  const deleteSupplier = async (id) => {
+    try {
+      const response = await axios.delete("/api/suppliers/destroy", {
+        data: {
+          encrypted_id: id,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return { errors, updateSupplier, supplierCred, deleteSupplier, addSupplier };
 }
