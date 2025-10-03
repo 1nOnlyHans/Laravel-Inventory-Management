@@ -5,7 +5,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
+use App\Mail\PurchaseOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,6 +33,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
 //PRODUCT LOGIC
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
     Route::get('/products/index', 'index');
+    Route::post('/products/productSupplier', 'getProductsBySupplier');
     //DUE TOMMOROW :>
 });
 
@@ -49,4 +52,9 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::cla
     Route::get('/categories/show', 'show');
     Route::put('/categories/update', 'update');
     Route::delete('/categories/destroy', 'destroy');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::class)->group(function () {
+    Route::post('/purchase_order/sendMail', 'mail');
+    Route::post('/purchase_order/store', 'store');
 });

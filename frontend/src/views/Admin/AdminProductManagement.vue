@@ -1,11 +1,12 @@
 <script setup>
 import { getProducts } from '@/composables/useProducts';
+import { sendPO } from '@/composables/usePO';
 import { onMounted } from 'vue';
 
 const { products, isLoading, fetchProducts } = getProducts();
+onMounted(async () => {
+    await getProducts();
 
-onMounted(() => {
-    getProducts();
 });
 
 </script>

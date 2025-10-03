@@ -17,6 +17,7 @@ import AdminUserManagement from "@/views/Admin/AdminUserManagement.vue";
 import AdminProductManagement from "@/views/Admin/AdminProductManagement.vue";
 import AdminSupplierManagement from "@/views/Admin/AdminSupplierManagement.vue";
 import AdminCategoriesManagement from "@/views/Admin/AdminCategoriesManagement.vue";
+import AdminPurchaseManagement from "@/views/Admin/AdminPurchaseManagement.vue";
 
 const routes = [
   // //Guest
@@ -93,6 +94,15 @@ const routes = [
         component: AdminCategoriesManagement,
         meta: {
           requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "purchase",
+        name: "Admin Purchase Management",
+        component: AdminPurchaseManagement,
+        meta: {
+          requiresAuth: "true",
           role: "Admin",
         },
       },

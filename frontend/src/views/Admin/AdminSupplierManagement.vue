@@ -220,7 +220,7 @@ onMounted(() => {
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="suppliers.length > 0">
                     <tr v-for="row in suppliersTable.getRowModel().rows" :key="row.id"
                         class="text-center transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="border px-3 py-2">
