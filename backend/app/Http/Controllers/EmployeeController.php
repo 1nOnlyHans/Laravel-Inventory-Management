@@ -52,7 +52,7 @@ class EmployeeController extends Controller
         $latest_employee_id = Employee::all();
 
         if (count($latest_employee_id) === 1) {
-            $latest_employee_id = Employee::where('unique_employee_id', 'ADM-1001')->get();
+            $latest_employee_id = Employee::where('unique_employee_id', 'ADM-0001')->get();
         } else {
             $latest_employee_id = Employee::latest()->get();
         }

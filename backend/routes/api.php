@@ -2,12 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
 use App\Mail\PurchaseOrder;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +36,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
     Route::get('/products/index', 'index');
     Route::post('/products/productSupplier', 'getProductsBySupplier');
+    Route::post('/products/store', 'store');
     //DUE TOMMOROW :>
 });
 
@@ -54,7 +57,12 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::cla
     Route::delete('/categories/destroy', 'destroy');
 });
 
+Route::middleware(['auth:sanctum', 'admin'])->controller(BrandController::class)->group(function () {
+    Route::get('/brands/index', 'index');
+});
+
 Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::class)->group(function () {
     Route::post('/purchase_order/sendMail', 'mail');
     Route::post('/purchase_order/store', 'store');
+    Route::get('/purchase_order/index', 'index');
 });

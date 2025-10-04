@@ -10,7 +10,19 @@ class Product extends Model
     //
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'supplier_id',
+        'category_id',
+        'brand_id',
+        'SKU',
+        'model',
+        'product_name',
+        'product_description',
+        'product_quantity',
+        'unit_price',
+        'reorder_level',
+        'status'
+    ];
 
     public function category()
     {
@@ -25,5 +37,15 @@ class Product extends Model
     public function productOrders()
     {
         return $this->hasMany(PurchaseOrderItems::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(ProductPhoto::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
     }
 }

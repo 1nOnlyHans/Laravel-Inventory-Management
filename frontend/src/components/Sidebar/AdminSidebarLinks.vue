@@ -35,6 +35,7 @@ import {
   faCartShopping
 } from "@fortawesome/free-solid-svg-icons";
 import { ref } from "vue";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 // Menu items.
 const items = [
   {
@@ -48,7 +49,7 @@ const items = [
     menus: [
       { title: "Products", url: "/admin/products", icon: faInbox },
       { title: "Suppliers", url: "/admin/suppliers", icon: faBuilding },
-      { title: "Categories", url: "/admin/categories", icon: faBoxesStacked } ,
+      { title: "Categories", url: "/admin/categories", icon: faBoxesStacked },
       { title: "Purchase", url: "/admin/purchase", icon: faCartShopping },
       { title: "Staff", url: "/admin/employees", icon: faUser },
       { title: "Users", url: "/admin/users", icon: faUserCircle },
@@ -58,6 +59,7 @@ const items = [
     group: "Records",
     menus: [
       { title: "Transactions", url: "/admin/transactions", icon: faArrowsLeftRight },
+      { title: "Purchase History", url: "/admin/purchase_history", icon: faCartShopping },
       { title: "Audit Logs", url: "/admin/logs", icon: faClipboardList },
       { title: "Alerts", url: "/admin/alerts", icon: faBell },
       { title: "Reports", url: "/admin/reports", icon: faFileAlt },

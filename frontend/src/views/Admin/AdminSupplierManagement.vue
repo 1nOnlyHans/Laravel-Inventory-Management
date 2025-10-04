@@ -2,7 +2,6 @@
 import { getSuppliers } from '@/composables/useSuppliers';
 import { manageSupplier } from '@/composables/useSuppliers';
 import { computed, onMounted, ref, h, reactive } from 'vue';
-import { RouterLink } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faGear, faPen, faEye, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import Label from '@/components/ui/label/Label.vue';
@@ -59,7 +58,7 @@ const columns = [
     }),
     columnHelper.accessor('address', {
         id: "Address",
-        header: "Address#",
+        header: "Address",
         cell: info => info.getValue()
     }),
     columnHelper.accessor(row => new Date(row.created_at).toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" }), {

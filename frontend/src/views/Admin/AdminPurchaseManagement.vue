@@ -109,6 +109,10 @@ const handleOrder = async (purchaseCred) => {
 
         openLetter.value = false;
         orderItems.value = [];
+        purchaseCred.supplier_id = '';
+        purchaseCred.order_date = null;
+        purchaseCred.expected_date = null;
+        purchaseCred.items = [];
     }
 };
 
@@ -134,28 +138,31 @@ watch(
 </script>
 
 <template>
-    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+    <!-- Loading State -->
+    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-6 space-y-3">
         <VueSpinnerOval size="80" color="#3b82f6" />
-        <p class="mt-2 text-gray-500 text-sm">
-            Please wait while we load the latest data
+        <p class="text-gray-600 text-base">
+            Loading the latest data, please wait...
         </p>
     </section>
 
-    <section v-else class="container-xl mx-auto p-3">
-        <div class="bg-white shadow-lg rounded">
+    <!-- Main Content -->
+    <section v-else class="container-xl mx-auto p-6">
+        <div class="bg-white shadow-lg rounded-lg border">
             <!-- Header -->
-            <div class="bg-blue-500 text-white p-3 flex justify-between items-center rounded-t">
-                <h1 class="font-bold text-2xl">Purchase Order</h1>
+            <div class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center rounded-t-lg">
+                <h1 class="font-bold text-2xl tracking-wide">Purchase Order</h1>
+                <span class="text-sm opacity-80">Generated: {{ new Date().toLocaleDateString() }}</span>
             </div>
 
-            <form class="space-y-6">
+            <form class="space-y-8">
                 <!-- Supplier and Order Info -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
                     <!-- Supplier -->
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         <Label for="supplier_id">Supplier</Label>
                         <Select id="supplier_id" v-model="purchaseCred.supplier_id" required>
-                            <SelectTrigger class="w-[280px]">
+                            <SelectTrigger class="w-full">
                                 <SelectValue placeholder="Select Supplier" />
                             </SelectTrigger>
                             <SelectContent>
@@ -171,90 +178,101 @@ watch(
                     </div>
 
                     <!-- Order Date -->
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         <Label for="order_date">Order Date</Label>
-                        <input type="date" id="order_date" class="border p-2 w-full rounded" required
+                        <input type="date" id="order_date"
+                            class="border p-2 w-full rounded focus:ring-2 focus:ring-blue-500" required
                             v-model="purchaseCred.order_date" />
                     </div>
 
                     <!-- Expected Delivery -->
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         <Label for="delivery_date">Expected Delivery</Label>
-                        <input type="date" id="delivery_date" class="border p-2 w-full rounded" required
+                        <input type="date" id="delivery_date"
+                            class="border p-2 w-full rounded focus:ring-2 focus:ring-blue-500" required
                             v-model="purchaseCred.expected_date" />
                     </div>
                 </div>
 
                 <!-- Products Table -->
                 <div class="p-6">
-                    <div class="mt-4 flex justify-end">
-                        <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-semibold text-lg">Products to Order</h2>
+                        <button type="button"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
                             :disabled="purchaseCred.supplier_id === ''" @click="handleAddProduct">
                             + Add Product
                         </button>
                     </div>
-                    <h2 class="font-semibold text-lg mb-4">Products to Order</h2>
-                    <table class="w-full border border-gray-300 rounded">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="border px-3 py-2 text-left">Product</th>
-                                <th class="border px-3 py-2 text-center">Qty</th>
-                                <th class="border px-3 py-2 text-center">Unit Price</th>
-                                <th class="border px-3 py-2 text-center">Total</th>
-                                <th class="border px-3 py-2 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(item, index) in orderItems" :key="index">
-                                <td class="border px-3 py-2">
-                                    <select class="border p-2 w-Ffull rounded" v-model="item.product_id"
-                                        @change="item.product_name = products.find(p => p.encrypted_id === item.product_id)?.product_name"
-                                        required>
-                                        <option disabled selected>Select Product</option>
-                                        <option v-for="product in products" :key="product.id"
-                                            :value="product.encrypted_id">
-                                            {{ product.product_name }}
-                                        </option>
-                                    </select>
-                                </td>
-                                <td class="border px-3 py-2 text-center">
-                                    <Input type="number" class="border p-2 w-20 rounded text-center" min="1" required
-                                        v-model="item.quantity" />
-                                </td>
-                                <td class="border px-3 py-2 text-center">
-                                    <Input type="number" class="border p-2 w-28 rounded text-center" step="0.01"
-                                        required v-model="item.unit_price" />
-                                </td>
-                                <td class="border px-3 py-2 text-center">
-                                    {{ (item.unit_price * item.quantity).toFixed(2) }}
-                                </td>
-                                <td class="border px-3 py-2 text-center">
-                                    <button type="button" @click="handleRemoveProduct(index)"
-                                        class="text-red-500 hover:underline">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="3" class="text-right px-3 py-2">Total Items:</th>
-                                <td class="px-3 py-2 text-center">{{ orderItems.length }}</td>
-                            </tr>
-                            <tr>
-                                <th colspan="3" class="text-right px-3 py-2">Total Amount:</th>
-                                <td class="px-3 py-2 text-center font-bold">₱{{ totalAmount.toFixed(2) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border border-gray-300 rounded-lg">
+                            <thead class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wide">
+                                <tr>
+                                    <th class="border px-3 py-2 text-left">Product</th>
+                                    <th class="border px-3 py-2 text-center">Qty</th>
+                                    <th class="border px-3 py-2 text-center">Unit Price</th>
+                                    <th class="border px-3 py-2 text-center">Total</th>
+                                    <th class="border px-3 py-2 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in orderItems" :key="index" class="hover:bg-gray-50">
+                                    <td class="border px-3 py-2">
+                                        <select class="border p-2 w-full rounded focus:ring-1 focus:ring-blue-500"
+                                            v-model="item.product_id"
+                                            @change="item.product_name = products.find(p => p.encrypted_id === item.product_id)?.product_name"
+                                            required>
+                                            <option disabled selected>Select Product</option>
+                                            <option v-for="product in products" :key="product.id"
+                                                :value="product.encrypted_id">
+                                                {{ product.product_name }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="border px-3 py-2 text-center">
+                                        <Input type="number"
+                                            class="border p-2 w-20 rounded text-center focus:ring-1 focus:ring-blue-500"
+                                            min="1" required v-model="item.quantity" />
+                                    </td>
+                                    <td class="border px-3 py-2 text-center">
+                                        <Input type="number"
+                                            class="border p-2 w-28 rounded text-center focus:ring-1 focus:ring-blue-500"
+                                            step="0.01" required v-model="item.unit_price" />
+                                    </td>
+                                    <td class="border px-3 py-2 text-center font-semibold text-gray-800">
+                                        ₱{{ (item.unit_price * item.quantity).toFixed(2) }}
+                                    </td>
+                                    <td class="border px-3 py-2 text-center">
+                                        <button type="button" @click="handleRemoveProduct(index)"
+                                            class="text-red-500 hover:text-red-700 transition">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50">
+                                <tr>
+                                    <th colspan="3" class="text-right px-3 py-2">Total Items:</th>
+                                    <td class="px-3 py-2 text-center">{{ orderItems.length }}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="text-right px-3 py-2">Total Amount:</th>
+                                    <td class="px-3 py-2 text-center font-bold text-green-600">
+                                        ₱{{ totalAmount.toFixed(2) }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="p-6 flex justify-end gap-4 border-t">
-                    <button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                <div class="p-6 flex justify-end gap-4 border-t bg-gray-50">
+                    <button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
                         Cancel
                     </button>
-                    <button type="button" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    <button type="button"
+                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition disabled:opacity-50"
                         @click="toggleLetter" :disabled="purchaseCred.items.length <= 0">
                         Generate Order
                     </button>
@@ -263,37 +281,40 @@ watch(
         </div>
     </section>
 
+    <!-- Letter Modal -->
     <Dialog v-model:open="openLetter">
         <DialogContent class="sm:max-w-[1200px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]">
-            <DialogHeader class="p-6 pb-0">
-                <DialogTitle>Letter Overview</DialogTitle>
+            <DialogHeader class="p-6 pb-0 border-b">
+                <DialogTitle class="text-xl font-semibold">Purchase Order Overview</DialogTitle>
             </DialogHeader>
             <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <!-- Letter Title -->
-                <h1 class="text-center font-bold text-3xl">EzeePC PURCHASE ORDER REQUEST</h1>
+                <h1 class="text-center font-bold text-3xl text-blue-700">
+                    EzeePC PURCHASE ORDER REQUEST
+                </h1>
 
                 <!-- Company Details -->
-                <div class="flex justify-start flex-col space-y-1">
+                <div class="flex flex-col space-y-1 text-gray-700">
                     <h2 class="font-bold text-2xl">EzeePC</h2>
-                    <p class="font-semibold">Barangay Jlectronics Street</p>
-                    <p class="font-semibold">Bacoor, Cavite 4102</p>
-                    <p class="font-semibold">Date: {{ purchaseCred.order_date }}</p>
+                    <p class="font-medium">Barangay Jlectronics Street</p>
+                    <p class="font-medium">Bacoor, Cavite 4102</p>
+                    <p class="font-medium">Date: {{ purchaseCred.order_date }}</p>
                 </div>
 
                 <!-- Supplier Details -->
-                <div v-if="letter.supplier_name" class="flex justify-start flex-col space-y-1 mt-6">
+                <div v-if="letter.supplier_name" class="flex flex-col space-y-1 mt-6 text-gray-700">
                     <h2 class="font-bold text-2xl">{{ letter.supplier_name }}</h2>
-                    <p class="font-semibold">{{ letter.address }}</p>
+                    <p class="font-medium">{{ letter.address }}</p>
                 </div>
 
                 <!-- Letter Body -->
-                <div class="flex justify-start flex-col space-y-4 mt-10 leading-relaxed">
+                <div class="flex flex-col space-y-4 mt-8 leading-relaxed text-gray-700">
                     <p class="italic">Dear {{ letter.supplier_name || 'Supplier' }},</p>
 
                     <p>
-                        We at <span class="font-bold">EzeePC</span> are pleased to formally request the supply of
-                        computer units and related accessories
-                        as part of our purchase order. Kindly review the details of our order below:
+                        We at <span class="font-bold">EzeePC</span> are pleased to formally request
+                        the supply of computer units and related accessories. Kindly review the
+                        details of our order below:
                     </p>
 
                     <!-- Order Details Table -->
@@ -301,17 +322,18 @@ watch(
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="border px-3 py-2 text-left">Product Name</th>
-                                <th class="border px-3 py-2 text-left">Quantity</th>
-                                <th class="border px-3 py-2 text-left">Unit Price</th>
-                                <th class="border px-3 py-2 text-left">Total</th>
+                                <th class="border px-3 py-2 text-center">Quantity</th>
+                                <th class="border px-3 py-2 text-center">Unit Price</th>
+                                <th class="border px-3 py-2 text-center">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in orderItems" :key="index">
                                 <td class="border px-3 py-2">{{ item.product_name }}</td>
-                                <td class="border px-3 py-2">{{ item.quantity }}</td>
-                                <td class="border px-3 py-2">₱{{ item.unit_price }}</td>
-                                <td class="border px-3 py-2">₱{{ (item.unit_price * item.quantity).toFixed(2) }}</td>
+                                <td class="border px-3 py-2 text-center">{{ item.quantity }}</td>
+                                <td class="border px-3 py-2 text-center">₱{{ item.unit_price }}</td>
+                                <td class="border px-3 py-2 text-center">₱{{ (item.unit_price *
+                                    item.quantity).toFixed(2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -328,13 +350,13 @@ watch(
 
                     <p>
                         Should you have any clarifications, feel free to reach us at
-                        <span class="font-semibold">EzeePC@gmail.com</span> or call us at
+                        <span class="font-semibold">EzeePC@gmail.com</span> or call
                         <span class="font-semibold">09123456789</span>.
                     </p>
 
                     <p class="mt-6">
-                        Thank you for your continued support and partnership. We look forward to your confirmation
-                        and a successful transaction.
+                        Thank you for your continued support and partnership. We look forward
+                        to your confirmation and a successful transaction.
                     </p>
 
                     <p class="mt-10">
@@ -345,9 +367,18 @@ watch(
             </div>
 
             <!-- Footer Actions -->
-            <DialogFooter class="p-6 pt-0">
-                <Button type="button">Download as PDF</Button>
-                <Button type="button" @click="handleOrder(purchaseCred)">Send to Mail</Button>
+            <DialogFooter class="p-6 pt-5 border-t">
+                <Button type="button" class="bg-gray-200 hover:bg-gray-300">Download as PDF</Button>
+                <Button type="button" @click="handleOrder(purchaseCred)" class="bg-blue-600 hover:bg-blue-700"
+                    :disabled="isLoading">
+                    <span v-if="isLoading" class="flex justify-center space-x-3 items-center">
+                        <VueSpinner size="20" />
+                        Sending...
+                    </span>
+                    <span v-else>
+                        Send to Mail
+                    </span>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

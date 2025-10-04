@@ -15,14 +15,18 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('supplier_id');
             $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('brand_id');
             $table->string('SKU')->unique();
+            $table->string('model');
             $table->string('product_name');
             $table->text('product_description');
             $table->integer('product_quantity');
             $table->decimal('unit_price');
             $table->integer('reorder_level');
+            $table->enum('status', ['Available', 'Unavailable', 'Low Stock', 'Out of Stock']);
             $table->foreign('supplier_id')->references('id')->on('suppliers')->cascadeOnDelete();
             $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
+            $table->foreign('brand_id')->references('id')->on('brands')->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -1,16 +1,12 @@
 <script setup>
-import { getProducts } from '@/composables/useProducts';
-import { computed, onMounted, ref, h, reactive, onUnmounted } from 'vue';
-import AddProductModal from '@/components/Modals/AddProductModal.vue';
+import { getPurchases } from '@/composables/usePO';
+import { computed, onMounted, ref, h, reactive } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faGear, faPen, faEye, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import { Button } from "@/components/ui/button";
 import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
-import ProductActionModal from '@/components/Modals/ProductActionModal.vue';
-import ProductOptionSilder from '@/components/Sliders/ProductOptionSilder.vue';
-const { products, isLoading, fetchProducts } = getProducts();
 
 // TanStack Table
 import {
@@ -21,62 +17,86 @@ import {
     getFilteredRowModel,
 } from '@tanstack/vue-table';
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
-const slider = ref(false);
+const { purchases, isLoading, fetchPurchases } = getPurchases();
+
+onMounted(() => {
+    fetchPurchases();
+})
 
 const columnHelper = createColumnHelper();
 
-const toggleSlider = () => {
-    slider.value = !slider.value
-}
-
 const columns = [
-    columnHelper.accessor('product_name', {
-        id: "Item",
-        header: "Item",
-        cell: info => info.getValue()
-    }),
-    columnHelper.accessor('model', {
-        id: "Model",
-        header: "Model",
-        cell: info => info.getValue()
-    }),
-    columnHelper.accessor(row => row.brand.brand_name, {
-        id: "Brand",
-        header: "Brand",
-        cell: info => info.getValue()
-    }),
-    columnHelper.accessor('product_quantity', {
-        id: "quantity",
-        header: "quantity",
-        cell: info => info.getValue()
-    }),
-    columnHelper.accessor('unit_price', {
-        id: "Unit Price",
-        header: "Unit Price",
-        cell: info => info.getValue()
-    }),
-    columnHelper.accessor(row => row.category.category_name, {
-        id: "Category",
-        header: "Category",
-        cell: info => info.getValue()
-    }),
-    {
-        id: "Actions",
-        header: "Actions",
+    columnHelper.accessor(row => row.supplier.supplier_name, {
+        id: "Supplier",
+        header: "Supplier",
         cell: ({ row }) => {
-            return h(
-                ProductOptionSilder, {
-                class: "absolute"
-            }
-            )
+            return row.original.supplier.supplier_name
         }
-    }
-
+    }),
+    columnHelper.accessor(row => row.items.length, {
+        id: "Number of Items",
+        header: "Number of Items",
+        cell: info => info.getValue()
+    }),
+    columnHelper.accessor(row => {
+        const totalQuantity = row.items.reduce((sum, item) => {
+            return sum + parseInt(item.quantity);
+        }, 0);
+        return totalQuantity;
+    }, {
+        id: "Total Items Quantity",
+        header: "Total Items Quantity",
+        cell: ({ row }) => {
+            const totalQuantity = row.original.items.reduce((sum, item) => {
+                return sum + parseInt(item.quantity);
+            }, 0);
+            return totalQuantity;
+        }
+    }),
+    columnHelper.accessor(row => new Date(row.order_date).toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" }), {
+        id: "Order Date",
+        header: "Order Date",
+        cell: ({ row }) => {
+            const formmattedDate = new Date(row.original.order_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            });
+            return formmattedDate
+        }
+    }),
+    columnHelper.accessor(row => new Date(row.expected_date).toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" }), {
+        id: "Expected Arrival",
+        header: "Expected Arrival",
+        cell: ({ row }) => {
+            const formmattedDate = new Date(row.original.expected_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            });
+            return formmattedDate
+        }
+    }),
+    columnHelper.accessor('status', {
+        id: "Status",
+        header: "Status",
+        cell: info => info.getValue()
+    })
 ];
+
 const globalFilter = ref("");
-const productsTable = useVueTable({
-    data: computed(() => products.value),
+const purchaseTable = useVueTable({
+    data: computed(() => purchases.value),
     columns,
     state: {
         get globalFilter() {
@@ -90,10 +110,6 @@ const productsTable = useVueTable({
     getFilteredRowModel: getFilteredRowModel()
 });
 
-onMounted(async () => {
-    await fetchProducts();
-
-});
 </script>
 <template>
     <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-6 space-y-3">
@@ -102,14 +118,10 @@ onMounted(async () => {
             Loading the latest data, please wait...
         </p>
     </section>
+
     <section v-else>
         <div class="container-xl mx-auto p-3">
-
-            <div class="flex justify-between items-center">
-                <h1>Products</h1>
-                <AddProductModal />
-            </div>
-
+            <h1>Purchase History</h1>
             <!-- Table -->
             <div class="flex flex-row space-x-3 w-1/2 mb-6">
                 <Label>Search:</Label>
@@ -119,14 +131,14 @@ onMounted(async () => {
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-white uppercase bg-accents hover:bg-accents-hover">
                         <tr class="text-center">
-                            <th v-for="header in productsTable.getFlatHeaders()" :key="header.id"
+                            <th v-for="header in purchaseTable.getFlatHeaders()" :key="header.id"
                                 class="border p-3 font-semibold tracking-wide">
                                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                             </th>
                         </tr>
                     </thead>
-                    <tbody v-if="products.length > 0">
-                        <tr v-for="row in productsTable.getRowModel().rows" :key="row.id"
+                    <tbody v-if="purchases.length > 0">
+                        <tr v-for="row in purchaseTable.getRowModel().rows" :key="row.id"
                             class="text-center transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="border px-3 py-2">
                                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
@@ -137,6 +149,4 @@ onMounted(async () => {
             </div>
         </div>
     </section>
-
-    <!-- <ProductActionModal :is-open="actionModal" /> -->
 </template>

@@ -14,11 +14,26 @@ use Symfony\Component\HttpFoundation\Response;
 class PurchaseController extends Controller
 {
     //
-    // public function mail(Request $request)
-    // {
-    //     Mail::to('carlo.mendoza@primehardwareimports.com')->send(new PurchaseOrder());
-    //     return response()->json(['success' => true, 'message' => 'Email sent successfully!']);
-    // }
+    public function index()
+    {
+        $pos = Purchase::with(['supplier', 'items'])->latest()->get();
+
+        foreach ($pos as $po) {
+            $po->makeHidden(['id']);
+            $po->makeHidden(['supplier_id']);
+            $po->supplier->makeHidden(['id']);
+            $po->supplier->supplier_encrypted_id = Crypt::encryptString($po->supplier->id);
+            $po->encrypted_id = Crypt::encryptString($po->id);
+
+            foreach ($po->items as $item) {
+                $item->makeHidden(['id']);
+                $item->makeHidden(['product_id']);
+                $item->makeHidden(['purchase_order_id']);
+                $item->encrypted_id = Crypt::encryptString($item->id);
+            }
+        }
+        return response()->json($pos, Response::HTTP_OK);
+    }
 
     public function store(Request $request)
     {
@@ -52,9 +67,10 @@ class PurchaseController extends Controller
                 'total' => $item['unit_price'] * $item['quantity']
             ]);
         }
-        
+
         //Make this a QUEUE 
         Mail::to($PO->supplier->email)->send(new PurchaseOrder($PO));
-        return response()->json(['icon' => 'success', 'title' => 'Order Successfully', 'text' => 'Your new order has been generated'], Response::HTTP_OK);
+
+        return response()->json(['icon' => 'success', 'title' => 'Ordered Successfully', 'text' => 'Your order has been sent to their email'], Response::HTTP_OK);
     }
 }

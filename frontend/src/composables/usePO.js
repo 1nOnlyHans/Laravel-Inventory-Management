@@ -42,3 +42,24 @@ export function managePO() {
 
   return { orderItems, itemCred, purchaseCred };
 }
+
+export function getPurchases() {
+  const purchases = ref([]);
+  const isLoading = ref(false);
+
+  const fetchPurchases = async () => {
+    isLoading.value = true;
+    try {
+      const response = await axios.get("/api/purchase_order/index");
+      if (response.status === 200) {
+        purchases.value = response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return { purchases, isLoading, fetchPurchases };
+}
