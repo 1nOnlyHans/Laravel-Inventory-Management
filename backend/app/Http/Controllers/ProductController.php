@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +17,14 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::with(['supplier', 'category', 'brand'])->latest()->get();
+        $products = Product::with(['supplier', 'category', 'brand', 'photos'])->latest()->get();
 
-        return response()->json($products, 200);
+        foreach ($products as $product) {
+            // $product->makeHidden(['id']);
+            $product->encrypted_id = Crypt::encryptString($product->id);
+        }
+
+        return response()->json($products, Response::HTTP_OK);
     }
 
     public function store(Request $request)
@@ -63,11 +69,18 @@ class ProductController extends Controller
             'status' => $status
         ]);
 
-        $files = $request->file('photos');
+        if ($request->hasFile('photos')) {
+            $files = $request->file('photos');
 
-        foreach ($files as $file) {
-            $file->store('brand_photos', 'public');
+            foreach ($files as $file) {
+                $path = $file->store('brand_photos', 'public');
+                ProductPhoto::create([
+                    'product_id' => $product->id,
+                    'image' => $path
+                ]);
+            }
         }
+
 
         return response()->json(['icon' => 'success', 'title' => 'Added Successfully', 'text' => $product->product_name . ' has been added'], Response::HTTP_OK);
     }
@@ -75,29 +88,80 @@ class ProductController extends Controller
     public function show(Request $request)
     {
         $id = Crypt::decryptString($request->route('product_id'));
-        $product = Product::findOrFail($id);
+        $product = Product::with(['supplier', 'category', 'brand', 'photos'])->findOrFail($id);
         $product->makeHidden(['id']);
-        $product->encrypted_id = Crypt::decrypt($product->id);
-        response($product, Response::HTTP_OK);
+        // $product->supplier->makeHidden(['id']);
+        $product->supplier->encrypted_id = Crypt::encryptString($product->supplier->id);
+        $product->encrypted_id = Crypt::encryptString($product->id);
+        return response()->json($product, Response::HTTP_OK);
     }
 
     public function update(Request $request)
     {
+
+        //Decrypt ID
         $id = Crypt::decryptString($request->product_id);
+
+        //VALIDATE
         $validated = $request->validate([
             'supplier_id' => ['required'],
-            'category_id' => ['category_id'],
+            'category_id' => ['required'],
+            'brand_id' => ['required'],
             'SKU' => ['required', Rule::unique('products', 'SKU')->ignore($id, 'id')],
-            'product_name' => ['required', Rule::unique('products', 'product_name')],
+            'model' => ['required'],
+            'product_name' => ['required', Rule::unique('products', 'product_name')->ignore($id, 'id')],
             'product_description' => ['required'],
             'product_quantity' => ['required'],
             'unit_price' => ['required'],
-            'reorder_level' => ['required']
+            'reorder_level' => ['required'],
         ]);
 
+        //FIND INSTANCE
         $product = Product::findOrFail($id);
-        $product->update($validated);
 
+        //Check Status
+        $status = intval($validated['product_quantity']) === 0
+            ? 'Out of Stock'
+            : (intval($validated['product_quantity']) <= $validated['reorder_level']
+                ? 'Low Stock'
+                : 'Available');
+        //UPDATE
+        $product->update([
+            'supplier_id' => $validated['supplier_id'],
+            'category_id' => $validated['category_id'],
+            'brand_id' => $validated['brand_id'],
+            'SKU' => $validated['SKU'],
+            'model' => $validated['model'],
+            'product_name' => $validated['product_name'],
+            'product_description' => $validated['product_description'],
+            'product_quantity' => $validated['product_quantity'],
+            'unit_price' => $validated['unit_price'],
+            'reorder_level' => $validated['reorder_level'],
+            'status' => $status
+        ]);
+
+        //Checks if there's an image
+        if ($request->hasFile('photos')) {
+            //Validate Image Type
+            $validatedPhotos = $request->validate([
+                'photos' => ['required', 'array'],
+                'photos.*' => [File::types(['jpg', 'jpeg', 'png', 'svg', 'webp'])]
+            ]);
+
+            //Photos
+            $photos = $request->file('photos');
+
+            // Loop
+            foreach ($photos as $photo) {
+                $path = $photo->store('brand_photos', 'public'); // Stores on Storage
+
+                //Insert new in DB
+                ProductPhoto::create([
+                    'product_id' => $product->id,
+                    'image' => $path
+                ]);
+            }
+        }
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $product . ' has been updated'], Response::HTTP_OK);
     }
 
@@ -120,5 +184,17 @@ class ProductController extends Controller
             $product->encrypted_id = Crypt::encryptString($product->id);
         }
         return response()->json($products, Response::HTTP_OK);
+    }
+
+    public function deleteProductPhoto(Request $request)
+    {
+        $photo = ProductPhoto::findOrFail($request->photo_id);
+        if (Storage::disk('public')->exists($photo->image)) {
+            Storage::disk('public')->delete($photo->image);
+            $photo->delete();
+            return response()->json(['icon' => 'success', 'title' => 'Photo Deleted', 'text' => 'Selected photo has been deleted'], Response::HTTP_OK);
+        } else {
+            return response()->json(['icon' => 'error', 'title' => 'Failed to Delete', 'text' => 'Failed to delete photo'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 }

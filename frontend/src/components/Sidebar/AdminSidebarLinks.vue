@@ -1,6 +1,6 @@
 <script setup>
 import { useAuthStore } from "@/stores/auth";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import {
   Sidebar,
   SidebarContent,
@@ -70,6 +70,7 @@ const items = [
 
 const auth = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 const isLoading = ref(false);
 const handleLogout = async () => {
   isLoading.value = true
@@ -89,8 +90,9 @@ const handleLogout = async () => {
 
 <template>
   <Sidebar :background="'bg-brand text-white'">
-    <SidebarHeader>
-      <h1 class="font-bold text-2xl">EzeePC</h1>
+    <SidebarHeader class="flex flex-col items-center text-center py-4 border-b border-gray-700">
+      <h1 class="font-bold text-2xl text-white tracking-wide">LapTopia</h1>
+      <p class="text-gray-400 text-sm">Inventory Management System</p>
     </SidebarHeader>
     <SidebarContent>
       <Collapsible v-for="section in items" :key="section.group" defaultOpen class="group/collapsible">
@@ -108,7 +110,7 @@ const handleLogout = async () => {
               <SidebarMenu>
                 <SidebarMenuItem v-for="item in section.menus" :key="item.title" class="mb-3">
                   <SidebarMenuButton asChild>
-                    <RouterLink :to="item.url">
+                    <RouterLink :to="item.url" :class="route.path === item.url ? 'bg-white text-black' : ''">
                       <FontAwesomeIcon :icon="item.icon" />
                       <span class="text-lg">{{ item.title }}</span>
                     </RouterLink>

@@ -35,9 +35,12 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
 //PRODUCT LOGIC
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
     Route::get('/products/index', 'index');
+    Route::get('/products/show/{product_id}', 'show');
     Route::post('/products/productSupplier', 'getProductsBySupplier');
     Route::post('/products/store', 'store');
-    //DUE TOMMOROW :>
+    Route::put('/products/update', 'update');
+    Route::delete('/products/softDelete', 'softDelete');
+    Route::delete('/products/deletePhoto', 'deleteProductPhoto');
 });
 
 //SUPPLIER AND CATEGORIES CRUD

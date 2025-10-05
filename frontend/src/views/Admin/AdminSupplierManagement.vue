@@ -138,6 +138,7 @@ const handleAddSupplier = async (supplierCred) => {
         RegularSwal(success.data);
     }
 }
+
 //====================================================
 const handleUpdateSupplier = async (supplierCred) => {
     errors.value = null
@@ -179,9 +180,11 @@ const suppliersTable = useVueTable({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel()
 });
+
 onMounted(() => {
     fetchSuppliers();
 });
+
 </script>
 
 <template>

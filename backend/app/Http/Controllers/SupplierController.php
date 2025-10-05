@@ -24,7 +24,7 @@ class SupplierController extends Controller
         $suppliers = Supplier::with('products')->latest()->get();
 
         foreach ($suppliers as $supplier) {
-            $supplier->makeHidden(['id']);
+            // $supplier->makeHidden(['id']);
             $supplier->encrypted_id = Crypt::encryptString($supplier->id);
         }
 

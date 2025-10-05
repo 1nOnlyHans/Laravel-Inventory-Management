@@ -19,6 +19,9 @@ import AdminSupplierManagement from "@/views/Admin/AdminSupplierManagement.vue";
 import AdminCategoriesManagement from "@/views/Admin/AdminCategoriesManagement.vue";
 import AdminPurchaseManagement from "@/views/Admin/AdminPurchaseManagement.vue";
 import AdminPurchaseHistory from "@/views/Admin/AdminPurchaseHistory.vue";
+import AdminAddProduct from "@/views/Admin/AdminAddProduct.vue";
+import AdminProductDetails from "@/views/Admin/AdminProductDetails.vue";
+import AdminEditProductDetails from "@/views/Admin/AdminEditProductDetails.vue";
 
 const routes = [
   // //Guest
@@ -75,6 +78,33 @@ const routes = [
         path: "products",
         name: "Admin Products Management",
         component: AdminProductManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "addProduct",
+        name: "Admin Add Products",
+        component: AdminAddProduct,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "product_details/:product_id",
+        name: "Admin Product Details",
+        component: AdminProductDetails,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "product_edit/:product_id",
+        name: "Admin Edit Product",
+        component: AdminEditProductDetails,
         meta: {
           requiresAuth: true,
           role: "Admin",

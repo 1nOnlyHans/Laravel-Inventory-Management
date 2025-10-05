@@ -15,7 +15,7 @@ class BrandController extends Controller
         $brands = Brand::with('products')->latest()->get();
 
         foreach ($brands as $brand) {
-            $brand->makeHidden(['id']);
+            // $brand->makeHidden(['id']);
             $brand->encrypted_id = Crypt::encryptString($brand->id);
         }
 

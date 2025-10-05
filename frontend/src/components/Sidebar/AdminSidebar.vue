@@ -6,8 +6,8 @@ import AdminSidebarLinks from "./AdminSidebarLinks.vue";
 <template>
     <SidebarProvider>
         <AdminSidebarLinks />
-        <SidebarTrigger class="md:hidden"/>
-        <section class="container mx-auto p-3 bg-bg">
+        <SidebarTrigger class="md:hidden" />
+        <section class="container mx-auto">
             <RouterView />
         </section>
         <main>

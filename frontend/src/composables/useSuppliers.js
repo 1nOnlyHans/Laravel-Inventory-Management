@@ -53,7 +53,6 @@ export function manageSupplier() {
       if (error.response.data.errors) {
         errors.value = error.response.data.errors;
       }
-      console.log(errors.value);
     }
   };
 
