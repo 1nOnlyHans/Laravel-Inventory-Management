@@ -22,14 +22,9 @@ import AdminPurchaseHistory from "@/views/Admin/AdminPurchaseHistory.vue";
 import AdminAddProduct from "@/views/Admin/AdminAddProduct.vue";
 import AdminProductDetails from "@/views/Admin/AdminProductDetails.vue";
 import AdminEditProductDetails from "@/views/Admin/AdminEditProductDetails.vue";
+import AdminBrandsManagement from "@/views/Admin/AdminBrandsManagement.vue";
 
 const routes = [
-  // //Guest
-  // { path: '/', component: Home, name: 'home' },
-  // { path: '/login', component: Login, name: 'login' },
-  // { path: '/register', component: Register, name: 'register' },
-  // //Auth
-  // { path: '/dashboard', component: Dashboard, name: 'dashboard', meta: { requiresAuth: true } },
   {
     path: "/employee",
     component: GuestStaffLayout,
@@ -123,6 +118,15 @@ const routes = [
         path: "categories",
         name: "Admin Categories Management",
         component: AdminCategoriesManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "brands",
+        name: "Admin Brands Management",
+        component: AdminBrandsManagement,
         meta: {
           requiresAuth: true,
           role: "Admin",

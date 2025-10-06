@@ -32,7 +32,8 @@ import {
   faBuilding,
   faFileAlt,
   faRightFromBracket,
-  faCartShopping
+  faCartShopping,
+  faTags
 } from "@fortawesome/free-solid-svg-icons";
 import { ref } from "vue";
 import { icon } from "@fortawesome/fontawesome-svg-core";
@@ -50,6 +51,7 @@ const items = [
       { title: "Products", url: "/admin/products", icon: faInbox },
       { title: "Suppliers", url: "/admin/suppliers", icon: faBuilding },
       { title: "Categories", url: "/admin/categories", icon: faBoxesStacked },
+      { title: "Brands", url: "/admin/brands", icon: faTags },
       { title: "Purchase", url: "/admin/purchase", icon: faCartShopping },
       { title: "Staff", url: "/admin/employees", icon: faUser },
       { title: "Users", url: "/admin/users", icon: faUserCircle },

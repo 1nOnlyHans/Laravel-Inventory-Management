@@ -62,6 +62,10 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::cla
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(BrandController::class)->group(function () {
     Route::get('/brands/index', 'index');
+    Route::get('/brands/show/{brand_id}', 'show');
+    Route::post('/brands/store', 'store');
+    Route::put('/brands/update', 'update');
+    Route::delete('/brands/destroy', 'destroy');
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::class)->group(function () {

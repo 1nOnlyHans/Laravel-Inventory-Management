@@ -2,11 +2,11 @@
     <x-main-layout>
         <div class="p-6">
             <!-- Title -->
-            <h1 class="text-center font-bold text-3xl">EzeePC PURCHASE ORDER REQUEST</h1>
+            <h1 class="text-center font-bold text-3xl">LapTopia PURCHASE ORDER REQUEST</h1>
 
             <!-- Company Details -->
             <div class="flex justify-start flex-col space-y-1 mt-6">
-                <h2 class="font-bold text-2xl">EzeePC</h2>
+                <h2 class="font-bold text-2xl">LapTopia</h2>
                 <p class="font-semibold">Barangay Jlectronics Street</p>
                 <p class="font-semibold">Bacoor, Cavite 4102</p>
                 <p class="font-semibold">Date: {{ $purchase->order_date }}</p>
@@ -25,7 +25,7 @@
                 <p class="italic">Dear {{ $purchase->supplier->name ?? 'Supplier' }},</p>
 
                 <p>
-                    We at <span class="font-bold">EzeePC</span> are pleased to formally request the supply of
+                    We at <span class="font-bold">LapTopia</span> are pleased to formally request the supply of
                     computer units and related accessories
                     as part of our purchase order. Kindly review the details of our order below:
                 </p>
@@ -61,7 +61,7 @@
 
                 <p>
                     Should you have any clarifications, feel free to reach us at
-                    <span class="font-semibold">EzeePC@gmail.com</span> or call us at
+                    <span class="font-semibold">LapTopia@gmail.com</span> or call us at
                     <span class="font-semibold">09123456789</span>.
                 </p>
 
@@ -72,7 +72,7 @@
 
                 <p class="mt-10">
                     Sincerely,<br />
-                    <span class="font-bold">EzeePC Procurement Team</span>
+                    <span class="font-bold">LapTopia Procurement Team</span>
                 </p>
             </div>
         </div>

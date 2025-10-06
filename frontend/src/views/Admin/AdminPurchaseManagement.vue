@@ -290,12 +290,12 @@ watch(
             <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <!-- Letter Title -->
                 <h1 class="text-center font-bold text-3xl text-blue-700">
-                    EzeePC PURCHASE ORDER REQUEST
+                    LapTopia PURCHASE ORDER REQUEST
                 </h1>
 
                 <!-- Company Details -->
                 <div class="flex flex-col space-y-1 text-gray-700">
-                    <h2 class="font-bold text-2xl">EzeePC</h2>
+                    <h2 class="font-bold text-2xl">LapTopia</h2>
                     <p class="font-medium">Barangay Jlectronics Street</p>
                     <p class="font-medium">Bacoor, Cavite 4102</p>
                     <p class="font-medium">Date: {{ purchaseCred.order_date }}</p>
@@ -312,7 +312,7 @@ watch(
                     <p class="italic">Dear {{ letter.supplier_name || 'Supplier' }},</p>
 
                     <p>
-                        We at <span class="font-bold">EzeePC</span> are pleased to formally request
+                        We at <span class="font-bold">LapTopia</span> are pleased to formally request
                         the supply of computer units and related accessories. Kindly review the
                         details of our order below:
                     </p>
@@ -350,7 +350,7 @@ watch(
 
                     <p>
                         Should you have any clarifications, feel free to reach us at
-                        <span class="font-semibold">EzeePC@gmail.com</span> or call
+                        <span class="font-semibold">LapTopia@gmail.com</span> or call
                         <span class="font-semibold">09123456789</span>.
                     </p>
 
@@ -361,7 +361,7 @@ watch(
 
                     <p class="mt-10">
                         Sincerely,<br />
-                        <span class="font-bold">EzeePC Procurement Team</span>
+                        <span class="font-bold">LapTopia Procurement Team</span>
                     </p>
                 </div>
             </div>

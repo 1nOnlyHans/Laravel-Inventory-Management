@@ -31,9 +31,9 @@ class PurchaseOrder extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('EzeePc@gmail.com', 'Hans Diaz'),
+            from: new Address('LapTopia@gmail.com', 'Hans Diaz'),
             replyTo: [
-                new Address('EzeePc@gmail.com', 'Hans Diaz'),
+                new Address('LapTopia@gmail.com', 'Hans Diaz'),
             ],
             subject: 'Purchase Order',
         );
