@@ -28,7 +28,7 @@ class BrandController extends Controller
     {
         $validated = $request->validate([
             'brand_name' => ['required', Rule::unique('brands', 'brand_name')],
-            'description' => ['nullable'],
+            'brand_description' => ['nullable'],
         ]);
 
         $brand = Brand::firstOrCreate($validated);
