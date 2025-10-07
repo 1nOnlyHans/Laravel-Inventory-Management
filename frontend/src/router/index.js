@@ -23,6 +23,10 @@ import AdminAddProduct from "@/views/Admin/AdminAddProduct.vue";
 import AdminProductDetails from "@/views/Admin/AdminProductDetails.vue";
 import AdminEditProductDetails from "@/views/Admin/AdminEditProductDetails.vue";
 import AdminBrandsManagement from "@/views/Admin/AdminBrandsManagement.vue";
+import AdminOnlinePayment from "@/views/Admin/AdminOnlinePayment.vue";
+import PaymentLayout from "@/views/Layouts/PaymentLayout.vue";
+import success from "@/views/Payment/success.vue";
+import Failed from "@/views/Payment/failed.vue";
 
 const routes = [
   {
@@ -150,11 +154,42 @@ const routes = [
           role: "Admin",
         },
       },
+      {
+        path: "online_payment/:order_id",
+        name: "Admin Online Payment",
+        component: AdminOnlinePayment,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
     ],
     meta: {
       requiresAuth: true,
       role: "Admin",
     },
+  },
+  {
+    path: "/payment",
+    component: PaymentLayout,
+    children: [
+      {
+        path: "success",
+        name: "Payment Success",
+        component: success,
+        meta: {
+          requiresAuth: true,
+        },
+      },
+      {
+        path: "failed",
+        name: "Payment Failed",
+        component: Failed,
+        meta: {
+          requiresAuth: true,
+        },
+      },
+    ],
   },
   {
     path: "/403",

@@ -20,4 +20,14 @@ class Purchase extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+
+    public function paymongo()
+    {
+        return $this->hasOne(PaymongoSession::class);
+    }
+
+    public function paymentRecord()
+    {
+        return $this->hasOne(PurchasePaymentRecord::class);
+    }
 }

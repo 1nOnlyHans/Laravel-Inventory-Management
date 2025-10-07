@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseOrder extends Mailable
 {
@@ -31,9 +32,9 @@ class PurchaseOrder extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('LapTopia@gmail.com', 'Hans Diaz'),
+            from: new Address('LapTopia@gmail.com', Auth::user()->firstname . ' ' . Auth::user()->lastname),
             replyTo: [
-                new Address('LapTopia@gmail.com', 'Hans Diaz'),
+                new Address('LapTopia@gmail.com', Auth::user()->firstname . ' ' . Auth::user()->lastname),
             ],
             subject: 'Purchase Order',
         );

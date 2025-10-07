@@ -74,8 +74,14 @@
                     Sincerely,<br />
                     <span class="font-bold">LapTopia Procurement Team</span>
                 </p>
+
+                <div class="flex justify-center">
+                    <a href="{{ url('/purchase/accept/' . $purchase->id) }}"
+                        style="display:inline-block;padding:10px 20px;background:#16a34a;color:white;text-decoration:none;border-radius:6px;">
+                        Accept Order
+                    </a>
+                </div>
             </div>
         </div>
     </x-main-layout>
-
 </x-main-layout>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('order_date');
             $table->date('expected_date');
             $table->enum('status', ['Pending', 'Approved', 'Delivered']);
+            $table->enum('payment_status', ['Pending', 'Paid'])->default('Pending');
             $table->foreign('supplier_id')->references('id')->on('suppliers')->cascadeOnDelete();
             $table->timestamps();
         });
