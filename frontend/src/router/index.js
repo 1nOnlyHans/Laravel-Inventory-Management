@@ -25,9 +25,8 @@ import AdminEditProductDetails from "@/views/Admin/AdminEditProductDetails.vue";
 import AdminBrandsManagement from "@/views/Admin/AdminBrandsManagement.vue";
 import AdminOnlinePayment from "@/views/Admin/AdminOnlinePayment.vue";
 import PaymentLayout from "@/views/Layouts/PaymentLayout.vue";
-import success from "@/views/Payment/success.vue";
-import Failed from "@/views/Payment/failed.vue";
-
+import success from "@/views/Payment/Success.vue";
+import failed from "@/views/Payment/Failed.vue";
 const routes = [
   {
     path: "/employee",
@@ -184,7 +183,7 @@ const routes = [
       {
         path: "failed",
         name: "Payment Failed",
-        component: Failed,
+        component: failed,
         meta: {
           requiresAuth: true,
         },

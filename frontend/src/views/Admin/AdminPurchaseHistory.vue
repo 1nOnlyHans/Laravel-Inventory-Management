@@ -1,5 +1,7 @@
 <script setup>
 import { getPurchases } from '@/composables/usePO';
+import { manageStock } from '@/composables/useStock';
+import { managePO } from '@/composables/usePO';
 import { computed, onMounted, ref, h, reactive } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faGear, faPen, faEye, faTrash, faPrint, } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +10,9 @@ import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import PaymentMethod from '@/components/Modals/PaymentMethod.vue';
+import ReceiveItemsModal from '@/components/Modals/ReceiveItemsModal.vue';
+import SupplierPurchaseLetter from '@/components/Modals/SupplierPurchaseLetter.vue';
+import SupplierReceipt from '@/components/receipt/SupplierReceipt.vue';
 // TanStack Table
 import {
     useVueTable,
@@ -16,27 +21,35 @@ import {
     createColumnHelper,
     getFilteredRowModel,
 } from '@tanstack/vue-table';
-
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faCashApp, faPaypal } from '@fortawesome/free-brands-svg-icons';
+import { RegularSwal } from '@/components/Swals/useSwals';
 
 const { purchases, isLoading, fetchPurchases } = getPurchases();
+const { markAsDelivered } = managePO();
+const { stockIn } = manageStock();
 const openPayment = ref(false);
+const receivedItemsModal = ref(false);
+const openLetter = ref(false);
+const openReceipt = ref(false);
+const payment_record = ref(null);
 const orderCred = reactive({
     order_id: '',
     supplier_name: '',
     amount: 0,
     items: null
 });
+const purchaseData = ref(null);
+
+const handleStockIn = async (product_id, purchase_id) => {
+    const delivered = await markAsDelivered(purchase_id);
+    const In = await stockIn(product_id);
+
+    if ((delivered && delivered.status === 200) && (In && In.status === 200)) {
+        receivedItemsModal.value = false
+        await fetchPurchases();
+        RegularSwal(In.data);
+    }
+}
+
 onMounted(() => {
     fetchPurchases();
 })
@@ -112,46 +125,96 @@ const columns = [
         id: "Actions",
         header: "Actions",
         cell: ({ row }) => {
+            const record = row.original;
+
+            const isApproved = record.status === "Approved";
+            const isPaid = record.payment_status === "Paid";
+            const isDelivered = record.status === "Delivered";
+
             return h(
-                "div", {
-                class: 'flex justify-center items-center space-x-6'
-            },
+                "div",
+                { class: "flex justify-center items-center space-x-3" },
                 [
+                    // 👁 View button (always visible)
                     h(
-                        Button, {
-                        variant: 'none',
-                        class: "text-accents hover:text-accents-hovered"
-                    }
-                        , () => h(
-                            FontAwesomeIcon, {
-                            icon: faPrint
-                        }
-                        )
-                    ),
-                    row.original.status === 'Approved' ?
-                        h(
-                            Button, {
-                            variant: 'none',
-                            class: "bg-green-500 text-white hover:bg-green-900",
+                        Button,
+                        {
+                            variant: "none",
+                            class: "text-accents hover:text-accents-hovered",
                             onClick: () => {
-                                openPayment.value = true
-                                orderCred.order_id = row.original.encrypted_id
-                                orderCred.supplier_name = row.original.supplier.supplier_name
-                                orderCred.amount = row.original.items.reduce((sum, item) => {
-                                    return sum += parseFloat(item.total);
-                                }, 0);
-                                orderCred.items = row.original.items
-                            }
-                        }
-                            , () => h(
-                                "p", [
-                                "Pay Now"
-                            ]
-                            )
-                        ) : '',
+                                purchaseData.value = record;
+                                openLetter.value = true;
+                            },
+                        },
+                        () => h(FontAwesomeIcon, { icon: faEye })
+                    ),
+
+                    // 🟢 Case 1: Approved but Not Paid → Pay Now
+                    isApproved && !isPaid &&
+                    h(
+                        Button,
+                        {
+                            variant: "none",
+                            class: "bg-green-500 text-white hover:bg-green-700",
+                            onClick: () => {
+                                openPayment.value = true;
+                                orderCred.order_id = record.encrypted_id;
+                                orderCred.supplier_name = record.supplier.supplier_name;
+                                orderCred.amount = record.items.reduce(
+                                    (sum, item) => sum + parseFloat(item.total),
+                                    0
+                                );
+                                orderCred.items = record.items;
+                            },
+                        },
+                        () => h("p", "Pay Now")
+                    ),
+
+                    // 🔵 Case 2: Paid but Not Delivered → Print + Mark as Delivered
+                    isPaid && record.status !== "Delivered" && [
+                        h(
+                            Button,
+                            {
+                                variant: "none",
+                                class: "bg-blue-500 text-white hover:bg-blue-700",
+                                onClick: () => {
+                                    payment_record.value = row.original.payment_record
+                                    openReceipt.value = true
+                                },
+                            },
+                            () => h("p", "Print Receipt")
+                        ),
+                        h(
+                            Button,
+                            {
+                                variant: "none",
+                                class: "bg-yellow-500 text-white hover:bg-yellow-700",
+                                onClick: () => {
+                                    receivedItemsModal.value = true;
+                                    purchaseData.value = record;
+                                },
+                            },
+                            () => h("p", "Mark as Delivered")
+                        ),
+                    ],
+
+                    // 🧾 Case 3: Paid + Delivered → Print Receipt only
+                    isPaid && isDelivered &&
+                    h(
+                        Button,
+                        {
+                            variant: "none",
+                            class: "bg-blue-500 text-white hover:bg-blue-700",
+                            onClick: () => {
+                                payment_record.value = row.original.payment_record
+                                openReceipt.value = true
+                            },
+                        },
+                        () => h("p", "Print Receipt")
+                    ),
                 ]
-            )
-        }
+            );
+        },
     }
 ];
 
@@ -239,4 +302,7 @@ const purchaseTable = useVueTable({
 
     <PaymentMethod v-model:open="openPayment" :order_id="orderCred.order_id" :supplier_name="orderCred.supplier_name"
         :amount="orderCred.amount" :items="orderCred.items" />
+    <ReceiveItemsModal v-model:open="receivedItemsModal" :purchase-data="purchaseData" @stock-in="handleStockIn" />
+    <SupplierPurchaseLetter v-model:open="openLetter" :purchase-cred="purchaseData" />
+    <SupplierReceipt v-model:open="openReceipt" :payment_record="payment_record" />
 </template>

@@ -344,7 +344,7 @@ watch(
 
                     <p>
                         We kindly request delivery of the above-mentioned items on or before
-                        <span class="font-semibold">{{ purchaseCred.delivery_date }}</span>.
+                        <span class="font-semibold">{{ purchaseCred.expected_date }}</span>.
                         Please ensure all products are in good condition and meet our specifications.
                     </p>
 
@@ -368,7 +368,6 @@ watch(
 
             <!-- Footer Actions -->
             <DialogFooter class="p-6 pt-5 border-t">
-                <Button type="button" class="bg-gray-200 hover:bg-gray-300">Download as PDF</Button>
                 <Button type="button" @click="handleOrder(purchaseCred)" class="bg-blue-600 hover:bg-blue-700"
                     :disabled="isLoading">
                     <span v-if="isLoading" class="flex justify-center space-x-3 items-center">
@@ -376,7 +375,7 @@ watch(
                         Sending...
                     </span>
                     <span v-else>
-                        Send to Mail
+                        Send to Supplier
                     </span>
                 </Button>
             </DialogFooter>

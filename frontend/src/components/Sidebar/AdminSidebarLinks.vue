@@ -1,6 +1,8 @@
 <script setup>
-import { useAuthStore } from "@/stores/auth";
+import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+
 import {
   Sidebar,
   SidebarContent,
@@ -10,15 +12,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { ChevronDown } from "lucide-vue-next";
+} from "@/components/ui/sidebar";
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from "@/components/ui/collapsible";
+
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
+
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faDashboard,
@@ -33,22 +37,29 @@ import {
   faFileAlt,
   faRightFromBracket,
   faCartShopping,
-  faTags
+  faTags,
+  faArrowTrendUp,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { ref } from "vue";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-// Menu items.
+
+// Sidebar menu items
 const items = [
   {
     group: "System",
-    menus: [
-      { title: "Dashboard", url: "/admin/dashboard", icon: faDashboard },
-    ],
+    menus: [{ title: "Dashboard", url: "/admin/dashboard", icon: faDashboard }],
   },
   {
     group: "Management",
     menus: [
-      { title: "Products", url: "/admin/products", icon: faInbox },
+      {
+        title: "Products",
+        url: "/admin/products",
+        icon: faInbox,
+        submenus: [
+          { title: "Inventory", url: "/admin/products", icon: faInbox },
+          { title: "Stock Movements", url: "/admin/stock_movements", icon: faArrowTrendUp },
+        ],
+      },
       { title: "Suppliers", url: "/admin/suppliers", icon: faBuilding },
       { title: "Categories", url: "/admin/categories", icon: faBoxesStacked },
       { title: "Brands", url: "/admin/brands", icon: faTags },
@@ -69,54 +80,92 @@ const items = [
   },
 ];
 
-
 const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
 const isLoading = ref(false);
+
 const handleLogout = async () => {
-  isLoading.value = true
+  isLoading.value = true;
   try {
     const response = await auth.logout();
     if (response.status === 200) {
-      router.push('/employee/login');
+      router.push("/employee/login");
     }
-    console.log(response);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 </script>
 
 <template>
-  <Sidebar :background="'bg-brand text-white'">
+  <Sidebar :background="'bg-brand text-white'" class="h-screen flex flex-col overflow-hidden">
+    <!-- Header -->
     <SidebarHeader class="flex flex-col items-center text-center py-4 border-b border-gray-700">
       <h1 class="font-bold text-2xl text-white tracking-wide">LapTopia</h1>
       <p class="text-gray-400 text-sm">Inventory Management System</p>
     </SidebarHeader>
-    <SidebarContent>
+
+    <!-- Sidebar Content -->
+    <SidebarContent class="flex-1 overflow-y-auto scrollbar-hide">
       <Collapsible v-for="section in items" :key="section.group" defaultOpen class="group/collapsible">
         <SidebarGroup>
-          <SidebarGroupLabel class="text-white" asChild>
-            <div class="flex justify-between items-center">
-              <h1 class="text-lg">{{ section.group }}</h1>
-              <CollapsibleTrigger>
-                <ChevronDown class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </div>
+          <SidebarGroupLabel class="text-white flex justify-between items-center">
+            <span class="text-lg font-semibold">{{ section.group }}</span>
+            <CollapsibleTrigger>
+              <FontAwesomeIcon :icon="faChevronDown"
+                class="transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            </CollapsibleTrigger>
           </SidebarGroupLabel>
+
           <CollapsibleContent>
-            <SidebarGroupContent class="mt-3">
+            <SidebarGroupContent class="mt-3 space-y-2">
               <SidebarMenu>
-                <SidebarMenuItem v-for="item in section.menus" :key="item.title" class="mb-3">
-                  <SidebarMenuButton asChild>
-                    <RouterLink :to="item.url" :class="route.path === item.url ? 'bg-white text-black' : ''">
-                      <FontAwesomeIcon :icon="item.icon" />
-                      <span class="text-lg">{{ item.title }}</span>
-                    </RouterLink>
-                  </SidebarMenuButton>
+                <SidebarMenuItem v-for="item in section.menus" :key="item.title">
+                  <!-- If item has submenus -->
+                  <div v-if="item.submenus">
+                    <Collapsible>
+                      <CollapsibleTrigger
+                        class="flex items-center justify-between w-full px-3 py-2 rounded hover:bg-white hover:text-black">
+                        <div class="flex items-center gap-x-2">
+                          <FontAwesomeIcon :icon="item.icon" />
+                          <span class="text-lg">{{ item.title }}</span>
+                        </div>
+                        <FontAwesomeIcon :icon="faChevronDown" class="text-sm" />
+                      </CollapsibleTrigger>
+
+                      <CollapsibleContent>
+                        <div class="ml-6 mt-2 space-y-1">
+                          <RouterLink v-for="sub in item.submenus" :key="sub.title" :to="sub.url" :class="[
+                            'block px-3 py-1.5 rounded text-sm',
+                            route.path === sub.url
+                              ? 'bg-white text-black font-medium'
+                              : 'hover:bg-white hover:text-black'
+                          ]">
+                            <FontAwesomeIcon :icon="sub.icon" class="mr-2" />
+                            {{ sub.title }}
+                          </RouterLink>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
+
+                  <!-- Regular menu item -->
+                  <div v-else>
+                    <SidebarMenuButton asChild>
+                      <RouterLink :to="item.url" :class="[
+                        'flex items-center gap-x-2 rounded px-3 py-2',
+                        route.path === item.url
+                          ? 'bg-white text-black font-medium'
+                          : 'hover:bg-white hover:text-black'
+                      ]">
+                        <FontAwesomeIcon :icon="item.icon" />
+                        <span class="text-lg">{{ item.title }}</span>
+                      </RouterLink>
+                    </SidebarMenuButton>
+                  </div>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
@@ -125,17 +174,30 @@ const handleLogout = async () => {
       </Collapsible>
     </SidebarContent>
 
-    <SidebarFooter>
-      <button type="button"
-        class="flex justify-start items-center gap-x-3 px-3 py-2 rounded hover:bg-white hover:text-black cursor-pointer"
-        @click="handleLogout">
-        <span v-if="isLoading">
-          <VueSpinner />
-        </span>
-        <span v-else>
-          <FontAwesomeIcon :icon="faRightFromBracket" /> Logout
-        </span>
+    <!-- Footer -->
+    <SidebarFooter class="border-t border-gray-700 p-3">
+      <button type="button" class="flex items-center gap-x-3 w-full px-3 py-2 rounded hover:bg-white hover:text-black"
+        @click="handleLogout" :disabled="isLoading">
+        <template v-if="isLoading">
+          <span class="animate-pulse">Logging out...</span>
+        </template>
+        <template v-else>
+          <FontAwesomeIcon :icon="faRightFromBracket" />
+          Logout
+        </template>
       </button>
     </SidebarFooter>
   </Sidebar>
 </template>
+
+<style scoped>
+/* Hide scrollbars for a clean look */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  /* Firefox */
+}
+</style>

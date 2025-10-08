@@ -40,7 +40,17 @@ export function managePO() {
     quantity: 0,
   });
 
-  return { orderItems, itemCred, purchaseCred };
+  const markAsDelivered = async (purchase_id) => {
+    try {
+      const response = await axios.put("/api/purchase/delivered", {
+        purchase_id: purchase_id,
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return { orderItems, itemCred, purchaseCred, markAsDelivered };
 }
 
 export function getPurchases() {
@@ -74,6 +84,8 @@ export function onlinePayment() {
     amount: 1200,
     items: null,
   });
+
+  const isLoading = ref(false);
 
   const createOnlinePayment = async (paymentCred) => {
     try {
@@ -120,6 +132,7 @@ export function onlinePayment() {
     }
   };
   const checkIfSuccessTransaction = async (session, purchase_id) => {
+    isLoading.value = true;
     try {
       const response = await axios.post(
         "/api/paymongo/checktransaction",
@@ -154,6 +167,9 @@ export function onlinePayment() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      isLoading.value = false;
+      window.location.href = "/admin/purchase_history";
     }
   };
 
@@ -192,6 +208,7 @@ export function onlinePayment() {
     createOnlinePayment,
     checkIfSuccessTransaction,
     fetchLatestSession,
+    isLoading,
   };
 }
 
