@@ -18,7 +18,7 @@ class PurchaseController extends Controller
     //
     public function index()
     {
-        $pos = Purchase::with(['supplier', 'items'])->latest()->get();
+        $pos = Purchase::with(['supplier', 'items', 'paymentRecord'])->latest()->get();
 
         foreach ($pos as $po) {
             $po->makeHidden(['id']);
@@ -93,16 +93,20 @@ class PurchaseController extends Controller
     public function createPaymentRecord(Request $request)
     {
         $validated = $request->validate(['purchase_id' => ['required'], 'payment_method' => ['required'], 'amount_paid' => ['required'], 'total_amount' => ['required']]);
-        $reference_no = uniqid('PAY - ', false);
-        $payment_record = PurchasePaymentRecord::create([
-            'purchase_id' => $validated['purchase_id'],
-            'reference_no' => $reference_no,
-            'payment_method' => ucfirst($validated['payment_method']),
-            'amount_paid' => $validated['amount_paid'],
-            'total_amount' => $validated['total_amount']
-        ]);
 
-        return response()->json($payment_record, 200);
+        $payment_record = DB::table('purchase_payment_records')->where('purchase_id', $request->purchase_id)->get();
+        if (count($payment_record) <= 0) {
+            $reference_no = uniqid('PAY - ', false);
+            $newPaymentRecord = PurchasePaymentRecord::firstOrCreate([
+                'purchase_id' => $validated['purchase_id'],
+                'reference_no' => $reference_no,
+                'payment_method' => ucfirst($validated['payment_method']),
+                'amount_paid' => $validated['amount_paid'],
+                'total_amount' => $validated['total_amount']
+            ]);
+        }
+
+        return response()->json(['success'], Response::HTTP_OK);
     }
 
     public function updateStatus(Request $request)
@@ -111,5 +115,13 @@ class PurchaseController extends Controller
         $po->payment_status = 'Paid';
         $po->save();
         return response()->json(['success'], Response::HTTP_OK);
+    }
+
+    public function markAsDelivered(Request $request)
+    {
+        $po = Purchase::findOrFail(Crypt::decryptString($request->purchase_id));
+        $po->status = 'Delivered';
+        $po->save();
+        return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => 'Marked as Delivered!'], Response::HTTP_OK);
     }
 }

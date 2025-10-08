@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PaymongoController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
 use App\Mail\PurchaseOrder;
@@ -74,8 +75,9 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::cla
     Route::get('/purchase/show/{purchase_id}', 'show');
     Route::post('/purchase_order/sendMail', 'mail');
     Route::post('/purchase_order/store', 'store');
-    Route::put('/purchase/updatestatus', 'updateStatus');
     Route::post('/purchase/record', 'createPaymentRecord');
+    Route::put('/purchase/updatestatus', 'updateStatus');
+    Route::put('/purchase/delivered', 'markAsDelivered');
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::class)->group(function () {
@@ -83,4 +85,8 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::cla
     Route::post('/paymongo/storeSession', 'storeSession');
     Route::get('/paymongo/latest', 'getLatestSession');
     Route::post('/paymongo/checktransaction', 'checkTransactionStatus');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(ProductStockController::class)->group(function () {
+    Route::post('/stocks/stockin', 'stockIn');
 });

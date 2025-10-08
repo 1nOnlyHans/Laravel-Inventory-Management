@@ -1,52 +1,60 @@
 <x-main-layout>
     <x-main-layout>
-        <div class="p-6">
+        <div style="padding: 24px;">
             <!-- Title -->
-            <h1 class="text-center font-bold text-3xl">LapTopia PURCHASE ORDER REQUEST</h1>
+            <h1 style="text-align: center; font-weight: bold; font-size: 28px;">
+                LapTopia PURCHASE ORDER REQUEST
+            </h1>
 
             <!-- Company Details -->
-            <div class="flex justify-start flex-col space-y-1 mt-6">
-                <h2 class="font-bold text-2xl">LapTopia</h2>
-                <p class="font-semibold">Barangay Jlectronics Street</p>
-                <p class="font-semibold">Bacoor, Cavite 4102</p>
-                <p class="font-semibold">Date: {{ $purchase->order_date }}</p>
+            <div style="display: flex; flex-direction: column; margin-top: 24px; line-height: 1.6;">
+                <h2 style="font-weight: bold; font-size: 24px;">LapTopia</h2>
+                <p style="font-weight: 600;">Barangay Jlectronics Street</p>
+                <p style="font-weight: 600;">Bacoor, Cavite 4102</p>
+                <p style="font-weight: 600;">Date: {{ $purchase->order_date }}</p>
             </div>
 
             <!-- Supplier Details -->
             @if ($purchase->supplier)
-                <div class="flex justify-start flex-col space-y-1 mt-6">
-                    <h2 class="font-bold text-2xl">{{ $purchase->supplier->name }}</h2>
-                    <p class="font-semibold">{{ $purchase->supplier->address }}</p>
+                <div style="display: flex; flex-direction: column; margin-top: 24px; line-height: 1.6;">
+                    <h2 style="font-weight: bold; font-size: 24px;">{{ $purchase->supplier->name }}</h2>
+                    <p style="font-weight: 600;">{{ $purchase->supplier->address }}</p>
                 </div>
             @endif
 
             <!-- Letter Body -->
-            <div class="flex justify-start flex-col space-y-4 mt-10 leading-relaxed">
-                <p class="italic">Dear {{ $purchase->supplier->name ?? 'Supplier' }},</p>
+            <div style="display: flex; flex-direction: column; margin-top: 40px; line-height: 1.7;">
+                <p style="font-style: italic;">
+                    Dear {{ $purchase->supplier->name ?? 'Supplier' }},
+                </p>
 
                 <p>
-                    We at <span class="font-bold">LapTopia</span> are pleased to formally request the supply of
-                    computer units and related accessories
-                    as part of our purchase order. Kindly review the details of our order below:
+                    We at <span style="font-weight: bold;">LapTopia</span> are pleased to formally request the supply of
+                    computer units and related accessories as part of our purchase order. Kindly review the details of
+                    our
+                    order below:
                 </p>
 
                 <!-- Order Details Table -->
-                <table class="w-full border border-gray-300 text-sm">
-                    <thead class="bg-gray-100">
+                <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; font-size: 14px;">
+                    <thead style="background-color: #f3f4f6;">
                         <tr>
-                            <th class="border px-3 py-2 text-left">Product Name</th>
-                            <th class="border px-3 py-2 text-left">Quantity</th>
-                            <th class="border px-3 py-2 text-left">Unit Price</th>
-                            <th class="border px-3 py-2 text-left">Total</th>
+                            <th style="border: 1px solid #d1d5db; padding: 8px 12px; text-align: left;">Product Name
+                            </th>
+                            <th style="border: 1px solid #d1d5db; padding: 8px 12px; text-align: left;">Quantity</th>
+                            <th style="border: 1px solid #d1d5db; padding: 8px 12px; text-align: left;">Unit Price</th>
+                            <th style="border: 1px solid #d1d5db; padding: 8px 12px; text-align: left;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($purchase->items as $item)
                             <tr>
-                                <td class="border px-3 py-2">{{ $item->product->product_name }}</td>
-                                <td class="border px-3 py-2">{{ $item->quantity }}</td>
-                                <td class="border px-3 py-2">₱{{ number_format($item->unit_price, 2) }}</td>
-                                <td class="border px-3 py-2">
+                                <td style="border: 1px solid #d1d5db; padding: 8px 12px;">
+                                    {{ $item->product->product_name }}</td>
+                                <td style="border: 1px solid #d1d5db; padding: 8px 12px;">{{ $item->quantity }}</td>
+                                <td style="border: 1px solid #d1d5db; padding: 8px 12px;">
+                                    ₱{{ number_format($item->unit_price, 2) }}</td>
+                                <td style="border: 1px solid #d1d5db; padding: 8px 12px;">
                                     ₱{{ number_format($item->unit_price * $item->quantity, 2) }}</td>
                             </tr>
                         @endforeach
@@ -55,29 +63,29 @@
 
                 <p>
                     We kindly request delivery of the above-mentioned items on or before
-                    <span class="font-semibold">{{ $purchase->expected_date }}</span>.
+                    <span style="font-weight: 600;">{{ $purchase->expected_date }}</span>.
                     Please ensure all products are in good condition and meet our specifications.
                 </p>
 
                 <p>
                     Should you have any clarifications, feel free to reach us at
-                    <span class="font-semibold">LapTopia@gmail.com</span> or call us at
-                    <span class="font-semibold">09123456789</span>.
+                    <span style="font-weight: 600;">LapTopia@gmail.com</span> or call us at
+                    <span style="font-weight: 600;">09123456789</span>.
                 </p>
 
-                <p class="mt-6">
+                <p style="margin-top: 24px;">
                     Thank you for your continued support and partnership. We look forward to your confirmation
                     and a successful transaction.
                 </p>
 
-                <p class="mt-10">
+                <p style="margin-top: 40px;">
                     Sincerely,<br />
-                    <span class="font-bold">LapTopia Procurement Team</span>
+                    <span style="font-weight: bold;">LapTopia Procurement Team</span>
                 </p>
 
-                <div class="flex justify-center">
+                <div style="display: flex; justify-content: center; margin-top: 20px;">
                     <a href="{{ url('/purchase/accept/' . $purchase->id) }}"
-                        style="display:inline-block;padding:10px 20px;background:#16a34a;color:white;text-decoration:none;border-radius:6px;">
+                        style="display: inline-block; padding: 10px 20px; background-color: #16a34a; color: white; text-decoration: none; border-radius: 6px;">
                         Accept Order
                     </a>
                 </div>

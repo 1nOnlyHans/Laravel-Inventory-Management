@@ -50,4 +50,9 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function movement()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
 }

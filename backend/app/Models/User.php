@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function movement()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
 }
