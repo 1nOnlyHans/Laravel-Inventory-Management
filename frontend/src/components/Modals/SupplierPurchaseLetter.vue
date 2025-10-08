@@ -25,7 +25,7 @@ const props = defineProps({
             </DialogHeader>
             <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <!-- Letter Title -->
-                <h1 class="text-center font-bold text-3xl text-blue-700">
+                <h1 class="text-center font-bold text-3xl">
                     LapTopia PURCHASE ORDER REQUEST
                 </h1>
 

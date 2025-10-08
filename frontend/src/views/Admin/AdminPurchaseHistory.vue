@@ -2,6 +2,7 @@
 import { getPurchases } from '@/composables/usePO';
 import { manageStock } from '@/composables/useStock';
 import { managePO } from '@/composables/usePO';
+import { onlinePayment } from '@/composables/usePO';
 import { computed, onMounted, ref, h, reactive } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faGear, faPen, faEye, faTrash, faPrint, } from '@fortawesome/free-solid-svg-icons';
@@ -24,6 +25,7 @@ import {
 import { RegularSwal } from '@/components/Swals/useSwals';
 
 const { purchases, isLoading, fetchPurchases } = getPurchases();
+const { createPaymentRecord, updatePaymentStatus } = onlinePayment();
 const { markAsDelivered } = managePO();
 const { stockIn } = manageStock();
 const openPayment = ref(false);
@@ -47,6 +49,19 @@ const handleStockIn = async (product_id, purchase_id) => {
         receivedItemsModal.value = false
         await fetchPurchases();
         RegularSwal(In.data);
+    }
+}
+const handleCOD = async (purchase_id, payment_method, amount_paid, total_amount, order_id) => {
+    if (amount_paid < total_amount) {
+        alert("Enter Valid Amount");
+        return;
+    }
+    const success = await createPaymentRecord(purchase_id, payment_method, amount_paid, total_amount, order_id);
+    if (success && success.status === 200) {
+        openPayment.value = false;
+        await updatePaymentStatus(purchase_id);
+        await fetchPurchases();
+        RegularSwal(success.data);
     }
 }
 
@@ -301,7 +316,7 @@ const purchaseTable = useVueTable({
     </section>
 
     <PaymentMethod v-model:open="openPayment" :order_id="orderCred.order_id" :supplier_name="orderCred.supplier_name"
-        :amount="orderCred.amount" :items="orderCred.items" />
+        :amount="orderCred.amount" :items="orderCred.items" @cod="handleCOD" />
     <ReceiveItemsModal v-model:open="receivedItemsModal" :purchase-data="purchaseData" @stock-in="handleStockIn" />
     <SupplierPurchaseLetter v-model:open="openLetter" :purchase-cred="purchaseData" />
     <SupplierReceipt v-model:open="openReceipt" :payment_record="payment_record" />

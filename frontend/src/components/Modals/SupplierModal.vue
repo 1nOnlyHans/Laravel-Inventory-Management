@@ -112,7 +112,7 @@ watch(props, () => {
                 </div>
             </form>
             <DialogFooter>
-                <Button type="submit" form="updateSupplier" class="bg-accents hover:bg-accents-hover">
+                <Button type="submit" form="updateSupplier">
                     Save changes
                 </Button>
             </DialogFooter>

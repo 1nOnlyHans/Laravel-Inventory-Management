@@ -37,7 +37,7 @@ const props = defineProps({
 <template>
     <Dialog>
         <DialogTrigger as-child>
-            <Button class="bg-accents hover:bg-accents-hover">
+            <Button>
                 <FontAwesomeIcon :icon="faAdd" /> Category
             </Button>
         </DialogTrigger>
@@ -73,7 +73,7 @@ const props = defineProps({
                 </div>
             </form>
             <DialogFooter>
-                <Button type="submit" form="addCategory" class="bg-accents hover:bg-accents-hover">
+                <Button type="submit" form="addCategory">
                     Add Category
                 </Button>
             </DialogFooter>

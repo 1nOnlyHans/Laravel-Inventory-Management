@@ -188,7 +188,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Loading state -->
+    <!-- Loading State -->
     <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
         <VueSpinnerOval size="80" color="#3b82f6" />
         <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-accents">
@@ -201,32 +201,52 @@ onMounted(() => {
 
     <!-- Supplier Management Table -->
     <section v-else class="container mx-auto p-6">
-        <!-- Page Title + Actions -->
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Supplier Management</h1>
-            <!-- DI KO TRIP TO -->
+            <div class="">
+                <h1 class="text-2xl font-bold text-gray-800 tracking-wide">
+                    Suppliers
+                </h1>
+                <p class="text-sm text-gray-500">Manage Suppliers</p>
+            </div>
+
             <AddSupplierModal @add-supplier="handleAddSupplier" :errors="errors" :supplier="supplierCred" />
         </div>
-        <!-- Table -->
-        <div class="flex flex-row space-x-3 w-1/2 mb-6">
+
+        <!-- Search -->
+        <div class="flex flex-row items-center gap-3 mb-5 w-full sm:w-1/2">
             <Label>Search:</Label>
-            <Input type="text" placeholder="Search here..." v-model="globalFilter" />
+            <Input type="text" placeholder="Search supplier..." v-model="globalFilter" class="w-full" />
         </div>
-        <div class="overflow-x-auto rounded-xl shadow-sm bg-white">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-white uppercase bg-accents hover:bg-accents-hover">
-                    <tr class="text-center">
+
+        <!-- Table Card -->
+        <div class="overflow-x-auto rounded-2xl bg-white shadow-md border border-gray-200">
+            <table class="w-full text-sm text-gray-700">
+                <!-- Table Head -->
+                <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
+                    <tr>
                         <th v-for="header in suppliersTable.getFlatHeaders()" :key="header.id"
-                            class="border p-3 font-semibold tracking-wide">
+                            class="px-4 py-3 text-center font-semibold border-b border-gray-300">
                             <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                         </th>
                     </tr>
                 </thead>
-                <tbody v-if="suppliers.length > 0">
+
+                <!-- Table Body -->
+                <tbody v-if="suppliers.length > 0" class="divide-y divide-gray-100">
                     <tr v-for="row in suppliersTable.getRowModel().rows" :key="row.id"
-                        class="text-center transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="border px-3 py-2">
+                        class="hover:bg-gray-50 transition-all duration-150 text-center">
+                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-2 border-b">
                             <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- Empty State -->
+                <tbody v-else>
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-gray-400">
+                            No suppliers found.
                         </td>
                     </tr>
                 </tbody>
@@ -234,7 +254,7 @@ onMounted(() => {
         </div>
     </section>
 
-    <!-- Modal -->
+    <!-- Update Modal -->
     <SupplierModal v-model:open="openUpdateModal" :id="supplierCred.encrypted_id" :name="supplierCred.supplier_name"
         :contact="supplierCred.contact_person" :phone="supplierCred.phone" :email="supplierCred.email"
         :address="supplierCred.address" @update-supplier="handleUpdateSupplier" :errors="errors" />

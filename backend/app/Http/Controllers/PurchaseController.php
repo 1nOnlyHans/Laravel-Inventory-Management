@@ -94,11 +94,19 @@ class PurchaseController extends Controller
     {
         $validated = $request->validate(['purchase_id' => ['required'], 'payment_method' => ['required'], 'amount_paid' => ['required'], 'total_amount' => ['required']]);
 
-        $payment_record = DB::table('purchase_payment_records')->where('purchase_id', $request->purchase_id)->get();
+        $id = null;
+        $purchase_id = null;
+        if ($request->order_id && $request->order_id !== '') {
+            $id = Crypt::decryptString($request->order_id);
+        } else {
+            $id = $request->purchase_id;
+        }
+        $purchase_id = $id;
+        $payment_record = DB::table('purchase_payment_records')->where('purchase_id', $id)->get();
         if (count($payment_record) <= 0) {
             $reference_no = uniqid('PAY - ', false);
             $newPaymentRecord = PurchasePaymentRecord::firstOrCreate([
-                'purchase_id' => $validated['purchase_id'],
+                'purchase_id' => $purchase_id,
                 'reference_no' => $reference_no,
                 'payment_method' => ucfirst($validated['payment_method']),
                 'amount_paid' => $validated['amount_paid'],
@@ -106,15 +114,20 @@ class PurchaseController extends Controller
             ]);
         }
 
-        return response()->json(['success'], Response::HTTP_OK);
+        return response()->json(['icon' => 'success', 'title' => 'Transaction Success', 'text' => 'Payment Record created successfully'], Response::HTTP_OK);
     }
 
     public function updateStatus(Request $request)
     {
-        $po = Purchase::findOrFail($request->purchase_id);
+        try {
+            $id = Crypt::decryptString($request->purchase_id);
+        } catch (\Exception $e) {
+            $id = $request->purchase_id;
+        }
+        $po = Purchase::findOrFail($id);
         $po->payment_status = 'Paid';
         $po->save();
-        return response()->json(['success'], Response::HTTP_OK);
+        return response()->json($id, Response::HTTP_OK);
     }
 
     public function markAsDelivered(Request $request)

@@ -177,7 +177,8 @@ export function onlinePayment() {
     purchase_id,
     payment_method,
     amount_paid,
-    total_amount
+    total_amount,
+    order_id = ""
   ) => {
     try {
       const response = await axios.post("/api/purchase/record", {
@@ -185,8 +186,10 @@ export function onlinePayment() {
         payment_method: payment_method,
         amount_paid: amount_paid,
         total_amount: total_amount,
+        order_id: order_id,
       });
       console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
     }
@@ -209,6 +212,8 @@ export function onlinePayment() {
     checkIfSuccessTransaction,
     fetchLatestSession,
     isLoading,
+    createPaymentRecord,
+    updatePaymentStatus,
   };
 }
 

@@ -164,7 +164,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-    <!-- Loading state -->
+    <!-- Loading State -->
     <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
         <VueSpinnerOval size="80" color="#3b82f6" />
         <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-accents">
@@ -175,34 +175,50 @@ onMounted(async () => {
         </p>
     </section>
 
-    <!-- Supplier Management Table -->
+    <!-- Brand Management Table -->
     <section v-else class="container mx-auto p-6">
-        <!-- Page Title + Actions -->
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Product Categories</h1>
+            <h1 class="text-2xl font-bold text-gray-800 tracking-wide">
+                Product Brands
+            </h1>
             <AddBrandModal @add-brand="handleAddBrand" :errors="errors" />
         </div>
 
-        <!-- Table -->
-        <div class="flex flex-row space-x-3 w-1/2 mb-6">
+        <!-- Search -->
+        <div class="flex flex-row items-center gap-3 mb-5 w-full sm:w-1/2">
             <Label>Search:</Label>
-            <Input type="text" placeholder="Search here..." v-model="globalFilter" />
+            <Input type="text" placeholder="Search brand..." v-model="globalFilter" class="w-full" />
         </div>
-        <div class="overflow-x-auto rounded-xl shadow-sm bg-white">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-white uppercase bg-accents hover:bg-accents-hover">
-                    <tr class="text-center">
+
+        <!-- Table Card -->
+        <div class="overflow-x-auto rounded-2xl bg-white shadow-md border border-gray-200">
+            <table class="w-full text-sm text-gray-700">
+                <!-- Table Head -->
+                <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
+                    <tr>
                         <th v-for="header in brandsTable.getFlatHeaders()" :key="header.id"
-                            class="border p-3 font-semibold tracking-wide">
+                            class="px-4 py-3 text-center font-semibold border-b border-gray-300">
                             <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+
+                <!-- Table Body -->
+                <tbody v-if="brands.length > 0" class="divide-y divide-gray-100">
                     <tr v-for="row in brandsTable.getRowModel().rows" :key="row.id"
-                        class="text-center transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="border px-3 py-2">
+                        class="hover:bg-gray-50 transition-all duration-150 text-center">
+                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-2 border-b">
                             <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- Empty State -->
+                <tbody v-else>
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-gray-400">
+                            No brands found.
                         </td>
                     </tr>
                 </tbody>
@@ -210,6 +226,7 @@ onMounted(async () => {
         </div>
     </section>
 
+    <!-- Update Modal -->
     <BrandModal v-model:open="openUpdateModal" :errors="errors" :id="brandCred.encrypted_id"
         :brand_name="brandCred.brand_name" :brand_description="brandCred.brand_description"
         @update-brand="handleUpdatebrand" />

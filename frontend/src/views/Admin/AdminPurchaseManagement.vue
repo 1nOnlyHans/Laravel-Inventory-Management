@@ -17,6 +17,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from "@/components/ui/number-field"
+
 import { Button } from "@/components/ui/button";
 
 import {
@@ -150,7 +158,7 @@ watch(
     <section v-else class="container-xl mx-auto p-6">
         <div class="bg-white shadow-lg rounded-lg border">
             <!-- Header -->
-            <div class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center rounded-t-lg">
+            <div class=" text-xs uppercase tracking-wide px-6 py-4 flex justify-between items-center rounded-t-lg">
                 <h1 class="font-bold text-2xl tracking-wide">Purchase Order</h1>
                 <span class="text-sm opacity-80">Generated: {{ new Date().toLocaleDateString() }}</span>
             </div>
@@ -198,30 +206,34 @@ watch(
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="font-semibold text-lg">Products to Order</h2>
-                        <button type="button"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+                        <Button type="button"
                             :disabled="purchaseCred.supplier_id === ''" @click="handleAddProduct">
                             + Add Product
-                        </button>
+                        </Button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full border border-gray-300 rounded-lg">
-                            <thead class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wide">
+                        <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
+                            <thead class="bg-gray-100 text-gray-700 uppercase tracking-wide">
                                 <tr>
-                                    <th class="border px-3 py-2 text-left">Product</th>
-                                    <th class="border px-3 py-2 text-center">Qty</th>
-                                    <th class="border px-3 py-2 text-center">Unit Price</th>
-                                    <th class="border px-3 py-2 text-center">Total</th>
-                                    <th class="border px-3 py-2 text-center">Action</th>
+                                    <th class="border px-4 py-3 text-left w-2/5">Product</th>
+                                    <th class="border px-3 py-3 text-center w-1/6">Qty</th>
+                                    <th class="border px-3 py-3 text-center w-1/6">Unit Price</th>
+                                    <th class="border px-3 py-3 text-center w-1/6">Total</th>
+                                    <th class="border px-3 py-3 text-center w-1/6">Action</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                <tr v-for="(item, index) in orderItems" :key="index" class="hover:bg-gray-50">
+                                <tr v-for="(item, index) in orderItems" :key="index"
+                                    class="hover:bg-gray-50 transition-colors">
+                                    <!-- Product -->
                                     <td class="border px-3 py-2">
-                                        <select class="border p-2 w-full rounded focus:ring-1 focus:ring-blue-500"
-                                            v-model="item.product_id"
-                                            @change="item.product_name = products.find(p => p.encrypted_id === item.product_id)?.product_name"
-                                            required>
+                                        <select
+                                            class="border border-gray-300 p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+                                            v-model="item.product_id" @change="
+                                                item.product_name =
+                                                products.find((p) => p.encrypted_id === item.product_id)?.product_name
+                                                " required>
                                             <option disabled selected>Select Product</option>
                                             <option v-for="product in products" :key="product.id"
                                                 :value="product.encrypted_id">
@@ -229,53 +241,69 @@ watch(
                                             </option>
                                         </select>
                                     </td>
+
+                                    <!-- Quantity -->
                                     <td class="border px-3 py-2 text-center">
-                                        <Input type="number"
-                                            class="border p-2 w-20 rounded text-center focus:ring-1 focus:ring-blue-500"
-                                            min="1" required v-model="item.quantity" />
+                                        <NumberField id="quantity" :default-value="0" :min="0" v-model="item.quantity">
+                                            <Label for="quantity" class="hidden">Quantity</Label>
+                                            <NumberFieldContent class="flex items-center justify-center gap-1">
+                                                <NumberFieldDecrement />
+                                                <NumberFieldInput class="text-center w-16 border-gray-300" />
+                                                <NumberFieldIncrement />
+                                            </NumberFieldContent>
+                                        </NumberField>
                                     </td>
+
+                                    <!-- Unit Price -->
                                     <td class="border px-3 py-2 text-center">
                                         <Input type="number"
-                                            class="border p-2 w-28 rounded text-center focus:ring-1 focus:ring-blue-500"
+                                            class="border border-gray-300 rounded-md text-center focus:ring-2 focus:ring-blue-500 w-24"
                                             step="0.01" required v-model="item.unit_price" />
                                     </td>
+
+                                    <!-- Total -->
                                     <td class="border px-3 py-2 text-center font-semibold text-gray-800">
                                         ₱{{ (item.unit_price * item.quantity).toFixed(2) }}
                                     </td>
+
+                                    <!-- Action -->
                                     <td class="border px-3 py-2 text-center">
                                         <button type="button" @click="handleRemoveProduct(index)"
-                                            class="text-red-500 hover:text-red-700 transition">
+                                            class="text-red-500 hover:text-red-700 font-medium transition">
                                             Remove
                                         </button>
                                     </td>
                                 </tr>
                             </tbody>
-                            <tfoot class="bg-gray-50">
+
+                            <tfoot class="bg-gray-50 text-sm">
                                 <tr>
-                                    <th colspan="3" class="text-right px-3 py-2">Total Items:</th>
-                                    <td class="px-3 py-2 text-center">{{ orderItems.length }}</td>
+                                    <th colspan="3" class="text-right px-4 py-2 font-medium">Total Items:</th>
+                                    <td class="px-4 py-2 text-center">{{ orderItems.length }}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" class="text-right px-3 py-2">Total Amount:</th>
-                                    <td class="px-3 py-2 text-center font-bold text-green-600">
+                                    <th colspan="3" class="text-right px-4 py-2 font-medium">Total Amount:</th>
+                                    <td class="px-4 py-2 text-center font-bold text-green-600">
                                         ₱{{ totalAmount.toFixed(2) }}
                                     </td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
+
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="p-6 flex justify-end gap-4 border-t bg-gray-50">
-                    <button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
+                    <Button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
                         Cancel
-                    </button>
-                    <button type="button"
-                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition disabled:opacity-50"
+                    </Button>
+                    <Button type="button"
                         @click="toggleLetter" :disabled="purchaseCred.items.length <= 0">
                         Generate Order
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>
@@ -289,7 +317,7 @@ watch(
             </DialogHeader>
             <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <!-- Letter Title -->
-                <h1 class="text-center font-bold text-3xl text-blue-700">
+                <h1 class="text-center font-bold text-3xl">
                     LapTopia PURCHASE ORDER REQUEST
                 </h1>
 
@@ -368,7 +396,7 @@ watch(
 
             <!-- Footer Actions -->
             <DialogFooter class="p-6 pt-5 border-t">
-                <Button type="button" @click="handleOrder(purchaseCred)" class="bg-blue-600 hover:bg-blue-700"
+                <Button type="button" @click="handleOrder(purchaseCred)"
                     :disabled="isLoading">
                     <span v-if="isLoading" class="flex justify-center space-x-3 items-center">
                         <VueSpinner size="20" />
