@@ -49,19 +49,15 @@ class EmployeeController extends Controller
         );
 
         //Make new
-        $latest_employee_id = Employee::all();
+        $latest_employee_id = Employee::all()->count();
+        $last_digit = intval($latest_employee_id) + 1;
 
-        if (count($latest_employee_id) === 1) {
-            $latest_employee_id = Employee::where('unique_employee_id', 'ADM-0001')->get();
-        } else {
-            $latest_employee_id = Employee::latest()->get();
+        if ($validated['role'] === 'Admin') {
+            $unique_employee_id = 'ADM-' . $last_digit;
+        } else if ($validated['role'] === 'Staff') {
+            $unique_employee_id = 'EMP-' . $last_digit;
         }
 
-        // Fetching for latest Employee ID
-        $latest_employee_id = explode('-', $latest_employee_id[0]['unique_employee_id']);
-        $latest_employee_id = $latest_employee_id[1];
-        $latest_employee_id = intval($latest_employee_id) + 1;
-        $unique_employee_id = 'EMP-' . $latest_employee_id;
         $validated['unique_employee_id'] = $unique_employee_id;
         $employee = Employee::create($validated);
 

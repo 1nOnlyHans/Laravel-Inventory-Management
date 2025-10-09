@@ -51,7 +51,6 @@ const productCred = ref({
     photos: [],
 });
 
-
 const handleAddProduct = async (productCred) => {
     const success = await addProduct(productCred);
     if (success && success.status === 200) {

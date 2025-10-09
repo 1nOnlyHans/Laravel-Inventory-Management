@@ -95,8 +95,7 @@ watch(searchQuery, () => {
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <Input type="text" placeholder="Search Employee ID..."
                         class="bg-gray-300 focus:bg-white w-full sm:w-64" v-model="searchQuery" />
-                    <Button class="bg-accents hover:bg-accents-hover w-full sm:w-auto" @click="search"
-                        :disabled="searchQuery === ''">
+                    <Button @click="search" :disabled="searchQuery === ''">
                         Search
                     </Button>
                 </div>
@@ -108,9 +107,7 @@ watch(searchQuery, () => {
             </section>
             <Dialog>
                 <DialogTrigger>
-                    <Button
-                        class="bg-accents hover:bg-accents-hover text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
-                        @click="resetEmployeeCred">
+                    <Button @click="resetEmployeeCred">
                         <FontAwesomeIcon :icon="faAdd" class="mr-2" />
                         Add Employee
                     </Button>
@@ -228,8 +225,7 @@ watch(searchQuery, () => {
                                 Close
                             </Button>
                         </DialogClose>
-                        <Button type="submit" form="addEmployeeForm"
-                            class="bg-accents hover:bg-accents-hover text-white px-6 py-2 rounded-lg shadow w-full sm:w-auto">
+                        <Button type="submit" form="addEmployeeForm">
                             Add Employee
                         </Button>
                     </DialogFooter>
@@ -263,15 +259,13 @@ watch(searchQuery, () => {
 
         <!-- Pagination -->
         <div v-if="pagination" class="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6">
-            <Button :disabled="!pagination.prev_page_url" @click="changePage(pagination.current_page - 1)"
-                class="bg-accents hover:bg-accents-hover w-full sm:w-auto">
+            <Button :disabled="!pagination.prev_page_url" @click="changePage(pagination.current_page - 1)">
                 Prev
             </Button>
             <span class="text-sm sm:text-base">
                 Page {{ pagination.current_page }} of {{ pagination.last_page }}
             </span>
-            <Button :disabled="!pagination.next_page_url" @click="changePage(pagination.current_page + 1)"
-                class="bg-accents hover:bg-accents-hover w-full sm:w-auto">
+            <Button :disabled="!pagination.next_page_url" @click="changePage(pagination.current_page + 1)">
                 Next
             </Button>
         </div>

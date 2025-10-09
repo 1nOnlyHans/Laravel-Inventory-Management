@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('supplier_id');
+            $table->string('reference_no');
             $table->date('order_date');
             $table->date('expected_date');
             $table->enum('status', ['Pending', 'Approved', 'Delivered']);

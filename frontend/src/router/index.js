@@ -27,6 +27,8 @@ import AdminOnlinePayment from "@/views/Admin/AdminOnlinePayment.vue";
 import PaymentLayout from "@/views/Layouts/PaymentLayout.vue";
 import success from "@/views/Payment/Success.vue";
 import failed from "@/views/Payment/Failed.vue";
+import AdminStockMovementManagement from "@/views/Admin/AdminStockMovementManagement.vue";
+
 const routes = [
   {
     path: "/employee",
@@ -157,6 +159,15 @@ const routes = [
         path: "online_payment/:order_id",
         name: "Admin Online Payment",
         component: AdminOnlinePayment,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "stock_movements",
+        name: "Admin Stock Movements",
+        component: AdminStockMovementManagement,
         meta: {
           requiresAuth: "true",
           role: "Admin",

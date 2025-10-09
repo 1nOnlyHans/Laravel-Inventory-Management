@@ -41,9 +41,9 @@ const orderCred = reactive({
 });
 const purchaseData = ref(null);
 
-const handleStockIn = async (product_id, purchase_id) => {
+const handleStockIn = async (product_id, reference_no, purchase_id) => {
     const delivered = await markAsDelivered(purchase_id);
-    const In = await stockIn(product_id);
+    const In = await stockIn(product_id, reference_no);
 
     if ((delivered && delivered.status === 200) && (In && In.status === 200)) {
         receivedItemsModal.value = false
@@ -72,6 +72,11 @@ onMounted(() => {
 const columnHelper = createColumnHelper();
 
 const columns = [
+    columnHelper.accessor('reference_no', {
+        id: "REF",
+        header: "REF",
+        cell: info => info.getValue()
+    }),
     columnHelper.accessor(row => row.supplier.supplier_name, {
         id: "Supplier",
         header: "Supplier",
@@ -261,7 +266,7 @@ const purchaseTable = useVueTable({
 
     <!-- Main Table Section -->
     <section v-else class="min-h-screen bg-gray-50 py-10 px-6">
-        <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-8">
+        <div>
             <!-- Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
@@ -282,7 +287,7 @@ const purchaseTable = useVueTable({
             <!-- Table Wrapper -->
             <div class="overflow-x-auto rounded-xl border border-gray-200">
                 <table class="w-full text-sm text-gray-600">
-                    <thead class="bg-blue-600 text-white">
+                    <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
                         <tr>
                             <th v-for="header in purchaseTable.getFlatHeaders()" :key="header.id"
                                 class="px-4 py-3 font-medium tracking-wide text-center">

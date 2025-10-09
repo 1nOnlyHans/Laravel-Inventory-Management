@@ -15,8 +15,8 @@ import { defineProps, defineEmits, watch, ref } from "vue"
 
 const emit = defineEmits(['stockIn']);
 
-const handleStockIn = async (product_id, purchase_id) => {
-    emit('stockIn', product_id, purchase_id);
+const handleStockIn = async (product_id, reference_no, purchase_id) => {
+    emit('stockIn', product_id, reference_no, purchase_id);
 }
 
 const props = defineProps({
@@ -85,7 +85,7 @@ const props = defineProps({
 
             <DialogFooter class="flex justify-end space-x-3">
                 <Button type="submit" class="bg-green-600 hover:bg-green-700 text-white"
-                    @click="handleStockIn(props.purchaseData.items, props.purchaseData.encrypted_id)">
+                    @click="handleStockIn(props.purchaseData.items, props.purchaseData.reference_no, props.purchaseData.encrypted_id)">
                     Stock In
                 </Button>
             </DialogFooter>

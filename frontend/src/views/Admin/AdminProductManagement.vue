@@ -72,6 +72,11 @@ const columns = [
             }
         }
     }),
+    columnHelper.accessor('SKU', {
+        id: "SKU",
+        header: "SKU",
+        cell: info => info.getValue()
+    }),
     columnHelper.accessor(row => row.category.category_name, {
         id: "Category",
         header: "Category",

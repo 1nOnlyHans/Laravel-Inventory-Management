@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LowStock;
+use App\Events\OutOfStock;
+use App\Events\ProductAdded;
+use App\Events\ProductRemoved;
+use App\Events\ProductUpdated;
 use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
@@ -73,7 +78,7 @@ class ProductController extends Controller
             $files = $request->file('photos');
 
             foreach ($files as $file) {
-                $path = $file->store('brand_photos', 'public');
+                $path = $file->store('product_photos', 'public');
                 ProductPhoto::create([
                     'product_id' => $product->id,
                     'image' => $path
@@ -81,6 +86,9 @@ class ProductController extends Controller
             }
         }
 
+        if ($status === 'Low Stock') {
+            broadcast(new LowStock($product))->toOthers();
+        }
 
         return response()->json(['icon' => 'success', 'title' => 'Added Successfully', 'text' => $product->product_name . ' has been added'], Response::HTTP_OK);
     }
@@ -153,7 +161,7 @@ class ProductController extends Controller
 
             // Loop
             foreach ($photos as $photo) {
-                $path = $photo->store('brand_photos', 'public'); // Stores on Storage
+                $path = $photo->store('product_photos', 'public'); // Stores on Storage
 
                 //Insert new in DB
                 ProductPhoto::create([
@@ -162,6 +170,13 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        if ($status === 'Low Stock') {
+            broadcast(new LowStock($product))->toOthers();
+        } else if ($status === 'Out of Stock') {
+            broadcast(new OutOfStock($product))->toOthers();
+        }
+
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $product . ' has been updated'], Response::HTTP_OK);
     }
 

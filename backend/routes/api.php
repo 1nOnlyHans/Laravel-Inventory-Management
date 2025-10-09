@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
@@ -24,6 +25,10 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 // Route::group(['middleware' => ['auth:sanctum']], function () {});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(AdminDashboardController::class)->group(function () {
+    Route::get('/admin/dashboard', 'getDashboardDatas');
+});
 
 //Employee Controller AND LOGIC
 Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::class)->group(function () {
@@ -88,5 +93,6 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::cla
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductStockController::class)->group(function () {
+    Route::get('/stocks/index', 'index');
     Route::post('/stocks/stockin', 'stockIn');
 });

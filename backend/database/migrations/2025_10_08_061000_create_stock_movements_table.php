@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->string('reference_no')->nullable();
             $table->enum('movement_type', ['Stock In', 'Stock Out', 'Adjustment']);
             $table->integer('quantity');
             $table->text('reason');

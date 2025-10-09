@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SupplierOrderAccepted;
 use App\Mail\PurchaseOrder;
 use App\Mail\TestMailer;
 use App\Models\Purchase;
@@ -45,7 +46,7 @@ class PurchaseController extends Controller
             'order_date' => ['required', 'date'],
             'expected_date' => ['required', 'date']
         ]);
-
+        $reference_no = 'PO-' . date('Y') . '-' . bin2hex(random_bytes(8));
         $items = $request->items;
 
         //Checks if there's an order items
@@ -56,6 +57,7 @@ class PurchaseController extends Controller
         //Insert PO
         $PO = Purchase::create([
             'supplier_id' => Crypt::decryptString($validated['supplier_id']),
+            'reference_no' => $reference_no,
             'order_date' => $validated['order_date'],
             'expected_date' => $validated['expected_date']
         ]);
@@ -87,6 +89,9 @@ class PurchaseController extends Controller
     {
         $purchase->status = 'Approved';
         $purchase->save();
+
+        broadcast(new SupplierOrderAccepted($purchase))->toOthers();
+
         return response()->view('mail.accept', compact('purchase'));
     }
 
