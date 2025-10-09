@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductStockController extends Controller
 {
     //
+    public function index(){
+        
+    }
 
     public function stockIn(Request $request)
     {
