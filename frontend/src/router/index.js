@@ -28,6 +28,8 @@ import PaymentLayout from "@/views/Layouts/PaymentLayout.vue";
 import success from "@/views/Payment/Success.vue";
 import failed from "@/views/Payment/Failed.vue";
 import AdminStockMovementManagement from "@/views/Admin/AdminStockMovementManagement.vue";
+import AdminAlerts from "@/views/Admin/AdminAlerts.vue";
+import AdminLogs from "@/views/Admin/AdminLogs.vue";
 
 const routes = [
   {
@@ -168,6 +170,24 @@ const routes = [
         path: "stock_movements",
         name: "Admin Stock Movements",
         component: AdminStockMovementManagement,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "alerts",
+        name: "Admin Alerts",
+        component: AdminAlerts,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "logs",
+        name: "Admin Logs",
+        component: AdminLogs,
         meta: {
           requiresAuth: "true",
           role: "Admin",

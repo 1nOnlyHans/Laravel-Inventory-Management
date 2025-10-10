@@ -110,7 +110,7 @@ onMounted(async () => {
                             Employee Details
                         </h2>
                         <div class="relative">
-                            <Button @click="toggleSlider" class="bg-accents hover:bg-accents-hover">
+                            <Button @click="toggleSlider">
                                 <FontAwesomeIcon :icon="faSliders" />
                             </Button>
                             <Transition enter-active-class="transition duration-300 ease-in-out"
@@ -261,15 +261,12 @@ onMounted(async () => {
 
                             <!-- Form Actions -->
                             <div class="mt-6 flex justify-end gap-3">
-                                <button type="button"
-                                    class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                    @click="resetForm">
+                                <Button type="button" variant="border" @click="edit = false">
                                     Cancel
-                                </button>
-                                <button type="submit"
-                                    class="px-4 py-2 rounded-md bg-accents text-white hover:bg-accents-hover">
+                                </Button>
+                                <Button type="submit">
                                     Save Changes
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -285,7 +282,7 @@ onMounted(async () => {
                         Account Details
                     </h2>
                     <div class="relative">
-                        <Button @click="toggleAccountSlider" class="bg-accents hover:bg-accents-hover">
+                        <Button @click="toggleAccountSlider">
                             <FontAwesomeIcon :icon="faSliders" />
                         </Button>
                         <Transition enter-active-class="transition duration-300 ease-in-out"
@@ -367,15 +364,12 @@ onMounted(async () => {
                         </div>
                         <!-- Form Actions -->
                         <div class="mt-6 flex justify-end gap-3">
-                            <button type="button"
-                                class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                @click="resetForm">
+                            <Button type="button" variant="border" @click="editAccount = false">
                                 Cancel
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 rounded-md bg-accents text-white hover:bg-accents-hover">
+                            </Button>
+                            <Button type="submit">
                                 Save Changes
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

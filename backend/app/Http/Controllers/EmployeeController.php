@@ -101,25 +101,34 @@ class EmployeeController extends Controller
     {
         $id = Crypt::decryptString($request->encrypted_id);
 
-        $validated = $request->validate(
-            [
-                'firstname' => ['required'],
-                'middlename' => ['nullable'],
-                'lastname' => ['required'],
-                'email' => ['required', 'email', Rule::unique('employees')->ignore($id, 'id')],
-                'gender' => ['required'],
-                'dob' => ['required']
-            ]
-        );
+        $validated = $request->validate([
+            'firstname' => ['required'],
+            'middlename' => ['nullable'],
+            'lastname' => ['required'],
+            'email' => ['required', 'email', Rule::unique('employees')->ignore($id, 'id')],
+            'gender' => ['required'],
+            'dob' => ['required']
+        ]);
 
-        $employee = Employee::where('id', $id)->update(['firstname' => $validated['firstname'], 'middlename' => $validated['middlename'], 'lastname' => $validated['lastname'], 'email' => $validated['email'], 'gender' => $validated['gender'], 'dob' => $request['dob'], 'status' => $request->status]);
+        $employee = Employee::findOrFail($id);
+
+        $employee->update([
+            'firstname' => $validated['firstname'],
+            'middlename' => $validated['middlename'],
+            'lastname' => $validated['lastname'],
+            'email' => $validated['email'],
+            'gender' => $validated['gender'],
+            'dob' => $request['dob'],
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'icon' => 'success',
             'title' => 'Update Success',
-            'text' => $employee . ' has been updated'
+            'text' => $employee->firstname . ' has been updated'
         ], 200);
     }
+
 
     public function updateAccount(Request $request)
     {
@@ -130,7 +139,10 @@ class EmployeeController extends Controller
             ]
         );
 
-        $user = User::with('employee')->where('id', $id)->update(['role' => $validated['role']]);
+        $user = User::findOrFail($id);
+
+        $user->update(['role' => $validated['role']]);
+
         return response()->json([
             'icon' => 'success',
             'title' => 'Update Success',

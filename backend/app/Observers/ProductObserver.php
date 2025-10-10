@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Observers;
+
+use App\Models\AuditLog;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+
+class ProductObserver
+{
+    /**
+     * Handle the Product "created" event.
+     */
+    public function created(Product $product): void
+    {
+        //
+        AuditLog::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Added new Product',
+            'details' => $product->product_name . ' has been added'
+        ]);
+    }
+
+    /**
+     * Handle the Product "updated" event.
+     */
+    public function updated(Product $product): void
+    {
+        //
+        AuditLog::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Updated a Product',
+            'details' => $product->product_name . ' has been updated'
+        ]);
+    }
+
+    /**
+     * Handle the Product "deleted" event.
+     */
+    public function deleted(Product $product): void
+    {
+        //
+        AuditLog::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Removed a Product',
+            'details' => $product->product_name . ' has been removed'
+        ]);
+    }
+
+    /**
+     * Handle the Product "restored" event.
+     */
+    public function restored(Product $product): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Product "force deleted" event.
+     */
+    public function forceDeleted(Product $product): void
+    {
+        //
+    }
+}

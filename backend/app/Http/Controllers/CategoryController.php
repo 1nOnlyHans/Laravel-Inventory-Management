@@ -80,8 +80,8 @@ class CategoryController extends Controller
             ]
         );
 
-        $category = Category::where('id', $id)->update($validated);
-
+        $category = Category::findOrFail($id);
+        $category->update($validated);
         return response(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $category . ' has been updated'], Response::HTTP_OK);
     }
 

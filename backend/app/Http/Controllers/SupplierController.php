@@ -83,7 +83,8 @@ class SupplierController extends Controller
             'email' => ['required', Rule::unique('suppliers', 'email')->ignore($id, 'id')],
             'address' => ['required']
         ]);
-        $supplier = Supplier::where('id', $id)->update(['supplier_name' => $validated['supplier_name'], 'contact_person' => $validated['contact_person'], 'phone' => $validated['phone'], 'email' => $validated['email'], 'address' => $validated['address']]);
+        $supplier = Supplier::findOrFail($id);
+        $supplier->update(['supplier_name' => $validated['supplier_name'], 'contact_person' => $validated['contact_person'], 'phone' => $validated['phone'], 'email' => $validated['email'], 'address' => $validated['address']]);
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $supplier . ' supplier has been updated'], Response::HTTP_OK);
     }
     public function destroy(Request $request)

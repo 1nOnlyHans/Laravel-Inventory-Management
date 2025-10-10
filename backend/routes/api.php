@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AuditLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\PaymongoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\StockAlertController;
 use App\Http\Controllers\SupplierController;
 use App\Mail\PurchaseOrder;
 use App\Models\Brand;
@@ -95,4 +97,13 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::cla
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductStockController::class)->group(function () {
     Route::get('/stocks/index', 'index');
     Route::post('/stocks/stockin', 'stockIn');
+});
+
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(StockAlertController::class)->group(function () {
+    Route::get('/alerts/index', 'index');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(AuditLogController::class)->group(function () {
+    Route::get('/logs/index', 'index');
 });
