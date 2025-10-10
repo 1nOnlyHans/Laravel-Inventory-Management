@@ -65,7 +65,6 @@ const items = [
       { title: "Brands", url: "/admin/brands", icon: faTags },
       { title: "Purchase", url: "/admin/purchase", icon: faCartShopping },
       { title: "Staff", url: "/admin/employees", icon: faUser },
-      { title: "Users", url: "/admin/users", icon: faUserCircle },
     ],
   },
   {

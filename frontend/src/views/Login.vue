@@ -11,10 +11,11 @@
                 </div>
                 <div class="mb-3">
                     <label class="block text-blue-500">Password</label>
-                    <input type="password" v-model="userData.password" class="border-2 border-gray-300 rounded p-2 w-full">
+                    <input type="password" v-model="userData.password"
+                        class="border-2 border-gray-300 rounded p-2 w-full">
                 </div>
                 <div class="text-center mt-10">
-                    <button type="submit" class="bg-blue-500 text-white py-2 rounded px-30 px-">Login</button>
+                    <Button type="submit">Login</Button>
                 </div>
             </form>
         </div>
@@ -22,27 +23,27 @@
 </template>
 
 <script setup>
-    import { ref } from "vue";
-    import { useRouter } from "vue-router";
-    import Swal from "sweetalert2";
-    import { useAuthStore } from "@/stores/auth";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
+import { useAuthStore } from "@/stores/auth";
+import Button from "@/components/ui/button/Button.vue";
+const userData = ref({
+    email: '',
+    password: '',
+});
+const router = useRouter();
+const auth = useAuthStore();
 
-    const userData = ref({
-        email: '',
-        password: '',
-    });
-    const router = useRouter();
-    const auth = useAuthStore();
-
-    const handleLogin = async () => {
-        try {
-            const response = await auth.login(userData.value.email, userData.value.password);
-            if (response.status === 200) {
-                router.push("/dashboard");
-            }
-            Swal.fire(response.data.message);
-        } catch (error) {
-            Swal.fire(error.response.data.message);
+const handleLogin = async () => {
+    try {
+        const response = await auth.login(userData.value.email, userData.value.password);
+        if (response.status === 200) {
+            router.push("/dashboard");
         }
+        Swal.fire(response.data.message);
+    } catch (error) {
+        Swal.fire(error.response.data.message);
     }
+}
 </script>

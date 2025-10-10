@@ -191,7 +191,7 @@ onMounted(async () => {
                     <FontAwesomeIcon :icon="faAdd" class="mr-2" />
                     Add Product
                 </RouterLink>
-            </div>
+            </div>  
 
             <!-- Search -->
             <div class="flex items-center space-x-3 w-full md:w-1/2">

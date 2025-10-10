@@ -101,15 +101,23 @@ class PurchaseController extends Controller
 
         $id = null;
         $purchase_id = null;
+        $reference_no = null;
+
         if ($request->order_id && $request->order_id !== '') {
             $id = Crypt::decryptString($request->order_id);
         } else {
             $id = $request->purchase_id;
         }
+
         $purchase_id = $id;
-        $payment_record = DB::table('purchase_payment_records')->where('purchase_id', $id)->get();
-        if (count($payment_record) <= 0) {
-            $reference_no = uniqid('PAY - ', false);
+        $payment_record = DB::table('purchase_payment_records')->where('purchase_id', $id)->get()->count();
+        if ($payment_record <= 0) {
+            if ($validated['payment_method'] === 'Card') {
+                $request->validate(['reference_no' => ['required']]);
+                $reference_no = $request->reference_no;
+            } else {
+                $reference_no = uniqid('PAY - ', false);
+            }
             $newPaymentRecord = PurchasePaymentRecord::firstOrCreate([
                 'purchase_id' => $purchase_id,
                 'reference_no' => $reference_no,

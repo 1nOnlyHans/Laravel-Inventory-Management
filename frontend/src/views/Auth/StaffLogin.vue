@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button"
 
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import Swal from "sweetalert2";
 import { useAuthStore } from "@/stores/auth";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faL, faLock } from "@fortawesome/free-solid-svg-icons";
+import { RegularSwal } from "@/components/Swals/useSwals";
+import Swal from "sweetalert2";
 
 const userData = ref({
     username: '',
@@ -26,7 +27,7 @@ const handleLogin = async () => {
                 router.push('/admin/dashboard');
             }
         }
-        Swal.fire(response.data.message);
+        RegularSwal(response.data.message);
     } catch (error) {
         Swal.fire(error.response.data.message);
     } finally {
@@ -40,7 +41,7 @@ const handleLogin = async () => {
             <!-- Logo -->
             <div class="flex flex-col items-center mb-8">
                 <img src="@/assets/images/logo.png" class="w-28 h-auto mb-3" />
-                <h1 class="text-xl font-semibold text-gray-800">Staff Login</h1>
+                <h1 class="text-xl font-semibold text-gray-800">System Account Login</h1>
                 <p class="text-sm text-gray-500">Enter your credentials to access the system</p>
             </div>
 
@@ -50,8 +51,7 @@ const handleLogin = async () => {
                 <div class="relative">
                     <FontAwesomeIcon :icon="faUser"
                         class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input type="text" id="username" name="username" v-model="userData.username"
-                        placeholder="Employee ID"
+                    <Input type="text" id="username" name="username" v-model="userData.username" placeholder="Your ID"
                         class="w-full pl-10 pr-3 py-3 rounded-lg bg-gray-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
 
@@ -67,7 +67,7 @@ const handleLogin = async () => {
                 <!-- Button -->
                 <div>
                     <Button
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg flex justify-center items-center font-medium transition">
+                        class="w-full text-white py-3 rounded-lg flex justify-center items-center font-medium transition">
                         <span v-if="isLoading">
                             <VueSpinner size="20" />
                         </span>

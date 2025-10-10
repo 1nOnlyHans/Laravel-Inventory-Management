@@ -156,10 +156,12 @@ export function onlinePayment() {
           const total_amount =
             response.data.data.attributes.payment_intent.attributes.amount /
             100;
+          const reference_no = null;
           await updatePaymentStatus(purchase_id);
           await createPaymentRecord(
             purchase_id,
             payment_method,
+            reference_no,
             amount_paid,
             total_amount
           );
@@ -176,6 +178,7 @@ export function onlinePayment() {
   const createPaymentRecord = async (
     purchase_id,
     payment_method,
+    reference_no = null,
     amount_paid,
     total_amount,
     order_id = ""
@@ -184,6 +187,7 @@ export function onlinePayment() {
       const response = await axios.post("/api/purchase/record", {
         purchase_id: purchase_id,
         payment_method: payment_method,
+        reference_no: reference_no,
         amount_paid: amount_paid,
         total_amount: total_amount,
         order_id: order_id,

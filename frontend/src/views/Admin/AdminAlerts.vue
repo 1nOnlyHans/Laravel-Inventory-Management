@@ -25,7 +25,7 @@ onMounted(() => {
                 </div>
 
                 <!-- Alerts List -->
-                <div v-if="alerts.length" class="divide-y divide-gray-100">
+                <div v-if="alerts && alerts.length > 0" class="divide-y divide-gray-100">
                     <div v-for="(item, index) in alerts" :key="item.id"
                         class="flex justify-between items-start py-4 hover:bg-gray-50 transition-colors duration-200 rounded-lg px-2">
                         <!-- Left Side -->

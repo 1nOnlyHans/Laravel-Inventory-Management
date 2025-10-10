@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LowStock;
+use App\Events\StockIn;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
@@ -13,10 +15,10 @@ class ProductStockController extends Controller
     //
     public function index()
     {
-        $stock = StockMovement::with(['product', 'user'])->get();
+        $stock = StockMovement::with(['product', 'user'])->latest()->get();
         return response()->json($stock, Response::HTTP_OK);
     }
-    
+
     public function stockIn(Request $request)
     {
         $products = $request->product_id;
@@ -41,8 +43,9 @@ class ProductStockController extends Controller
                 'quantity' => $product['quantity'],
                 'reason' => 'Received From Supplier'
             ]);
-        }
 
+            broadcast(new StockIn($stock))->toOthers();
+        }
 
         return response()->json(['icon' => 'success', 'title' => 'Stock-In Successful', 'text' => 'Product quantities have been successfully updated in the inventory.'], Response::HTTP_OK);
     }

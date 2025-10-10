@@ -40,7 +40,7 @@ class PaymongoController extends Controller
                 'data' => [
                     'attributes' => [
                         'line_items' => $line_items,
-                        'payment_method_types' => ['gcash', 'paymaya', 'card'],
+                        'payment_method_types' => ['gcash', 'paymaya'],
                         "metadata" => [
                             "customer_name" => $name,
                             "customer_email" => $email

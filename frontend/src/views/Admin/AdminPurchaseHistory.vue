@@ -51,12 +51,12 @@ const handleStockIn = async (product_id, reference_no, purchase_id) => {
         RegularSwal(In.data);
     }
 }
-const handleCOD = async (purchase_id, payment_method, amount_paid, total_amount, order_id) => {
+const handleCOD = async (purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id) => {
     if (amount_paid < total_amount) {
         alert("Enter Valid Amount");
         return;
     }
-    const success = await createPaymentRecord(purchase_id, payment_method, amount_paid, total_amount, order_id);
+    const success = await createPaymentRecord(purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id);
     if (success && success.status === 200) {
         openPayment.value = false;
         await updatePaymentStatus(purchase_id);

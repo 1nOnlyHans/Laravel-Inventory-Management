@@ -125,7 +125,7 @@ class AuthController extends Controller
             'token' => $token,
             'message' => [
                 'icon' => 'success',
-                'title' => 'Success',
+                'title' => 'Login Success',
                 'text' => 'User authenticated successfully'
             ],
         ], Response::HTTP_OK);

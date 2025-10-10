@@ -11,7 +11,8 @@ class StockAlertController extends Controller
     //
     public function index()
     {
-        $alerts = StockAlert::with(['product'])->latest()->get();
+        //Only Fetch Products that is not deleted or softdeleted
+        $alerts = StockAlert::whereHas('product')->with(['product'])->latest()->get();
         return response()->json($alerts, Response::HTTP_OK);
     }
 }

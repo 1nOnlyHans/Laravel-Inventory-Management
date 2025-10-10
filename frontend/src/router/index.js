@@ -1,10 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-import Home from "@/views/Home.vue";
-import Login from "@/views/Login.vue";
-import Register from "@/views/Register.vue";
-import Dashboard from "@/views/Pages/Dashboard.vue";
 import GuestStaffLayout from "@/views/Layouts/GuestStaffLayout.vue";
 import StaffLogin from "@/views/Auth/StaffLogin.vue";
 import AdminDashboard from "@/views/Admin/AdminDashboard.vue";
@@ -13,7 +9,6 @@ import Forbidden from "@/views/Pages/Forbidden.vue";
 import NoPage from "@/views/Pages/NoPage.vue";
 import AdminStaffManagement from "@/views/Admin/AdminStaffManagement.vue";
 import AdminStaffDetails from "@/views/Admin/AdminStaffDetails.vue";
-import AdminUserManagement from "@/views/Admin/AdminUserManagement.vue";
 import AdminProductManagement from "@/views/Admin/AdminProductManagement.vue";
 import AdminSupplierManagement from "@/views/Admin/AdminSupplierManagement.vue";
 import AdminCategoriesManagement from "@/views/Admin/AdminCategoriesManagement.vue";
@@ -62,15 +57,6 @@ const routes = [
         path: "employee_details/:employee_id",
         name: "Admin Employee Details",
         component: AdminStaffDetails,
-        meta: {
-          requiresAuth: true,
-          role: "Admin",
-        },
-      },
-      {
-        path: "users",
-        name: "Admin User Management",
-        component: AdminUserManagement,
         meta: {
           requiresAuth: true,
           role: "Admin",

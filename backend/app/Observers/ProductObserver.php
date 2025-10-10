@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\AuditLog;
 use App\Models\Product;
+use App\Models\StockAlert;
 use Illuminate\Support\Facades\Auth;
 
 class ProductObserver
@@ -27,6 +28,15 @@ class ProductObserver
     public function updated(Product $product): void
     {
         //
+        $alerts = StockAlert::with(['product'])->where('product_id', $product->id)->get();
+
+        if ($product->product_quantity > $product->reorder_level) {
+            foreach ($alerts as $alert) {
+                $alert->status = 'Resolved';
+                $alert->save();
+            }
+        }
+        
         AuditLog::create([
             'user_id' => Auth::user()->id,
             'action' => 'Updated a Product',

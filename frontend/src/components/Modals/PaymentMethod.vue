@@ -15,6 +15,7 @@ import { onlinePayment } from "@/composables/usePO";
 
 const openPaymongoModal = ref(false);
 const openCOD = ref(false);
+const bank = ref(false);
 const { paymentCred, createOnlinePayment } = onlinePayment();
 
 const COD = () => {
@@ -26,10 +27,15 @@ const toggleModal = () => {
     openCOD.value = false;
 };
 
+const toggleBank = () => {
+    bank.value = !bank.value
+    openCOD.value = false;
+    openPaymongoModal.value = false;
+}
 const emit = defineEmits(['cod']);
 
-const handleEmit = async (purchase_id, payment_method, amount_paid, total_amount, order_id) => {
-    emit('cod', purchase_id, payment_method, amount_paid, total_amount, order_id);
+const handleEmit = async (purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id) => {
+    emit('cod', purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id);
 }
 
 const props = defineProps({
@@ -54,7 +60,7 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
 
 <template>
     <Dialog>
-        <DialogContent v-if="!openPaymongoModal && !openCOD" class="sm:max-w-[420px] rounded-2xl shadow-xl">
+        <DialogContent v-if="!openPaymongoModal && !openCOD && !bank" class="sm:max-w-[500px] rounded-2xl shadow-xl">
             <DialogHeader class="border-b pb-3">
                 <DialogTitle class="text-lg font-semibold text-gray-800">
                     Select Payment Method
@@ -66,22 +72,28 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
 
             <!-- STEP 1: Payment Method Selection -->
             <div class="p-6 space-y-4">
-                <div class="flex flex-col sm:flex-row gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <Button
-                        class="w-full sm:w-1/2 py-3 bg-accents text-white rounded-md text-center font-medium hover:bg-accents-hover transition-all duration-150"
+                        class="w-full py-3 bg-accents text-white rounded-md text-center font-medium hover:bg-accents-hover transition-all duration-150"
                         @click="COD">
                         Cash on Delivery
                     </Button>
 
                     <Button @click="toggleModal"
-                        class="w-full sm:w-1/2 py-3 bg-green-600 text-white rounded-md text-center font-medium hover:bg-green-700 transition-all duration-150">
+                        class="w-full py-3 bg-green-600 text-white rounded-md text-center font-medium hover:bg-green-700 transition-all duration-150">
                         Online Payment
+                    </Button>
+
+                    <Button @click="toggleBank"
+                        class="w-full py-3 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition-all duration-150">
+                        Bank Transfer
                     </Button>
                 </div>
             </div>
+
         </DialogContent>
 
-        <DialogContent v-else-if="openPaymongoModal && !openCOD"
+        <DialogContent v-else-if="openPaymongoModal && !openCOD && !bank"
             class="sm:max-w-[420px] rounded-2xl shadow-xl p-0 overflow-hidden">
             <DialogHeader class="border-b px-6 py-4 bg-gray-50">
                 <DialogTitle class="text-lg font-semibold text-gray-800">
@@ -132,7 +144,7 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
             </div>
         </DialogContent>
 
-        <DialogContent v-else-if="openCOD && !openPaymongoModal"
+        <DialogContent v-else-if="openCOD && !openPaymongoModal && !bank"
             class="sm:max-w-[420px] rounded-2xl shadow-lg p-0 overflow-hidden border border-gray-200 bg-white">
             <!-- Header -->
             <DialogHeader class="border-b bg-gray-50 px-6 py-4">
@@ -189,12 +201,80 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
                         Back
                     </Button>
                     <Button class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all"
-                        @click="handleEmit(paymentCred.order_id, 'Cash', paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
+                        @click="handleEmit(paymentCred.order_id, 'Cash', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
                         Confirm Payment
                     </Button>
                 </DialogFooter>
             </div>
         </DialogContent>
 
+        <DialogContent v-else-if="bank && !openCOD && !openPaymongoModal"
+            class="sm:max-w-[420px] rounded-2xl shadow-lg p-0 overflow-hidden border border-gray-200 bg-white">
+            <!-- Header -->
+            <DialogHeader class="border-b bg-gray-50 px-6 py-4">
+                <DialogTitle class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    Bank Transfer Details
+                </DialogTitle>
+                <DialogDescription class="text-sm text-gray-500">
+                    Kindly Put the Bank Payment Reference No.
+                </DialogDescription>
+            </DialogHeader>
+
+            <!-- Body -->
+            <div class="p-6 space-y-5">
+                <!-- Supplier -->
+                <div class="space-y-1">
+                    <Label class="text-sm font-medium text-gray-700">Supplier</Label>
+                    <Input type="text" readonly v-model="props.supplier_name" placeholder="Supplier Name"
+                        class="bg-gray-50 border-gray-200 text-gray-800 cursor-not-allowed" />
+                </div>
+
+                <!-- Items List -->
+                <div class="space-y-1">
+                    <Label class="text-sm font-medium text-gray-700">Items</Label>
+                    <ul
+                        class="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-40 overflow-y-auto divide-y divide-gray-100">
+                        <li v-for="(item, index) in props.items" :key="index"
+                            class="flex justify-between py-2 text-sm text-gray-600">
+                            <span class="font-medium text-gray-700">
+                                {{ item.product.product_name }} × {{ item.quantity }}
+                            </span>
+                            <span class="font-semibold text-green-700">
+                                ₱{{ item.total }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1">
+                    <Label class="text-sm font-medium text-gray-700">Total Amount to Pay:</Label>
+                    <Input type="text" readonly v-model="paymentCred.amount" placeholder="₱0.00"
+                        class="bg-green-50 border-green-200 font-semibold text-green-800" />
+                </div>
+
+                <div class="space-y-1">
+                    <Label class="text-sm font-medium text-gray-700">Amount</Label>
+                    <Input type="text" placeholder="₱0.00" v-model="paymentCred.amount_pay" required />
+                </div>
+
+                <div class="space-y-1">
+                    <Label class="text-sm font-medium text-gray-700">Reference No / Receipt No</Label>
+                    <Input type="text" placeholder="Reference No / Receipt No" v-model="paymentCred.reference_no"
+                        required />
+                </div>
+
+                <!-- Footer Buttons -->
+                <DialogFooter class="flex justify-between gap-3 pt-4">
+                    <Button variant="outline" class="w-1/2 py-2 border-gray-300 hover:bg-gray-100 transition-all"
+                        @click="toggleBank">
+                        Back
+                    </Button>
+                    <Button class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all"
+                        @click="handleEmit(paymentCred.order_id, 'Card', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
+                        Confirm Payment
+                    </Button>
+                </DialogFooter>
+            </div>
+        </DialogContent>
     </Dialog>
 </template>

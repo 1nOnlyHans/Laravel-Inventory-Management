@@ -9,9 +9,9 @@ const menuRef = ref(null);
 const menuPosition = ref({ top: 0, left: 0 });
 
 const props = defineProps({
-    product_id: String
+    product_id: String,
 });
-const emit = defineEmits(['deleteProduct']);
+const emit = defineEmits(["deleteProduct"]);
 
 const toggleMenu = () => {
     showMenu.value = !showMenu.value;
@@ -24,15 +24,40 @@ const toggleMenu = () => {
     }
 };
 
+// Close menu when clicking outside
+const handleClickOutside = (event) => {
+    const button = buttonRef.value;
+    const menu = menuRef.value;
+
+    if (
+        showMenu.value &&
+        menu &&
+        !menu.contains(event.target) &&
+        button &&
+        !button.contains(event.target)
+    ) {
+        showMenu.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handleClickOutside);
+});
+
 const handleDelete = async (id) => {
-    await emit('deleteProduct', id)
-}
+    await emit("deleteProduct", id);
+};
+
 const menuStyle = computed(() => ({
     top: `${menuPosition.value.top}px`,
     left: `${menuPosition.value.left}px`,
 }));
-
 </script>
+
 
 <style scoped>
 .fade-enter-active,
