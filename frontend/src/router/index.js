@@ -3,10 +3,12 @@ import { useAuthStore } from "@/stores/auth";
 
 import GuestStaffLayout from "@/views/Layouts/GuestStaffLayout.vue";
 import StaffLogin from "@/views/Auth/StaffLogin.vue";
-import AdminDashboard from "@/views/Admin/AdminDashboard.vue";
-import AdminLayout from "@/views/Layouts/AdminLayout.vue";
 import Forbidden from "@/views/Pages/Forbidden.vue";
 import NoPage from "@/views/Pages/NoPage.vue";
+
+// Admin Routes
+import AdminDashboard from "@/views/Admin/AdminDashboard.vue";
+import AdminLayout from "@/views/Layouts/AdminLayout.vue";
 import AdminStaffManagement from "@/views/Admin/AdminStaffManagement.vue";
 import AdminStaffDetails from "@/views/Admin/AdminStaffDetails.vue";
 import AdminProductManagement from "@/views/Admin/AdminProductManagement.vue";
@@ -25,6 +27,15 @@ import failed from "@/views/Payment/Failed.vue";
 import AdminStockMovementManagement from "@/views/Admin/AdminStockMovementManagement.vue";
 import AdminAlerts from "@/views/Admin/AdminAlerts.vue";
 import AdminLogs from "@/views/Admin/AdminLogs.vue";
+
+// Staff Routes
+import StaffLayout from "@/views/Layouts/StaffLayout.vue";
+import StaffDashboard from "@/views/Staff/StaffDashboard.vue";
+import StaffPOS from "@/views/Staff/StaffPOS.vue";
+import StaffLogs from "@/views/Staff/StaffLogs.vue";
+import StaffAlerts from "@/views/Staff/StaffAlerts.vue";
+import StaffProductDetails from "@/views/Staff/StaffProductDetails.vue";
+import StaffTransactions from "@/views/Staff/StaffTransactions.vue";
 
 const routes = [
   {
@@ -206,6 +217,70 @@ const routes = [
         },
       },
     ],
+  },
+  {
+    path: "/staff",
+    component: StaffLayout,
+    children: [
+      {
+        path: "dashboard",
+        name: "Staff Dashboard",
+        component: StaffDashboard,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+      {
+        path: "pos",
+        name: "Staff POS",
+        component: StaffPOS,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+      {
+        path: "logs",
+        name: "Staff Logs",
+        component: StaffLogs,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+      {
+        path: "alerts",
+        name: "Staff Alerts",
+        component: StaffAlerts,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+      {
+        path: "product_details/:product_id",
+        name: "Staff Product Details",
+        component: StaffProductDetails,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+      {
+        path: "transactions",
+        name: "Staff Transactions",
+        component: StaffTransactions,
+        meta: {
+          requiresAuth: true,
+          role: "Staff",
+        },
+      },
+    ],
+    meta: {
+      requiresAuth: true,
+      role: "Staff",
+    },
   },
   {
     path: "/403",

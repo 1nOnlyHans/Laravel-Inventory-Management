@@ -20,7 +20,7 @@ class AdminDashboardController extends Controller
         $orders = Purchase::where('status', 'Pending')->count();
         $low_stock = StockAlert::where('alert_message', 'Low Stock')->where('status', 'Pending')->count();
         $no_stock = StockAlert::where('alert_message', 'Out of Stock')->where('status', 'Pending')->count();
-        $movements = StockMovement::whereHas('product')->with(['product', 'user'])->get();
+        $movements = StockMovement::whereHas('product')->with(['product', 'user'])->latest()->get();
         $stock_ins = StockMovement::with('product')->where('movement_type', 'Stock In')->whereDate('created_at', Carbon::today())->get();
         $total_stocks_per_category = [];
         $total_received_stocks = 0;

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Employee;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\SaleTransaction;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\User;
@@ -15,6 +16,7 @@ use App\Observers\CategoryObserver;
 use App\Observers\EmployeeObserver;
 use App\Observers\ProductObserver;
 use App\Observers\PurchaseObserver;
+use App\Observers\SaleTransactionObserver;
 use App\Observers\StockMovementObserver;
 use App\Observers\SupplierObserver;
 use App\Observers\UserObserver;
@@ -44,5 +46,6 @@ class AppServiceProvider extends ServiceProvider
         Category::observe(CategoryObserver::class);
         Brand::observe(BrandObserver::class);
         StockMovement::observe(StockMovementObserver::class);
+        SaleTransaction::observe(SaleTransactionObserver::class);
     }
 }

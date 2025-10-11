@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\LowStock;
 use App\Events\OutOfStock;
-use App\Events\ProductAdded;
-use App\Events\ProductRemoved;
-use App\Events\ProductUpdated;
 use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
@@ -86,9 +83,9 @@ class ProductController extends Controller
             }
         }
 
-        if ($status === 'Low Stock') {
-            broadcast(new LowStock($product))->toOthers();
-        }
+        // if ($status === 'Low Stock') {
+        //     broadcast(new LowStock($product))->toOthers();
+        // }
 
         return response()->json(['icon' => 'success', 'title' => 'Added Successfully', 'text' => $product->product_name . ' has been added'], Response::HTTP_OK);
     }
@@ -171,11 +168,11 @@ class ProductController extends Controller
             }
         }
 
-        if ($status === 'Low Stock') {
-            broadcast(new LowStock($product))->toOthers();
-        } else if ($status === 'Out of Stock') {
-            broadcast(new OutOfStock($product))->toOthers();
-        }
+        // if ($status === 'Low Stock') {
+        //     broadcast(new LowStock($product))->toOthers();
+        // } else if ($status === 'Out of Stock') {
+        //     broadcast(new OutOfStock($product))->toOthers();
+        // }
 
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $product . ' has been updated'], Response::HTTP_OK);
     }

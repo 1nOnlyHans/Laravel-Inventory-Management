@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(StockMovement::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
 }

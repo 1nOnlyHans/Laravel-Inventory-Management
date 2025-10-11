@@ -30,6 +30,18 @@ window.Echo.channel("stock").listen(".stock.stockin", (event) => {
   });
 });
 
+window.Echo.channel("sold").listen(".sold.created", (event) => {
+  const transaction = event.transaction;
+  toast.success(
+    `New Sale! Customer: ${transaction.customer_name}, Total: ₱${transaction.total_amount}`,
+    {
+      position: "bottom-right",
+      autoClose: 3000,
+      theme: "colored",
+    }
+  );
+});
+
 window.Echo.channel("stock").listen(".stock.lowstock", (event) => {
   toast.warning(`Low Stock: ${event.product.product_name}`, {
     position: "bottom-right",

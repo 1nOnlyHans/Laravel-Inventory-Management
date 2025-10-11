@@ -1,15 +1,13 @@
-<script setup lang="ts">
+<script setup>
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AdminSidebarLinks from "./AdminSidebarLinks.vue";
-import {
-    useAuthStore
-} from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth";
+import StaffSidebarLinks from "./StaffSidebarLinks.vue";
+
 const auth = useAuthStore();
 </script>
-
 <template>
     <SidebarProvider>
-        <AdminSidebarLinks />
+        <StaffSidebarLinks />
         <main class="flex-1 overflow-y-auto">
             <div className="">
                 <nav class="w-ful bg-brand shadow-md">

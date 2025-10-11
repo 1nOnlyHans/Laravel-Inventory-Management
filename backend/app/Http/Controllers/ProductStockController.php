@@ -25,7 +25,7 @@ class ProductStockController extends Controller
         $reference_no = $request->reference_no;
         foreach ($products as $product) {
             $stock = Product::findOrFail($product['product']['id']);
-            $stock->product_quantity = $stock->product_quantity + $product['quantity'];
+            $stock->product_quantity = $stock->product_quantity + $product['quantity']; // Refactor
 
             if ($stock->product_quantity + $product['quantity'] > $stock->reorder_level) {
                 $stock->status = 'Available';

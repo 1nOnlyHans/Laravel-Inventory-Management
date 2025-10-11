@@ -23,9 +23,7 @@ const handleLogin = async () => {
     try {
         const response = await auth.login(userData.value.username, userData.value.password);
         if (response.status === 200) {
-            if (auth.user.role === 'Admin') {
-                router.push('/admin/dashboard');
-            }
+            router.push(`/${auth.user.role.toLowerCase()}/dashboard`);
         }
         RegularSwal(response.data.message);
     } catch (error) {
