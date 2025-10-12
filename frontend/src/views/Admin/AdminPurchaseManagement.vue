@@ -37,7 +37,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { RegularSwal } from '@/components/Swals/useSwals';
+import { ConfirmationSwal, RegularSwal } from '@/components/Swals/useSwals';
 import { getSuppliers } from '@/composables/useSuppliers';
 import { managePO } from '@/composables/usePO';
 import { sendPO } from '@/composables/usePO';
@@ -110,7 +110,6 @@ const toggleLetter = () => {
 
 const handleOrder = async (purchaseCred) => {
     const success = await addPurchaseOrder(purchaseCred);
-
     if (success && success.status === 200) {
         await fetchSuppliers();
         RegularSwal(success.data);
@@ -206,8 +205,7 @@ watch(
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="font-semibold text-lg">Products to Order</h2>
-                        <Button type="button"
-                            :disabled="purchaseCred.supplier_id === ''" @click="handleAddProduct">
+                        <Button type="button" :disabled="purchaseCred.supplier_id === ''" @click="handleAddProduct">
                             + Add Product
                         </Button>
                     </div>
@@ -300,8 +298,7 @@ watch(
                     <Button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
                         Cancel
                     </Button>
-                    <Button type="button"
-                        @click="toggleLetter" :disabled="purchaseCred.items.length <= 0">
+                    <Button type="button" @click="toggleLetter" :disabled="purchaseCred.items.length <= 0">
                         Generate Order
                     </Button>
                 </div>
@@ -396,8 +393,7 @@ watch(
 
             <!-- Footer Actions -->
             <DialogFooter class="p-6 pt-5 border-t">
-                <Button type="button" @click="handleOrder(purchaseCred)"
-                    :disabled="isLoading">
+                <Button type="button" @click="handleOrder(purchaseCred)" :disabled="isLoading">
                     <span v-if="isLoading" class="flex justify-center space-x-3 items-center">
                         <VueSpinner size="20" />
                         Sending...

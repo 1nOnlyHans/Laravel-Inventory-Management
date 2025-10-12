@@ -181,30 +181,32 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
                         </li>
                     </ul>
                 </div>
+                <form id="cod"
+                    @submit.prevent="handleEmit(paymentCred.order_id, 'Cash', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
+                    <div class="space-y-1">
+                        <Label class="text-sm font-medium text-gray-700">Total Amount to Pay:</Label>
+                        <Input type="text" readonly v-model="paymentCred.amount" placeholder="₱0.00"
+                            class="bg-green-50 border-green-200 font-semibold text-green-800" required />
+                    </div>
 
-                <div class="space-y-1">
-                    <Label class="text-sm font-medium text-gray-700">Total Amount to Pay:</Label>
-                    <Input type="text" readonly v-model="paymentCred.amount" placeholder="₱0.00"
-                        class="bg-green-50 border-green-200 font-semibold text-green-800" />
-                </div>
+                    <!-- Total Amount -->
+                    <div class="space-y-1">
+                        <Label class="text-sm font-medium text-gray-700">Amount</Label>
+                        <Input type="text" placeholder="₱0.00" v-model="paymentCred.amount_pay" required />
+                    </div>
 
-                <!-- Total Amount -->
-                <div class="space-y-1">
-                    <Label class="text-sm font-medium text-gray-700">Amount</Label>
-                    <Input type="text" placeholder="₱0.00" v-model="paymentCred.amount_pay" required />
-                </div>
-
-                <!-- Footer Buttons -->
-                <DialogFooter class="flex justify-between gap-3 pt-4">
-                    <Button variant="outline" class="w-1/2 py-2 border-gray-300 hover:bg-gray-100 transition-all"
-                        @click="COD">
-                        Back
-                    </Button>
-                    <Button class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all"
-                        @click="handleEmit(paymentCred.order_id, 'Cash', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
-                        Confirm Payment
-                    </Button>
-                </DialogFooter>
+                    <!-- Footer Buttons -->
+                    <DialogFooter class="flex justify-between gap-3 pt-4">
+                        <Button variant="outline" class="w-1/2 py-2 border-gray-300 hover:bg-gray-100 transition-all"
+                            @click="COD">
+                            Back
+                        </Button>
+                        <Button type="submit" form="cod"
+                            class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all">
+                            Confirm Payment
+                        </Button>
+                    </DialogFooter>
+                </form>
             </div>
         </DialogContent>
 
@@ -245,35 +247,37 @@ watch(() => [props.order_id, props.supplier_name, props.amount, props.items], ()
                         </li>
                     </ul>
                 </div>
+                <form id="bank"
+                    @submit.prevent="handleEmit(paymentCred.order_id, 'Card', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
+                    <div class="space-y-1">
+                        <Label class="text-sm font-medium text-gray-700">Total Amount to Pay:</Label>
+                        <Input type="text" readonly v-model="paymentCred.amount" placeholder="₱0.00"
+                            class="bg-green-50 border-green-200 font-semibold text-green-800" required />
+                    </div>
 
-                <div class="space-y-1">
-                    <Label class="text-sm font-medium text-gray-700">Total Amount to Pay:</Label>
-                    <Input type="text" readonly v-model="paymentCred.amount" placeholder="₱0.00"
-                        class="bg-green-50 border-green-200 font-semibold text-green-800" />
-                </div>
+                    <div class="space-y-1">
+                        <Label class="text-sm font-medium text-gray-700">Amount</Label>
+                        <Input type="text" placeholder="₱0.00" v-model="paymentCred.amount_pay" required />
+                    </div>
 
-                <div class="space-y-1">
-                    <Label class="text-sm font-medium text-gray-700">Amount</Label>
-                    <Input type="text" placeholder="₱0.00" v-model="paymentCred.amount_pay" required />
-                </div>
+                    <div class="space-y-1">
+                        <Label class="text-sm font-medium text-gray-700">Reference No / Receipt No</Label>
+                        <Input type="text" placeholder="Reference No / Receipt No" v-model="paymentCred.reference_no"
+                            required />
+                    </div>
 
-                <div class="space-y-1">
-                    <Label class="text-sm font-medium text-gray-700">Reference No / Receipt No</Label>
-                    <Input type="text" placeholder="Reference No / Receipt No" v-model="paymentCred.reference_no"
-                        required />
-                </div>
-
-                <!-- Footer Buttons -->
-                <DialogFooter class="flex justify-between gap-3 pt-4">
-                    <Button variant="outline" class="w-1/2 py-2 border-gray-300 hover:bg-gray-100 transition-all"
-                        @click="toggleBank">
-                        Back
-                    </Button>
-                    <Button class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all"
-                        @click="handleEmit(paymentCred.order_id, 'Card', paymentCred.reference_no, paymentCred.amount_pay, paymentCred.amount, paymentCred.order_id)">
-                        Confirm Payment
-                    </Button>
-                </DialogFooter>
+                    <!-- Footer Buttons -->
+                    <DialogFooter class="flex justify-between gap-3 pt-4">
+                        <Button variant="outline" class="w-1/2 py-2 border-gray-300 hover:bg-gray-100 transition-all"
+                            @click="toggleBank">
+                            Back
+                        </Button>
+                        <Button type="submit"
+                            class="w-1/2 bg-green-600 text-white py-2 hover:bg-green-700 transition-all">
+                            Confirm Payment
+                        </Button>
+                    </DialogFooter>
+                </form>
             </div>
         </DialogContent>
     </Dialog>

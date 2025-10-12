@@ -62,95 +62,92 @@ onMounted(async () => {
 
             <!-- Dashboard Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <!-- 1. Today's Sales -->
                 <admin-dashboard-card :title="'Today\'s Sales'" :icon="faMoneyBill" :value="datas.today_sales"
                     :subtitle="'Total Amount'" :is-money="true" />
 
-                <!-- 2. Total Sales -->
                 <admin-dashboard-card :title="'Total Sales'" :icon="faMoneyBill" :value="datas.total_sales"
                     :subtitle="'Overall Revenue'" :is-money="true" />
 
-                <!-- 3. Total Stocks -->
                 <admin-dashboard-card :title="'Total Stocks'" :icon="faBoxOpen" :value="datas.total_stocks"
                     :subtitle="'Units in Stock'" />
 
-                <!-- 4. Inventory Value -->
                 <admin-dashboard-card :title="'Inventory Value'" :icon="faArrowTrendUp" :value="datas.inventory_value"
                     :subtitle="'Total Inventory Value'" :is-money="true" />
 
-                <!-- 5. Low Stocks -->
                 <admin-dashboard-card :title="'Low Stocks'" :icon="faTriangleExclamation" :value="datas.low_stock"
                     :subtitle="'Low Stock Items'" />
 
-                <!-- 6. Out of Stocks -->
                 <admin-dashboard-card :title="'Out of Stocks'" :icon="faTriangleExclamation" :value="datas.no_stock"
                     :subtitle="'No Stock Items'" />
 
-                <!-- 7. Pending Purchase Orders -->
                 <admin-dashboard-card :title="'Pending Purchase Orders'" :icon="faCartShopping" :value="datas.orders"
                     :subtitle="'Awaiting Approval'" />
 
-                <!-- 8. Received Items Today -->
                 <admin-dashboard-card :title="'Items Received Today'" :icon="faBoxesStacked"
                     :value="datas.received_stocks" :subtitle="'Incoming Stocks'" />
             </div>
 
-            <!-- Sales/Inventory Chart -->
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Sales & Inventory Overview</h2>
-                <Bar :chart-data="chartData" :chart-options="chartOptions" />
-            </div>
-
-            <!-- Recent Stock Movements -->
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-                <h2 class="font-semibold text-gray-800 text-lg mb-4">Recent Stock Movements</h2>
-
-                <!-- Scrollable List -->
-                <div
-                    class="max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    <div v-for="(item, index) in datas.movements" :key="item.id"
-                        class="py-3 flex justify-between items-start border-b border-gray-100 last:border-none">
-                        <!-- Left -->
-                        <div>
-                            <h3 class="font-medium text-gray-800">
-                                {{ item.product.product_name }}
-                            </h3>
-                            <p class="text-sm text-gray-500">{{ item.reason }}</p>
-                        </div>
-
-                        <!-- Right -->
-                        <div class="text-right">
-                            <h3 :class="{
-                                'text-green-500': item.movement_type === 'Stock In',
-                                'text-red-500': item.movement_type === 'Stock Out',
-                                'text-yellow-500':
-                                    item.movement_type !== 'Stock In' &&
-                                    item.movement_type !== 'Stock Out',
-                            }" class="font-semibold text-sm">
-                                {{
-                                    item.movement_type === 'Stock In'
-                                        ? '+'
-                                        : item.movement_type === 'Stock Out'
-                                ? '-'
-                                : ''
-                                }}
-                                {{ item.quantity }} units
-                            </h3>
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                {{ new Date(item.created_at).toLocaleDateString('en-US') }}
-                            </p>
-                        </div>
+            <!-- Charts & Movements Side by Side -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Sales/Inventory Chart -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Sales & Inventory Overview</h2>
+                    <div class="h-64">
+                        <Bar :chart-data="chartData" :chart-options="chartOptions" />
                     </div>
                 </div>
 
-                <!-- View All -->
-                <div class="pt-4 flex justify-center">
-                    <RouterLink :to="{ name: 'Admin Stock Movements' }" class="text-brand font-medium hover:underline">
-                        View All
-                    </RouterLink>
+                <!-- Recent Stock Movements -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-2">
+                    <h2 class="font-semibold text-gray-800 text-lg mb-4">Recent Stock Movements</h2>
+
+                    <!-- Scrollable List -->
+                    <div
+                        class="max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                        <div v-for="(item, index) in datas.movements" :key="item.id"
+                            class="py-3 flex justify-between items-start border-b border-gray-100 last:border-none">
+                            <!-- Left -->
+                            <div>
+                                <h3 class="font-medium text-gray-800">
+                                    {{ item.product.product_name }}
+                                </h3>
+                                <p class="text-sm text-gray-500">{{ item.reason }}</p>
+                            </div>
+
+                            <!-- Right -->
+                            <div class="text-right">
+                                <h3 :class="{
+                                    'text-green-500': item.movement_type === 'Stock In',
+                                    'text-red-500': item.movement_type === 'Stock Out',
+                                    'text-yellow-500':
+                                        item.movement_type !== 'Stock In' &&
+                                        item.movement_type !== 'Stock Out',
+                                }" class="font-semibold text-sm">
+                                    {{
+                                        item.movement_type === 'Stock In'
+                                            ? '+'
+                                            : item.movement_type === 'Stock Out'
+                                                ? '-'
+                                                : ''
+                                    }}
+                                    {{ item.quantity }} units
+                                </h3>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    {{ new Date(item.created_at).toLocaleDateString('en-US') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View All -->
+                    <div class="pt-4 flex justify-center">
+                        <RouterLink :to="{ name: 'Admin Stock Movements' }"
+                            class="text-brand font-medium hover:underline">
+                            View All
+                        </RouterLink>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-
 </template>

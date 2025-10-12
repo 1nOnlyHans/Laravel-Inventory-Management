@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeController extends Controller
 {
@@ -150,5 +152,17 @@ class EmployeeController extends Controller
         ], 200);
 
         return response()->json($user, 200);
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = Crypt::decryptString($request->employee_id);
+        $employee = Employee::findOrFail($id);
+        if (Auth::user()->role === $employee->user->role) {
+            return response()->json(['icon' => 'error', 'title' => 'Failed to delete', 'text' => 'Cannot delete same role'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $employee->destroy($id);
+
+        return response()->json(['icon' => 'success', 'title' => 'Deleted Successfully'], Response::HTTP_OK);
     }
 }

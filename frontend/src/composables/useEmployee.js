@@ -139,6 +139,20 @@ export function manageEmployee() {
       console.log(errors.value);
     }
   };
+
+  const deleteEmployee = async (id) => {
+    try {
+      const response = await axios.delete("/api/employee/destroy", {
+        data: {
+          employee_id: id,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
   return {
     employeCred,
     addEmployee,
@@ -146,5 +160,6 @@ export function manageEmployee() {
     resetEmployeeCred,
     updateEmployee,
     updateEmployeeAccount,
+    deleteEmployee,
   };
 }

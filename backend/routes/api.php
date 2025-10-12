@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
     Route::get('/employees/show/{employee_id}', 'show');
     Route::put('/employees/update', 'update');
     Route::put('/employees/updateAccount', 'updateAccount');
+    Route::delete('/employee/destroy', 'destroy');
 });
 
 //PRODUCT LOGIC

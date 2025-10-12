@@ -40,6 +40,11 @@ class EmployeeObserver
     public function deleted(Employee $employee): void
     {
         //
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'Deleted an employee',
+            'details' => "{$employee->unique_employee_id} profile was deleted by " . Auth::user()->name,
+        ]);
     }
 
     /**

@@ -17,7 +17,7 @@ import ProductPOScard from '@/components/Cards/ProductPOScard.vue';
 import CartItemCard from '@/components/Cards/CartItemCard.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import POSCheckoutModal from '@/components/Modals/POSCheckoutModal.vue';
-import { RegularSwal } from '@/components/Swals/useSwals';
+import { ConfirmationSwal, RegularSwal } from '@/components/Swals/useSwals';
 const { categories, fetchCategories } = getCategories();
 const { products, fetchProducts } = getProducts();
 const { cart, addItem, removeItem, clearItem, sale } = managePOS();
@@ -45,21 +45,30 @@ const updateQuantity = ({ index, quantity }) => {
 };
 
 const handleSale = async (saleCred) => {
-    const success = await sale(saleCred);
-    if (success && success.status === 200) {
-        clearItem();
-        paymentModal.value = false;
-        fetchCategories();
-        fetchProducts();
-        RegularSwal(success.data);
-    }
-    else {
-        RegularSwal({
-            icon: "error",
-            title: "Transaction Failed",
-            text: success.response.data.message
-        });
-    }
+    paymentModal.value = false;
+    ConfirmationSwal({
+        icon: 'question',
+        title: 'Confirm Transaction?',
+        message: '',
+        confirm_text: 'Yes!',
+        callBack: async () => {
+            const success = await sale(saleCred);
+            if (success && success.status === 200) {
+                clearItem();
+                paymentModal.value = false;
+                fetchCategories();
+                fetchProducts();
+                RegularSwal(success.data);
+            }
+            else {
+                RegularSwal({
+                    icon: "error",
+                    title: "Transaction Failed",
+                    text: success.response.data.message
+                });
+            }
+        }
+    })
 }
 
 

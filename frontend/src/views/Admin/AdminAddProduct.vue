@@ -224,8 +224,7 @@ onMounted(async () => {
 
                 <!-- Submit -->
                 <div class="flex justify-center pt-4">
-                    <Button type="submit"
-                        class="bg-accents hover:bg-accents-hover text-white font-medium px-6 py-2 rounded-lg">
+                    <Button type="submit">
                         Add Product
                     </Button>
                 </div>

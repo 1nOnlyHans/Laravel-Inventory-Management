@@ -22,7 +22,7 @@ import {
     createColumnHelper,
     getFilteredRowModel,
 } from '@tanstack/vue-table';
-import { RegularSwal } from '@/components/Swals/useSwals';
+import { RegularSwal, ConfirmationSwal } from '@/components/Swals/useSwals';
 
 const { purchases, isLoading, fetchPurchases } = getPurchases();
 const { createPaymentRecord, updatePaymentStatus } = onlinePayment();
@@ -42,27 +42,45 @@ const orderCred = reactive({
 const purchaseData = ref(null);
 
 const handleStockIn = async (product_id, reference_no, purchase_id) => {
-    const delivered = await markAsDelivered(purchase_id);
-    const In = await stockIn(product_id, reference_no);
-
-    if ((delivered && delivered.status === 200) && (In && In.status === 200)) {
-        receivedItemsModal.value = false
-        await fetchPurchases();
-        RegularSwal(In.data);
-    }
+    receivedItemsModal.value = false;
+    ConfirmationSwal({
+        icon: 'question',
+        title: 'Receive Items?',
+        confirm_text: 'Receive items',
+        message: 'Following items will be received',
+        callBack: async () => {
+            const delivered = await markAsDelivered(purchase_id);
+            const In = await stockIn(product_id, reference_no);
+            if ((delivered && delivered.status === 200) && (In && In.status === 200)) {
+                receivedItemsModal.value = false
+                await fetchPurchases();
+                RegularSwal(In.data);
+            }
+        }
+    });
 }
+
 const handleCOD = async (purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id) => {
     if (amount_paid < total_amount) {
         alert("Enter Valid Amount");
         return;
     }
-    const success = await createPaymentRecord(purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id);
-    if (success && success.status === 200) {
-        openPayment.value = false;
-        await updatePaymentStatus(purchase_id);
-        await fetchPurchases();
-        RegularSwal(success.data);
-    }
+    openPayment.value = false;
+    ConfirmationSwal({
+        icon: 'question',
+        title: 'Confirm Payment?',
+        message: '',
+        confirm_text: 'Yes!',
+        callBack: async () => {
+            const success = await createPaymentRecord(purchase_id, payment_method, reference_no, amount_paid, total_amount, order_id);
+            if (success && success.status === 200) {
+                openPayment.value = false;
+                await updatePaymentStatus(purchase_id);
+                await fetchPurchases();
+                RegularSwal(success.data);
+            }
+        }
+    })
 }
 
 onMounted(() => {

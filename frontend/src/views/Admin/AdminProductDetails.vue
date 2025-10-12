@@ -145,7 +145,7 @@ onMounted(async () => {
                         </span>
                         <RouterLink
                             :to="{ name: 'Admin Edit Product', params: { product_id: route.params.product_id } }">
-                            <Button class="bg-accents hover:bg-accents-hover">Edit this Product</Button>
+                            <Button>Edit this Product</Button>
                         </RouterLink>
                     </div>
                 </div>
