@@ -84,7 +84,7 @@ const filteredProducts = computed(() => {
 </script>
 <template>
     <section class="p-4 md:p-6 bg-gray-50 min-h-screen">
-        <div class="container mx-auto">
+        <div class="container-xl mx-auto">
             <div class="flex flex-col md:flex-row gap-6">
 
                 <!-- LEFT: POS Section -->
@@ -114,14 +114,15 @@ const filteredProducts = computed(() => {
 
                     <!-- Product display -->
                     <div class="border-t pt-4 text-gray-500">
-                        <div v-if="products.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div v-if="products.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[550px] overflow-y-auto pr-2 
+                                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                             <ProductPOScard v-for="product in filteredProducts" :key="product.encrypted_id"
                                 :product_name="product.product_name" :product_brand="product.brand.brand_name"
                                 :product_stocks="product.product_quantity" :product_price="product.unit_price"
                                 :product_photos="product.photos" :product="product" :cart="cart"
                                 @add-item="handleAddItem" />
                         </div>
-                        <p v-else>No items displayed yet...</p>
+                        <p v-else class="text-center text-sm text-gray-400 py-4">No items displayed yet...</p>
                     </div>
                 </div>
 

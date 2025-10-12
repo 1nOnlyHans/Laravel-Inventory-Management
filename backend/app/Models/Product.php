@@ -60,4 +60,9 @@ class Product extends Model
     {
         return $this->hasMany(StockAlert::class);
     }
+
+    public function purchases()
+    {
+        return $this->hasMany(PurchaseOrderItems::class);
+    }
 }

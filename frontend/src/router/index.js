@@ -36,14 +36,14 @@ import StaffLogs from "@/views/Staff/StaffLogs.vue";
 import StaffAlerts from "@/views/Staff/StaffAlerts.vue";
 import StaffProductDetails from "@/views/Staff/StaffProductDetails.vue";
 import StaffTransactions from "@/views/Staff/StaffTransactions.vue";
+import AdminTransactions from "@/views/Admin/AdminTransactions.vue";
+import AdminReports from "@/views/Admin/AdminReports.vue";
 
 const routes = [
   {
-    path: "/employee",
+    path: "/",
     component: GuestStaffLayout,
-    children: [
-      { path: "login", name: "Employee Login", component: StaffLogin },
-    ],
+    children: [{ path: "/", name: "Employee Login", component: StaffLogin }],
   },
   {
     path: "/admin",
@@ -185,6 +185,24 @@ const routes = [
         path: "logs",
         name: "Admin Logs",
         component: AdminLogs,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "transactions",
+        name: "Admin Transactions",
+        component: AdminTransactions,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "reports",
+        name: "Admin Reports",
+        component: AdminReports,
         meta: {
           requiresAuth: "true",
           role: "Admin",

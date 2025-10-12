@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\SaleTransaction;
 use App\Models\StockAlert;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ class AdminDashboardController extends Controller
 
     public function getDashboardDatas()
     {
+        $sales = SaleTransaction::all()->sum('total_amount');
+        $today_sales = SaleTransaction::whereDate('created_at', Carbon::today())->sum('total_amount');
         $stocks = Product::with(['category'])->get();
         $orders = Purchase::where('status', 'Pending')->count();
         $low_stock = StockAlert::where('alert_message', 'Low Stock')->where('status', 'Pending')->count();
@@ -41,6 +44,8 @@ class AdminDashboardController extends Controller
         }
 
         return response()->json([
+            'total_sales' => $sales,
+            'today_sales' => $today_sales,
             'total_stocks' => $total_stocks,
             'orders' => $orders,
             'low_stock' => $low_stock,

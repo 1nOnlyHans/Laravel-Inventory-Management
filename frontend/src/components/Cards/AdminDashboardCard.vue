@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const props = defineProps({
     title: String,
+    isMoney: Boolean,
     icon: Object,
     value: [Number, String],
     subtitle: String,
@@ -27,8 +28,8 @@ const props = defineProps({
 
         <CardContent>
             <div class="flex flex-col gap-1">
-                <span class="text-3xl font-regular text-gray-900">{{ props.title === 'Inventory Value' ? '₱' : '' }}{{ value
-                    }}</span>
+                <span class="text-3xl font-regular text-gray-900">{{ props.isMoney ? '₱' : '' }}{{ value
+                }}</span>
                 <span class="text-sm text-gray-500">{{ subtitle }}</span>
             </div>
         </CardContent>

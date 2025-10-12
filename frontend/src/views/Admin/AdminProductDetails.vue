@@ -97,9 +97,15 @@ onMounted(async () => {
                     </div>
 
                     <!-- Price -->
-                    <div class="mt-4">
-                        <p class="text-gray-500 text-sm uppercase tracking-wide">Unit Price</p>
-                        <h2 class="text-4xl font-extrabold text-green-600">₱{{ productDetails.unit_price }}</h2>
+                    <div class="mt-4 flex justify-between items-center">
+                        <div class="">
+                            <p class="text-gray-500 text-sm uppercase tracking-wide">Unit Price</p>
+                            <h2 class="text-4xl font-extrabold text-green-600">₱{{ productDetails.unit_price }}</h2>
+                        </div>
+                        <div class="">
+                            <p class="text-gray-500 text-sm uppercase tracking-wide">Latest Buying Price</p>
+                            <h2 class="text-4xl font-extrabold text-red-600">₱{{ productDetails.latest_srp }}</h2>
+                        </div>
                     </div>
 
                     <!-- Quantity and Reorder Level -->

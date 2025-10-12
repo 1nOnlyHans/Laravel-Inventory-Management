@@ -12,7 +12,7 @@ const auth = useAuthStore();
         <AdminSidebarLinks />
         <main class="flex-1 overflow-y-auto">
             <div className="">
-                <nav class="w-ful bg-brand shadow-md">
+                <nav class="w-full bg-brand shadow-md">
                     <div class="container-xl mx-auto p-3">
                         <div class="flex justify-between items-center">
                             <SidebarTrigger class="text-white" />

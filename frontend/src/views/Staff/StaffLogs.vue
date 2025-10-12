@@ -94,7 +94,7 @@ onMounted(() => {
     </section>
 
     <!-- Audit Logs Table -->
-    <section v-else class="container mx-auto p-6">
+    <section v-else class="container-xl mx-auto p-6">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-800 tracking-wide">

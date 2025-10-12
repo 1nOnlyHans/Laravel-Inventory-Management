@@ -110,19 +110,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <!-- ✅ Loading State -->
-    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
-        <VueSpinnerOval size="80" color="#3b82f6" />
-        <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-accents">
-            Fetching Stock Movements...
-        </h1>
-        <p class="mt-2 text-gray-500 text-sm">
-            Please wait while we load the latest stock movement records.
-        </p>
-    </section>
-
     <!-- ✅ Movements Table -->
-    <section v-else class="container mx-auto p-6 min-h-screen">
+    <section class="container mx-auto p-6 min-h-screen">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-800 tracking-wide">

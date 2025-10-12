@@ -36,13 +36,24 @@ const handleEmit = (item) => {
 
 </script>
 <template>
-    <Card class="w-[320px] bg-white border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200">
+    <Card class="w-[300px] bg-white border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200">
         <!-- Header -->
         <CardHeader class="p-5 pb-3">
-            <CardTitle class="flex justify-between items-center text-lg font-semibold">
-                <h1 class="truncate">{{ props.product_name }}</h1>
-                <Badge>{{ product_stocks }} in stock</Badge>
+            <CardTitle class="flex items-start justify-between gap-2 text-lg font-semibold">
+                <div class="flex-1 min-w-0">
+                    <h1 class="truncate text-[1rem] leading-snug font-semibold text-gray-800"
+                        :title="props.product_name">
+                        {{ props.product_name }}
+                    </h1>
+                </div>
+                <div class="flex-shrink-0">
+                    <Badge class="whitespace-nowrap text-xs px-2 py-1 font-medium">
+                        {{ product_stocks }} in stock
+                    </Badge>
+                </div>
             </CardTitle>
+            <!--  -->
+            <p class="text-gray-500 font-medium text-sm">SKU: {{ product.SKU }}</p>
             <CardDescription class="text-sm text-gray-500 mt-1 flex justify-between items-center">
                 {{ props.product_brand }}
                 <Badge :class="{

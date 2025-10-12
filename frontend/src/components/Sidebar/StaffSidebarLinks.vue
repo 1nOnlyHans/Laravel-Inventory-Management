@@ -61,7 +61,7 @@ const items = [
                     { title: "POS", url: "/staff/pos", icon: faCreditCard },
                 ],
             },
-            { title: "Customers", url: "/staff/customers", icon: faUsers },
+            // { title: "Customers", url: "/staff/customers", icon: faUsers },
         ],
     },
     {
@@ -70,7 +70,7 @@ const items = [
             { title: "Transactions", url: "/staff/transactions", icon: faArrowsLeftRight },
             { title: "Audit Logs", url: "/staff/logs", icon: faClipboardList },
             { title: "Alerts", url: "/staff/alerts", icon: faBell },
-            { title: "Reports", url: "/staff/reports", icon: faFileAlt },
+            // { title: "Reports", url: "/staff/reports", icon: faFileAlt },
         ],
     },
 ];
@@ -85,7 +85,7 @@ const handleLogout = async () => {
     try {
         const response = await auth.logout();
         if (response.status === 200) {
-            router.push("/employee/login");
+            router.push("/");
         }
     } catch (error) {
         console.error(error);

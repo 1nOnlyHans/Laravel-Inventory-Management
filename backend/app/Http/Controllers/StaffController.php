@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\SaleTransaction;
 use App\Models\StockMovement;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -86,5 +87,27 @@ class StaffController extends Controller
     {
         $transaction = SaleTransaction::with(['customer'])->latest()->get();
         return response()->json($transaction, Response::HTTP_OK);
+    }
+
+    public function getDashboardDatas()
+    {
+        $sales = SaleTransaction::all()->sum('total_amount');
+        $items = StockMovement::where('movement_type', 'Stock Out')->sum('quantity');
+        $today_sales = SaleTransaction::whereDate('created_at', Carbon::today())->sum('total_amount');
+        $today_transaction_count = SaleTransaction::whereDate('created_at', Carbon::today())->count();
+        $topSelling = Product::withSum(['movement as total_sold' => function ($query) {
+            $query->where('movement_type', 'Stock Out');
+        }], 'quantity')
+            ->orderByDesc('total_sold')
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'today_sales' => $today_sales,
+            'total_sales' => $sales,
+            'total_items_sold' => $items,
+            'total_transactions_today' => $today_transaction_count,
+            'top_selling' => $topSelling
+        ], Response::HTTP_OK);
     }
 }

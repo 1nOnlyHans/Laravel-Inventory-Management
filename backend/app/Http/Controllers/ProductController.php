@@ -93,10 +93,15 @@ class ProductController extends Controller
     public function show(Request $request)
     {
         $id = Crypt::decryptString($request->route('product_id'));
-        $product = Product::with(['supplier', 'category', 'brand', 'photos'])->findOrFail($id);
+        $product = Product::with(['supplier', 'category', 'brand', 'photos', 'purchases'])->findOrFail($id);
         $product->makeHidden(['id']);
         // $product->supplier->makeHidden(['id']);
         $product->supplier->encrypted_id = Crypt::encryptString($product->supplier->id);
+        if (count($product->purchases) > 0) {
+            $product->latest_srp = $product->purchases[count($product->purchases) - 1]->unit_price;
+        } else {
+            $product->latest_srp = 0;
+        }
         $product->encrypted_id = Crypt::encryptString($product->id);
         return response()->json($product, Response::HTTP_OK);
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PaymongoController;
+use App\Http\Controllers\PDFcontroller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\PurchaseController;
@@ -112,8 +113,17 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(AuditLogController::cla
     Route::get('/logs/index', 'index')->withoutMiddleware(['admin']);
 });
 
+Route::middleware(['auth:sanctum'])->controller(PDFcontroller::class)->group(function () {
+    Route::get('/pdf/inventory', 'generateInventoryValuationReport');
+    Route::get('/pdf/movement', 'generateStockMovementsReport');
+    Route::get('/pdf/purchase', 'generatePurchaseHistoryReport');
+    Route::get('/pdf/sales', 'generateSalesReport');
+    Route::get('/pdf/lowStock', 'generateLowStockReport');
+    Route::get('/pdf/outOfStock', 'generateOutOfStockReport');
+});
 
 Route::middleware(['auth:sanctum', 'staff'])->controller(StaffController::class)->group(function () {
-    Route::get('/staff/getTransactions', 'getSaleTransactions');
+    Route::get('/staff/getTransactions', 'getSaleTransactions')->withoutMiddleware(['staff']);
     Route::post('/staff/sale', 'finalizedSale');
+    Route::get('/staff/dashboard', 'getDashboardDatas');
 });

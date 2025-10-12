@@ -89,7 +89,7 @@ const handleLogout = async () => {
   try {
     const response = await auth.logout();
     if (response.status === 200) {
-      router.push("/employee/login");
+      router.push("/");
     }
   } catch (error) {
     console.error(error);
