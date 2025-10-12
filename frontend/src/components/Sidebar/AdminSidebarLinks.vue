@@ -1,3 +1,4 @@
+/.
 <script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -40,6 +41,8 @@ import {
   faTags,
   faArrowTrendUp,
   faChevronDown,
+  faArchive,
+  faGears,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Sidebar menu items
@@ -57,6 +60,7 @@ const items = [
         icon: faInbox,
         submenus: [
           { title: "Inventory", url: "/admin/products", icon: faInbox },
+          { title: "Archived Products", url: "/admin/archived_products", icon: faArchive },
           { title: "Stock Movements", url: "/admin/stock_movements", icon: faArrowTrendUp },
         ],
       },
@@ -75,6 +79,12 @@ const items = [
       { title: "Audit Logs", url: "/admin/logs", icon: faClipboardList },
       { title: "Alerts", url: "/admin/alerts", icon: faBell },
       { title: "Reports", url: "/admin/reports", icon: faFileAlt },
+    ],
+  },
+  {
+    group: "Settings",
+    menus: [
+      { title: "System", url: "/admin/settings", icon: faGears },
     ],
   },
 ];

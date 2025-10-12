@@ -38,7 +38,7 @@ const handleLogin = async () => {
         <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
             <!-- Logo -->
             <div class="flex flex-col items-center mb-8">
-                <img src="@/assets/images/logo.png" class="w-28 h-auto mb-3" />
+                <img src="@/assets/images/logo 2.png" class="w-28 h-auto mb-3" />
                 <h1 class="text-xl font-semibold text-gray-800">System Account Login</h1>
                 <p class="text-sm text-gray-500">Enter your credentials to access the system</p>
             </div>

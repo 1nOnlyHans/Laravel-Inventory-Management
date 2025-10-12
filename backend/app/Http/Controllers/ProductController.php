@@ -28,6 +28,17 @@ class ProductController extends Controller
 
         return response()->json($products, Response::HTTP_OK);
     }
+    public function archived()
+    {
+        $products = Product::with(['supplier', 'category', 'brand', 'photos'])->onlyTrashed()->latest()->get();
+
+        foreach ($products as $product) {
+            // $product->makeHidden(['id']);
+            $product->encrypted_id = Crypt::encryptString($product->id);
+        }
+
+        return response()->json($products, Response::HTTP_OK);
+    }
 
     public function store(Request $request)
     {
@@ -182,6 +193,14 @@ class ProductController extends Controller
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $product . ' has been updated'], Response::HTTP_OK);
     }
 
+    public function restore(Request $request)
+    {
+        $id = Crypt::decryptString($request->product_id);
+
+        $product = Product::withTrashed()->findOrFail($id)->restore();
+        return response()->json(['icon' => 'success', 'title' => 'Item has been Restored', 'text' => 'item has been restored'], Response::HTTP_OK);
+    }
+
     public function softDelete(Request $request)
     {
         $id = Crypt::decryptString($request->product_id);
@@ -191,6 +210,22 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['icon' => 'success', 'title' => 'Item has been Archived', 'text' => 'item has been stored in archived section'], Response::HTTP_OK);
+    }
+
+    public function forceDelete(Request $request)
+    {
+        $id = Crypt::decryptString($request->product_id);
+        $photos = ProductPhoto::where('product_id', $id)->get();
+
+        foreach ($photos as $photo) {
+            if (Storage::disk('public')->exists($photo->image)) {
+                Storage::disk('public')->delete($photo->image);
+            }
+        }
+
+        $product = Product::withTrashed()->findOrFail($id)->forceDelete();
+
+        return response()->json(['icon' => 'success', 'title' => 'Item has been permanently deleted', 'text' => 'Item datas is permanently deleted'], Response::HTTP_OK);
     }
 
     public function getProductsBySupplier(Request $request)

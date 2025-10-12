@@ -38,6 +38,8 @@ import StaffProductDetails from "@/views/Staff/StaffProductDetails.vue";
 import StaffTransactions from "@/views/Staff/StaffTransactions.vue";
 import AdminTransactions from "@/views/Admin/AdminTransactions.vue";
 import AdminReports from "@/views/Admin/AdminReports.vue";
+import AdminArchivedProducts from "@/views/Admin/AdminArchivedProducts.vue";
+import AdminSystemSettings from "@/views/Admin/AdminSystemSettings.vue";
 
 const routes = [
   {
@@ -77,6 +79,15 @@ const routes = [
         path: "products",
         name: "Admin Products Management",
         component: AdminProductManagement,
+        meta: {
+          requiresAuth: true,
+          role: "Admin",
+        },
+      },
+      {
+        path: "archived_products",
+        name: "Admin Products Archived",
+        component: AdminArchivedProducts,
         meta: {
           requiresAuth: true,
           role: "Admin",
@@ -203,6 +214,15 @@ const routes = [
         path: "reports",
         name: "Admin Reports",
         component: AdminReports,
+        meta: {
+          requiresAuth: "true",
+          role: "Admin",
+        },
+      },
+      {
+        path: "settings",
+        name: "System Settings",
+        component: AdminSystemSettings,
         meta: {
           requiresAuth: "true",
           role: "Admin",

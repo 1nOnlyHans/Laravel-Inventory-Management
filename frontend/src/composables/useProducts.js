@@ -22,7 +22,16 @@ export function getProducts() {
       isLoading.value = false;
     }
   };
-
+  const fetchArchivedProducts = async () => {
+    try {
+      const response = await axios.get("/api/products/archived");
+      if (response.status === 200) {
+        products.value = response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchProductsBySupplier = async (supplier_id) => {
     try {
       const response = await axios.post(
@@ -67,6 +76,7 @@ export function getProducts() {
     fetchProductsBySupplier,
     fetchProductDetailsById,
     productDetails,
+    fetchArchivedProducts,
   };
 }
 
@@ -164,6 +174,31 @@ export function manageProducts() {
       console.log(error);
     }
   };
+
+  const restoreProduct = async (id) => {
+    try {
+      const response = await axios.post("/api/products/restore", {
+        product_id: id,
+      });
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const forceDelete = async (id) => {
+    try {
+      const response = await axios.delete("/api/products/forceDelete", {
+        data: {
+          product_id: id,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return {
     addProduct,
     errors,
@@ -171,5 +206,7 @@ export function manageProducts() {
     errors,
     updateProduct,
     deleteProduct,
+    restoreProduct,
+    forceDelete,
   };
 }

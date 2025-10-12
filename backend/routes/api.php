@@ -15,6 +15,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StockAlertController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SystemSettingController;
 use App\Mail\PurchaseOrder;
 use App\Models\Brand;
 use Illuminate\Http\Request;
@@ -47,11 +48,14 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
 Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
     Route::get('/products/index', 'index')->withoutMiddleware(['admin']);;
     Route::get('/products/show/{product_id}', 'show')->withoutMiddleware(['admin']);
+    Route::get('/products/archived', 'archived');
     Route::post('/products/productSupplier', 'getProductsBySupplier');
     Route::post('/products/store', 'store');
+    Route::post('/products/restore', 'restore');
     Route::put('/products/update', 'update');
     Route::delete('/products/softDelete', 'softDelete');
     Route::delete('/products/deletePhoto', 'deleteProductPhoto');
+    Route::delete('/products/forceDelete', 'forceDelete');
 });
 
 //SUPPLIER, CATEGORIES, AND BRANDS CRUD
@@ -126,4 +130,9 @@ Route::middleware(['auth:sanctum', 'staff'])->controller(StaffController::class)
     Route::get('/staff/getTransactions', 'getSaleTransactions')->withoutMiddleware(['staff']);
     Route::post('/staff/sale', 'finalizedSale');
     Route::get('/staff/dashboard', 'getDashboardDatas');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(SystemSettingController::class)->group(function () {
+    Route::get('/system/index', 'index');
+    Route::post('/system/config', 'create');
 });

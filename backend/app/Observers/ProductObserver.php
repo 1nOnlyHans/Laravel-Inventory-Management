@@ -77,6 +77,11 @@ class ProductObserver
     public function restored(Product $product): void
     {
         //
+        AuditLog::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Restored a Product',
+            'details' => $product->product_name . ' has been removed'
+        ]);
     }
 
     /**
@@ -84,6 +89,11 @@ class ProductObserver
      */
     public function forceDeleted(Product $product): void
     {
-        //
+        //        
+        AuditLog::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Permanently deleted a product',
+            'details' => $product->product_name . ' has been permanently removed'
+        ]);
     }
 }

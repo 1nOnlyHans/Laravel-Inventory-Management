@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AuditLog::class);
     }
+
+    public function config()
+    {
+        return $this->hasMany(SystemSetting::class);
+    }
 }
