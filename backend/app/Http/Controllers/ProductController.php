@@ -6,6 +6,8 @@ use App\Events\LowStock;
 use App\Events\OutOfStock;
 use App\Models\Product;
 use App\Models\ProductPhoto;
+use App\Models\Purchase;
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
@@ -68,6 +70,14 @@ class ProductController extends Controller
                 ? 'Low Stock'
                 : 'Available');
 
+        $tax = SystemSetting::where('config_key', 'tax')->first();
+        $profit = SystemSetting::where('config_key', 'profit')->first();
+
+        $cost = $validated['unit_price'];
+        $profitAmount = $cost * ($profit->config_value / 100); //30%
+        $taxAmount = $cost * ($tax->config_value / 100); //5%
+        $sellingPrice = $cost + $profitAmount + $taxAmount;
+
         $product = Product::create([
             'supplier_id' => $supplier_id,
             'category_id' => $category_id,
@@ -77,7 +87,7 @@ class ProductController extends Controller
             'product_name' => $validated['product_name'],
             'product_description' => $validated['product_description'],
             'product_quantity' => $validated['product_quantity'],
-            'unit_price' => $validated['unit_price'],
+            'unit_price' => $sellingPrice,
             'reorder_level' => $validated['reorder_level'],
             'status' => $status
         ]);
@@ -147,6 +157,7 @@ class ProductController extends Controller
                 ? 'Low Stock'
                 : 'Available');
         //UPDATE
+
         $product->update([
             'supplier_id' => $validated['supplier_id'],
             'category_id' => $validated['category_id'],

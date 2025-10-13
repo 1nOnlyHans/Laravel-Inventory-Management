@@ -41,8 +41,22 @@ const props = defineProps({
 const emit = defineEmits(['sale']);
 
 const handleEmit = async (saleCred) => {
+    const totalPrice = props.items.reduce((sum, item) => {
+        return sum += Number(item.total_price)
+    }, 0);
+    if (saleCred.amount_received < 0) {
+        alert("Amount received cannot be negative.");
+        saleCred.amount_received = 0;
+        return;
+    }
+
+    if (saleCred.amount_received < totalPrice) {
+        return alert('Invalid Amount');
+    }
+
     await emit('sale', saleCred);
-}
+};
+
 
 watch(() => props.items, (newItem) => {
     saleCred.value.items = newItem.map((item) => {
@@ -89,7 +103,8 @@ watch(() => props.items, (newItem) => {
                         <Label for="phone" class="text-sm font-medium text-gray-700">
                             Phone
                         </Label>
-                        <Input id="phone" type="tel" placeholder="+63 900 000 0000" v-model="saleCred.phone" required />
+                        <Input id="phone" type="tel" placeholder="+63 900 000 0000" v-model="saleCred.phone" required
+                            @input="saleCred.phone = saleCred.phone.replace(/[^0-9+]/g, '')" />
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -133,8 +148,8 @@ watch(() => props.items, (newItem) => {
                         <Label for="amount" class="text-sm font-medium text-gray-700">
                             Amount Received
                         </Label>
-                        <Input id="amount" type="number" placeholder="₱0.00" v-model="saleCred.amount_received"
-                            required />
+                        <Input id="amount" type="number" placeholder="₱0.00" v-model="saleCred.amount_received" required
+                            min="0" />
                     </div>
 
                     <!-- Notes -->
