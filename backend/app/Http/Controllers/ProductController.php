@@ -2,30 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\LowStock;
-use App\Events\OutOfStock;
 use App\Models\Product;
 use App\Models\ProductPhoto;
-use App\Models\Purchase;
 use App\Models\SystemSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProductController extends Controller
 {
     //
-
     public function index()
     {
         $products = Product::with(['supplier', 'category', 'brand', 'photos'])->latest()->get();
 
         foreach ($products as $product) {
             // $product->makeHidden(['id']);
-            $product->encrypted_id = Crypt::encryptString($product->id);
+            $product->encrypted_id = Hashids::encode($product->id);
         }
 
         return response()->json($products, Response::HTTP_OK);
@@ -36,7 +32,7 @@ class ProductController extends Controller
 
         foreach ($products as $product) {
             // $product->makeHidden(['id']);
-            $product->encrypted_id = Crypt::encryptString($product->id);
+            $product->encrypted_id = Hashids::encode($product->id);
         }
 
         return response()->json($products, Response::HTTP_OK);
@@ -60,9 +56,9 @@ class ProductController extends Controller
             'photos.*' => [File::types(['jpg', 'jpeg', 'png', 'svg', 'webp'])]
         ]);
 
-        $supplier_id = Crypt::decryptString($validated['supplier_id']);
-        $category_id = Crypt::decryptString($validated['category_id']);
-        $brand_id = Crypt::decryptString($validated['brand_id']);
+        $supplier_id = Hashids::decode($validated['supplier_id']);
+        $category_id = Hashids::decode($validated['category_id']);
+        $brand_id = Hashids::decode($validated['brand_id']);
 
         $status = intval($validated['product_quantity']) === 0
             ? 'Out of Stock'
@@ -79,9 +75,9 @@ class ProductController extends Controller
         $sellingPrice = $cost + $profitAmount + $taxAmount;
 
         $product = Product::create([
-            'supplier_id' => $supplier_id,
-            'category_id' => $category_id,
-            'brand_id' => $brand_id,
+            'supplier_id' => $supplier_id[0],
+            'category_id' => $category_id[0],
+            'brand_id' => $brand_id[0],
             'SKU' => $validated['SKU'],
             'model' => $validated['model'],
             'product_name' => $validated['product_name'],
@@ -113,17 +109,17 @@ class ProductController extends Controller
 
     public function show(Request $request)
     {
-        $id = Crypt::decryptString($request->route('product_id'));
-        $product = Product::with(['supplier', 'category', 'brand', 'photos', 'purchases'])->findOrFail($id);
+        $id = Hashids::decode($request->route('product_id'));
+        $product = Product::with(['supplier', 'category', 'brand', 'photos', 'purchases'])->findOrFail($id[0]);
         $product->makeHidden(['id']);
         // $product->supplier->makeHidden(['id']);
-        $product->supplier->encrypted_id = Crypt::encryptString($product->supplier->id);
+        $product->supplier->encrypted_id = Hashids::encode($product->supplier->id);
         if (count($product->purchases) > 0) {
             $product->latest_srp = $product->purchases[count($product->purchases) - 1]->unit_price;
         } else {
             $product->latest_srp = 0;
         }
-        $product->encrypted_id = Crypt::encryptString($product->id);
+        $product->encrypted_id = Hashids::encode($product->id);
         return response()->json($product, Response::HTTP_OK);
     }
 
@@ -131,16 +127,16 @@ class ProductController extends Controller
     {
 
         //Decrypt ID
-        $id = Crypt::decryptString($request->product_id);
+        $id = Hashids::decode($request->product_id);
 
         //VALIDATE
         $validated = $request->validate([
             'supplier_id' => ['required'],
             'category_id' => ['required'],
             'brand_id' => ['required'],
-            'SKU' => ['required', Rule::unique('products', 'SKU')->ignore($id, 'id')],
+            'SKU' => ['required', Rule::unique('products', 'SKU')->ignore($id[0], 'id')],
             'model' => ['required'],
-            'product_name' => ['required', Rule::unique('products', 'product_name')->ignore($id, 'id')],
+            'product_name' => ['required', Rule::unique('products', 'product_name')->ignore($id[0], 'id')],
             'product_description' => ['required'],
             'product_quantity' => ['required'],
             'unit_price' => ['required'],
@@ -148,7 +144,7 @@ class ProductController extends Controller
         ]);
 
         //FIND INSTANCE
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         //Check Status
         $status = intval($validated['product_quantity']) === 0
@@ -206,17 +202,17 @@ class ProductController extends Controller
 
     public function restore(Request $request)
     {
-        $id = Crypt::decryptString($request->product_id);
+        $id =  Hashids::decode($request->product_id);
 
-        $product = Product::withTrashed()->findOrFail($id)->restore();
+        $product = Product::withTrashed()->findOrFail($id[0])->restore();
         return response()->json(['icon' => 'success', 'title' => 'Item has been Restored', 'text' => 'item has been restored'], Response::HTTP_OK);
     }
 
     public function softDelete(Request $request)
     {
-        $id = Crypt::decryptString($request->product_id);
+        $id = Hashids::decode($request->product_id);
 
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         $product->delete();
 
@@ -225,8 +221,8 @@ class ProductController extends Controller
 
     public function forceDelete(Request $request)
     {
-        $id = Crypt::decryptString($request->product_id);
-        $photos = ProductPhoto::where('product_id', $id)->get();
+        $id =  Hashids::decode($request->product_id);
+        $photos = ProductPhoto::where('product_id', $id[0])->get();
 
         foreach ($photos as $photo) {
             if (Storage::disk('public')->exists($photo->image)) {
@@ -234,17 +230,18 @@ class ProductController extends Controller
             }
         }
 
-        $product = Product::withTrashed()->findOrFail($id)->forceDelete();
+        $product = Product::withTrashed()->findOrFail($id[0])->forceDelete();
 
         return response()->json(['icon' => 'success', 'title' => 'Item has been permanently deleted', 'text' => 'Item datas is permanently deleted'], Response::HTTP_OK);
     }
 
     public function getProductsBySupplier(Request $request)
     {
-        $products = Product::with('supplier')->where('supplier_id', Crypt::decryptString($request->supplier_id))->get();
+        $id = Hashids::decode($request->supplier_id);
+        $products = Product::with('supplier')->where('supplier_id', $id[0])->get();
         foreach ($products as $product) {
             $product->makeHidden(['id']);
-            $product->encrypted_id = Crypt::encryptString($product->id);
+            $product->encrypted_id = Hashids::encode($product->id);
         }
         return response()->json($products, Response::HTTP_OK);
     }

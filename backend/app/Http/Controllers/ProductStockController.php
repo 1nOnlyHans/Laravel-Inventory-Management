@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\LowStock;
 use App\Events\StockIn;
 use App\Models\Product;
 use App\Models\Purchase;

@@ -10,8 +10,9 @@ use App\Models\StockMovement;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
+
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class StaffController extends Controller
 {
@@ -34,7 +35,7 @@ class StaffController extends Controller
 
 
         foreach ($request->items as $item) {
-            $id = Crypt::decryptString($item['product_id']);
+            $id = Hashids::decode($item['product_id']);
             $product = Product::findOrFail($id);
             $newQuantity = $product->product_quantity - $item['quantity'];
 

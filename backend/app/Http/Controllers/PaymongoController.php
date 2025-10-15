@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymongoSession;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class PaymongoController extends Controller
 {
@@ -67,10 +67,10 @@ class PaymongoController extends Controller
             'session_id' => ['required']
         ]);
 
-        $purchase_id = Crypt::decryptString($validate['purchase_id']);
+        $purchase_id = Hashids::decode($validate['purchase_id']);
 
         $session = PaymongoSession::create([
-            'purchase_id' => $purchase_id,
+            'purchase_id' => $purchase_id[0],
             'session_id' => $validate['session_id']
         ]);
 

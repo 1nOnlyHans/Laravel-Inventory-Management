@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class BrandController extends Controller
 {
@@ -18,7 +18,7 @@ class BrandController extends Controller
 
         foreach ($brands as $brand) {
             // $brand->makeHidden(['id']);
-            $brand->encrypted_id = Crypt::encryptString($brand->id);
+            $brand->encrypted_id = Hashids::encode($brand->id);
         }
 
         return response()->json($brands, 200);
@@ -38,14 +38,14 @@ class BrandController extends Controller
 
     public function show(Request $request)
     {
-        $id = Crypt::decryptString($request->route('brand_id'));
+        $id = Hashids::decode($request->route('brand_id'));
         $brand = Brand::with('products')->findOrFail($id);
         $brand->makeHidden(['id']);
-        $brand->encrypted_id = Crypt::encryptString($brand->id);
+        $brand->encrypted_id = Hashids::encode($brand->id);
         if (count($brand->products) > 0) {
             foreach ($brand->products as $product) {
                 $product->makeHidden(['id']);
-                $product->encrypted_id = Crypt::encryptString($product->id);
+                $product->encrypted_id = Hashids::encode($product->id);
             }
         }
 
@@ -54,9 +54,9 @@ class BrandController extends Controller
 
     public function update(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
-        $validated = $request->validate(['brand_name' => Rule::unique('brands', 'brand_name')->ignore($id, 'id'), 'brand_description' => ['nullable']]);
-        $brand = Brand::findOrFail($id);
+        $id = Hashids::decode($request->encrypted_id);
+        $validated = $request->validate(['brand_name' => Rule::unique('brands', 'brand_name')->ignore($id[0], 'id'), 'brand_description' => ['nullable']]);
+        $brand = Brand::findOrFail($id[0]);
         $brand->update($validated);
 
         return response(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $brand . ' has been updated'], Response::HTTP_OK);
@@ -64,7 +64,7 @@ class BrandController extends Controller
 
     public function destroy(Request $request)
     {
-        $brand = Brand::findOrFail(Crypt::decryptString($request->brand_id));
+        $brand = Brand::findOrFail(Hashids::decode($request->brand_id)[0]);
         $brand->delete();
         return response(['icon' => 'success', 'title' => 'Deleted Successfully', 'text' => $brand . ' has been deleted'], Response::HTTP_OK);
     }

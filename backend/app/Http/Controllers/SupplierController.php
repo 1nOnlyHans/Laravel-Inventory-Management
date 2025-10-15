@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class SupplierController extends Controller
 {
@@ -16,7 +16,7 @@ class SupplierController extends Controller
         // $suppliers = Supplier::with('products')->latest()->paginate(10);
 
         // $suppliers->getCollection()->transform(function ($supplier) {
-        //     $supplier->encrypted_id = Crypt::encryptString($supplier->id);
+        //     $supplier->encrypted_id = Hashids::decode($supplier->id);
         //     $supplier->makeHidden(['id']);
         //     return $supplier;
         // });
@@ -25,7 +25,7 @@ class SupplierController extends Controller
 
         foreach ($suppliers as $supplier) {
             // $supplier->makeHidden(['id']);
-            $supplier->encrypted_id = Crypt::encryptString($supplier->id);
+            $supplier->encrypted_id = Hashids::encode($supplier->id);
         }
 
         return response()->json($suppliers, 200);
@@ -59,14 +59,14 @@ class SupplierController extends Controller
 
     public function show(Request $request)
     {
-        $id = Crypt::decryptString($request->route('supplier_id'));
+        $id = Hashids::decode($request->route('supplier_id'))[0];
         $supplier = Supplier::with('products')->findOrFail($id);
         $supplier->makeHidden(['id']);
         $supplier->encrypted_id = $request->encrypted_id;
         if ($supplier->products && count($supplier->products) > 0) {
             foreach ($supplier->products as $product) {
                 $product->makehidden['id'];
-                $product->encrypted_id = Crypt::encryptString($product->id);
+                $product->encrypted_id = Hashids::encode($product->id);
             }
         }
         return response()->json($supplier, Response::HTTP_OK);
@@ -74,7 +74,7 @@ class SupplierController extends Controller
 
     public function update(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
+        $id = Hashids::decode($request->encrypted_id)[0];
         $validated = $request->validate([
             'encrypted_id' => ['required'], // or supplier_id
             'supplier_name' => ['required', Rule::unique('suppliers', 'supplier_name')->ignore($id, 'id')],
@@ -89,7 +89,7 @@ class SupplierController extends Controller
     }
     public function destroy(Request $request)
     {
-        $supplier = Supplier::destroy(Crypt::decryptString($request->encrypted_id));
+        $supplier = Supplier::destroy(Hashids::decode($request->encrypted_id)[0]);
 
         return response()->json(
             [

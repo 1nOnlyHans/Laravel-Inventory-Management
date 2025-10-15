@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Events\SupplierOrderAccepted;
 use App\Mail\PurchaseOrder;
-use App\Mail\TestMailer;
 use App\Models\Purchase;
 use App\Models\PurchaseOrderItems;
 use App\Models\PurchasePaymentRecord;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class PurchaseController extends Controller
 {
@@ -25,14 +24,14 @@ class PurchaseController extends Controller
             $po->makeHidden(['id']);
             $po->makeHidden(['supplier_id']);
             $po->supplier->makeHidden(['id']);
-            $po->supplier->supplier_encrypted_id = Crypt::encryptString($po->supplier->id);
-            $po->encrypted_id = Crypt::encryptString($po->id);
+            $po->supplier->supplier_encrypted_id = Hashids::encode($po->supplier->id);
+            $po->encrypted_id = Hashids::encode($po->id);
 
             foreach ($po->items as $item) {
                 $item->makeHidden(['id']);
                 $item->makeHidden(['product_id']);
                 $item->makeHidden(['purchase_order_id']);
-                $item->encrypted_id = Crypt::encryptString($item->id);
+                $item->encrypted_id = Hashids::encode($item->id);
                 $item->product = $item->product;
             }
         }
@@ -56,7 +55,7 @@ class PurchaseController extends Controller
 
         //Insert PO
         $PO = Purchase::create([
-            'supplier_id' => Crypt::decryptString($validated['supplier_id']),
+            'supplier_id' => Hashids::decode($validated['supplier_id'])[0],
             'reference_no' => $reference_no,
             'order_date' => $validated['order_date'],
             'expected_date' => $validated['expected_date']
@@ -66,7 +65,7 @@ class PurchaseController extends Controller
         foreach ($items as $item) {
             PurchaseOrderItems::create([
                 'purchase_order_id' => $PO->id,
-                'product_id' => Crypt::decryptString($item['product_id']),
+                'product_id' => Hashids::decode($item['product_id'])[0],
                 'unit_price' => $item['unit_price'],
                 'quantity' => $item['quantity'],
                 'total' => $item['unit_price'] * $item['quantity']
@@ -80,8 +79,8 @@ class PurchaseController extends Controller
 
     public function show(Request $request)
     {
-        $id = Crypt::decryptString($request->route('purchase_id'));
-        $PO = Purchase::with(['supplier', 'items'])->findOrFail($id);
+        $id = Hashids::decode($request->route('purchase_id'));
+        $PO = Purchase::with(['supplier', 'items'])->findOrFail($id[0]);
         return response()->json($PO, Response::HTTP_OK);
     }
 
@@ -104,7 +103,7 @@ class PurchaseController extends Controller
         $reference_no = null;
 
         if ($request->order_id && $request->order_id !== '') {
-            $id = Crypt::decryptString($request->order_id);
+            $id = Hashids::decode($request->order_id)[0];
         } else {
             $id = $request->purchase_id;
         }
@@ -132,11 +131,13 @@ class PurchaseController extends Controller
 
     public function updateStatus(Request $request)
     {
-        try {
-            $id = Crypt::decryptString($request->purchase_id);
-        } catch (\Exception $e) {
+        $id = Hashids::decode((string) $request->purchase_id);
+        if (count($id) <= 0) {
             $id = $request->purchase_id;
+        } else {
+            $id = $id[0];
         }
+
         $po = Purchase::findOrFail($id);
         $po->payment_status = 'Paid';
         $po->save();
@@ -145,7 +146,7 @@ class PurchaseController extends Controller
 
     public function markAsDelivered(Request $request)
     {
-        $po = Purchase::findOrFail(Crypt::decryptString($request->purchase_id));
+        $po = Purchase::findOrFail(Hashids::decode($request->purchase_id)[0]);
         $po->status = 'Delivered';
         $po->save();
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => 'Marked as Delivered!'], Response::HTTP_OK);

@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class CategoryController extends Controller
 {
@@ -17,7 +17,7 @@ class CategoryController extends Controller
         // $categories = Category::with('products')->latest()->paginate(10);
 
         // $categories->getCollection()->transform(function ($category) {
-        //     $category->encrypted_id = Crypt::encryptString($category->id);
+        //     $category->encrypted_id = Hashids::decode($category->id);
         //     $category->makeHidden(['id']);
         //     return $category;
         // });
@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
         foreach ($categories as $category) {
             $category->makeHidden(['id']);
-            $category->encrypted_id = Crypt::encryptString($category->id);
+            $category->encrypted_id = Hashids::encode($category->id);
         }
 
         return response()->json($categories, 200);
@@ -54,13 +54,13 @@ class CategoryController extends Controller
 
     public function show(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
+        $id = Hashids::decode($request->encrypted_id)[0];
 
         $category = Category::with('products')->findOrFail($id);
         $category->makeHidden(['id']);
         if ($category->products) {
             foreach ($category->products as $product) {
-                $product->encrypted_id = Crypt::encryptString($product->id);
+                $product->encrypted_id = Hashids::encode($product->id);
                 $product->makeHidden(['id']);
             }
         }
@@ -69,7 +69,7 @@ class CategoryController extends Controller
 
     public function update(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
+        $id = Hashids::decode($request->encrypted_id)[0];
         $validated = $request->validate(
             [
                 'category_name' => [
@@ -87,7 +87,7 @@ class CategoryController extends Controller
 
     public function destroy(Request $request)
     {
-        $category = Category::destroy(Crypt::decryptString($request->encrypted_id));
+        $category = Category::destroy(Hashids::decode($request->encrypted_id)[0]);
 
         return response(['icon' => 'success', 'title' => 'Deleted Successfully', 'text' => $category . ' has been deleted'], Response::HTTP_OK);
     }

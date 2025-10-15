@@ -6,10 +6,10 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class EmployeeController extends Controller
 {
@@ -21,13 +21,13 @@ class EmployeeController extends Controller
 
         // map each employee and replace id with encrypted one
         $employees->getCollection()->transform(function ($employee) {
-            $employee->encrypted_id = Crypt::encryptString($employee->id);
+            $employee->encrypted_id = Hashids::encode($employee->id);
             return $employee;
         });
 
         //Same shit
         // foreach ($employees as $employee) {
-        //     $employee->encrypted_id = Crypt::encryptString($employee->id);
+        //     $employee->encrypted_id = Hashids::encode($employee->id);
         // }
 
         return response()->json([
@@ -85,34 +85,34 @@ class EmployeeController extends Controller
 
     public function show(Request $request)
     {
-        $employee_id = Crypt::decryptString($request->route('employee_id'));
+        $employee_id = Hashids::decode($request->route('employee_id'));
         //QUERY BUILDER
         // $employee = DB::table('employees')->select('unique_employee_id')->where('id', $employee_id)->get();
-        $employee = Employee::with(['user'])->findOrFail($employee_id);
+        $employee = Employee::with(['user'])->findOrFail($employee_id[0]);
         $employee->makeHidden(['id']);          // hides employee id
         if ($employee->user) {
             $employee->user->makeHidden(['id']);    // hides user id
             $employee->user->makeHidden(['employee_id']);
-            $employee->user->encrypted_id = Crypt::encryptString($employee->user->id);
+            $employee->user->encrypted_id = Hashids::encode($employee->user->id);
         }
-        $employee->encrypted_id = Crypt::encryptString($employee_id);
+        $employee->encrypted_id = Hashids::encode($employee_id);
         return response()->json($employee, 200);
     }
 
     public function update(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
+        $id = Hashids::decode($request->encrypted_id);
 
         $validated = $request->validate([
             'firstname' => ['required'],
             'middlename' => ['nullable'],
             'lastname' => ['required'],
-            'email' => ['required', 'email', Rule::unique('employees')->ignore($id, 'id')],
+            'email' => ['required', 'email', Rule::unique('employees')->ignore($id[0], 'id')],
             'gender' => ['required'],
             'dob' => ['required']
         ]);
 
-        $employee = Employee::findOrFail($id);
+        $employee = Employee::findOrFail($id[0]);
 
         $employee->update([
             'firstname' => $validated['firstname'],
@@ -134,14 +134,14 @@ class EmployeeController extends Controller
 
     public function updateAccount(Request $request)
     {
-        $id = Crypt::decryptString($request->encrypted_id);
+        $id = Hashids::decode($request->encrypted_id);
         $validated = $request->validate(
             [
                 'role' => ['required']
             ]
         );
 
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($id[0]);
 
         $user->update(['role' => $validated['role']]);
 
@@ -156,12 +156,12 @@ class EmployeeController extends Controller
 
     public function destroy(Request $request)
     {
-        $id = Crypt::decryptString($request->employee_id);
-        $employee = Employee::findOrFail($id);
+        $id = Hashids::decode($request->employee_id);
+        $employee = Employee::findOrFail($id[0]);
         if (Auth::user()->role === $employee->user->role) {
             return response()->json(['icon' => 'error', 'title' => 'Failed to delete', 'text' => 'Cannot delete same role'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        $employee->destroy($id);
+        $employee->destroy($id[0]);
 
         return response()->json(['icon' => 'success', 'title' => 'Deleted Successfully'], Response::HTTP_OK);
     }
