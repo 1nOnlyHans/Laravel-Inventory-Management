@@ -195,11 +195,6 @@ onMounted(async () => {
                     <h1 class="text-2xl font-semibold text-gray-800">Inventory</h1>
                     <p class="text-gray-500 text-sm">Manage Products</p>
                 </div>
-                <RouterLink :to="{ name: 'Admin Add Products' }"
-                    class="flex items-center bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-                    <FontAwesomeIcon :icon="faAdd" class="mr-2" />
-                    Add Product
-                </RouterLink>
             </div>
 
             <!-- Search -->

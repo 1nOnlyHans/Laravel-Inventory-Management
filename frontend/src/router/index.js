@@ -45,7 +45,16 @@ const routes = [
   {
     path: "/",
     component: GuestStaffLayout,
-    children: [{ path: "/", name: "Employee Login", component: StaffLogin }],
+    children: [
+      {
+        path: "/",
+        name: "Employee Login",
+        component: StaffLogin,
+        meta: {
+          requiresAuth: false,
+        },
+      },
+    ],
   },
   {
     path: "/admin",
@@ -152,7 +161,7 @@ const routes = [
         name: "Admin Purchase Management",
         component: AdminPurchaseManagement,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -161,7 +170,7 @@ const routes = [
         name: "Admin Purchase History",
         component: AdminPurchaseHistory,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -170,7 +179,7 @@ const routes = [
         name: "Admin Online Payment",
         component: AdminOnlinePayment,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -179,7 +188,7 @@ const routes = [
         name: "Admin Stock Movements",
         component: AdminStockMovementManagement,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -188,7 +197,7 @@ const routes = [
         name: "Admin Alerts",
         component: AdminAlerts,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -197,7 +206,7 @@ const routes = [
         name: "Admin Logs",
         component: AdminLogs,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -206,7 +215,7 @@ const routes = [
         name: "Admin Transactions",
         component: AdminTransactions,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -215,7 +224,7 @@ const routes = [
         name: "Admin Reports",
         component: AdminReports,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -224,7 +233,7 @@ const routes = [
         name: "System Settings",
         component: AdminSystemSettings,
         meta: {
-          requiresAuth: "true",
+          requiresAuth: true,
           role: "Admin",
         },
       },
@@ -339,18 +348,24 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
+
   //If not authenticated
   if (!auth.isAuthenticated) {
     await auth.fetchUser();
   }
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    next("/login");
+    return next("/");
   }
 
   //Invalid role
   if (to.meta.role && auth.user.role !== to.meta.role) {
-    next("/403");
+    return next("/403");
+  }
+
+  //Authenticated
+  if (to.meta.requiresAuth === false && auth.isAuthenticated) {
+    return next("/" + auth.user.role + "/dashboard");
   }
 
   next();
