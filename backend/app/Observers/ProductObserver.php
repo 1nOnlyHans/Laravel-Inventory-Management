@@ -36,8 +36,6 @@ class ProductObserver
     public function updated(Product $product): void
     {
         //
-        $alerts = StockAlert::with(['product'])->where('product_id', $product->id)->get();
-
         if ($product->status === 'Low Stock') {
             broadcast(new LowStock($product))->toOthers();
         } else if ($product->status === 'Out of Stock') {
@@ -45,7 +43,7 @@ class ProductObserver
         }
 
         if ($product->product_quantity > $product->reorder_level) {
-            foreach ($alerts as $alert) {
+            foreach ($product->alerts as $alert) {
                 $alert->status = 'Resolved';
                 $alert->save();
             }

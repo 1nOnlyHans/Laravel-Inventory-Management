@@ -35,7 +35,7 @@ class StaffController extends Controller
 
 
         foreach ($request->items as $item) {
-            $id = Hashids::decode($item['product_id']);
+            $id = Hashids::decode($item['product_id'])[0];
             $product = Product::findOrFail($id);
             $newQuantity = $product->product_quantity - $item['quantity'];
 

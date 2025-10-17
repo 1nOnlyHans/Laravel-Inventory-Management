@@ -112,7 +112,7 @@
                         <td>{{ $product->category->category_name ?? 'N/A' }}</td>
                         <td>{{ $product->supplier->supplier_name ?? 'N/A' }}</td>
                         <td class="text-center">{{ $product->product_quantity }}</td>
-                        <td class="text-right">₱{{ number_format($product->unit_price, 2) }}</td>
+                        <td class="text-right">{{ number_format($product->unit_price, 2) }}</td>
                         <td>
                             @if ($product->product_quantity <= 5)
                                 Reorder Soon

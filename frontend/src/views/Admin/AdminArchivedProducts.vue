@@ -2,14 +2,8 @@
 import { getProducts } from '@/composables/useProducts';
 import { manageProducts } from '@/composables/useProducts';
 import { computed, onMounted, ref, h, reactive, onUnmounted } from 'vue';
-import AddProductModal from '@/components/Modals/AddProductModal.vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faGear, faPen, faEye, faTrash, faAdd } from '@fortawesome/free-solid-svg-icons';
-import { Button } from "@/components/ui/button";
 import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
-import Textarea from '@/components/ui/textarea/Textarea.vue';
-import ProductActionModal from '@/components/Modals/ProductActionModal.vue';
 import ArchivedProductSlider from '@/components/Sliders/ArchivedProductSlider.vue';
 const { products, isLoading, fetchArchivedProducts } = getProducts();
 const { errors, restoreProduct, forceDelete } = manageProducts();

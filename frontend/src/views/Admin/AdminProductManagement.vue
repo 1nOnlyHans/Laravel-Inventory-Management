@@ -178,7 +178,7 @@ onMounted(async () => {
 
     <!-- Inventory Section -->
     <section v-else class="min-h-screen bg-gray-50 py-10 px-4">
-        <div class="mx-auto bg-white rounded-2xl shadow-md p-6 space-y-6 border border-gray-100">
+        <div class="mx-auto p-6 space-y-6">
 
             <!-- Header -->
             <div class="flex flex-wrap justify-between items-center border-b border-gray-200 pb-4">

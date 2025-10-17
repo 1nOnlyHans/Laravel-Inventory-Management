@@ -36,7 +36,9 @@ onMounted(() => {
                             </h2>
                             <p class="text-sm text-gray-500 mt-1">
                                 <span class="font-medium">{{ item.product.product_name }}</span> —
-                                Only <span class="text-red-500 font-semibold">{{ item.product.product_quantity }}</span>
+                                {{ item.status !== 'Resolved' ? 'Only' : '' }}
+                                <span :class="item.status === 'Resolved' ? 'text-green-500' : 'text-red-500'">
+                                    {{ item.product.product_quantity }}</span>
                                 remaining
                             </p>
                         </div>

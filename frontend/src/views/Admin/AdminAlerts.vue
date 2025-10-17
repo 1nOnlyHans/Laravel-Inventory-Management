@@ -1,7 +1,9 @@
 <script setup>
 import { getAlerts } from '@/composables/useStockAlert';
 import { onMounted } from 'vue';
-
+import { RouterLink } from 'vue-router';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 const { alerts, isLoading, fetchAlerts } = getAlerts();
 
 onMounted(() => {
@@ -36,13 +38,19 @@ onMounted(() => {
                             </h2>
                             <p class="text-sm text-gray-500 mt-1">
                                 <span class="font-medium">{{ item.product.product_name }}</span> —
-                                Only <span class="text-red-500 font-semibold">{{ item.product.product_quantity }}</span>
+                                {{ item.status !== 'Resolved' ? 'Only' : '' }}
+                                <span :class="item.status === 'Resolved' ? 'text-green-500' : 'text-red-500'">
+                                    {{ item.product.product_quantity }}</span>
                                 remaining
                             </p>
                         </div>
 
                         <!-- Right Side -->
-                        <div class="text-right">
+                        <div class="text-right flex justify-center items-center space-x-3">
+                            <RouterLink
+                                :to="{ name: 'Admin Product Details', params: { product_id: item.product.encrypted_id } }" class="text-brand">
+                                <FontAwesomeIcon :icon="faEye" />
+                            </RouterLink>
                             <span :class="{
                                 'bg-green-100 text-green-700': item.status === 'Resolved',
                                 'bg-red-100 text-red-600': item.status === 'Pending',

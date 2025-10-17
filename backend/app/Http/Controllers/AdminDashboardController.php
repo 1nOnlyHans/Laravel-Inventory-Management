@@ -31,12 +31,14 @@ class AdminDashboardController extends Controller
         $inventory_value = 0;
 
         foreach ($stocks as $stock) {
+            $category_name = $stock->category->category_name;
+            $total_stocks_per_category[$category_name] = 0;
+        }
+
+        foreach ($stocks as $stock) {
             $total_stocks += intval($stock->product_quantity);
             $inventory_value += floatval($stock->unit_price * $stock->product_quantity);
-            $category_name = $stock->category->category_name;
-
-            $total_stocks_per_category[$category_name] = 0;
-            $total_stocks_per_category[$category_name] += intval($stock->product_quantity);
+            $total_stocks_per_category[$stock->category->category_name] += intval($stock->product_quantity);
         }
 
         foreach ($stock_ins as $stock) {
