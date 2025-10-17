@@ -31,12 +31,12 @@ Route::controller(AuthController::class)->group(function () {
 
 // Route::group(['middleware' => ['auth:sanctum']], function () {});
 
-Route::middleware(['auth:sanctum', 'admin'])->controller(AdminDashboardController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(AdminDashboardController::class)->group(function () {
     Route::get('/admin/dashboard', 'getDashboardDatas');
 });
 
 //Employee Controller AND LOGIC
-Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(EmployeeController::class)->group(function () {
     Route::get('/employees/index', 'index');
     Route::post('/employees/store', 'store');
     Route::get('/employees/show/{employee_id}', 'show');
@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(EmployeeController::cla
 });
 
 //PRODUCT LOGIC
-Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(ProductController::class)->group(function () {
     Route::get('/products/index', 'index')->withoutMiddleware(['admin']);;
     Route::get('/products/show/{product_id}', 'show')->withoutMiddleware(['admin']);
     Route::get('/products/archived', 'archived');
@@ -60,7 +60,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(ProductController::clas
 });
 
 //SUPPLIER, CATEGORIES, AND BRANDS CRUD
-Route::middleware(['auth:sanctum', 'admin'])->controller(SupplierController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(SupplierController::class)->group(function () {
     Route::get('/suppliers/index', 'index')->withoutMiddleware(['admin']);;
     Route::post('/suppliers/store', 'store');
     Route::get('/suppliers/show', 'show');
@@ -68,7 +68,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(SupplierController::cla
     Route::delete('/suppliers/destroy', 'destroy');
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(CategoryController::class)->group(function () {
     Route::get('/categories/index', 'index')->withoutMiddleware(['admin']);
     Route::post('/categories/store', 'store');
     Route::get('/categories/show', 'show');
@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(CategoryController::cla
     Route::delete('/categories/destroy', 'destroy');
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->controller(BrandController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(BrandController::class)->group(function () {
     Route::get('/brands/index', 'index')->withoutMiddleware(['admin']);
     Route::get('/brands/show/{brand_id}', 'show');
     Route::post('/brands/store', 'store');
@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(BrandController::class)
 });
 
 //PURCHASE ORDERS
-Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(PurchaseController::class)->group(function () {
     Route::get('/purchase_order/index', 'index');
     Route::get('/purchase/show/{purchase_id}', 'show');
     Route::post('/purchase_order/sendMail', 'mail');
@@ -94,8 +94,9 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PurchaseController::cla
     Route::put('/purchase/updatestatus', 'updateStatus');
     Route::put('/purchase/delivered', 'markAsDelivered');
 });
+
 // PAYMONGO
-Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(PaymongoController::class)->group(function () {
     Route::post('/paymongo/payment', 'createPaymentIntent');
     Route::post('/paymongo/storeSession', 'storeSession');
     Route::get('/paymongo/latest', 'getLatestSession');
@@ -103,22 +104,22 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymongoController::cla
 });
 
 //STOCK
-Route::middleware(['auth:sanctum', 'admin'])->controller(ProductStockController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(ProductStockController::class)->group(function () {
     Route::get('/stocks/index', 'index');
     Route::post('/stocks/stockin', 'stockIn');
 });
 
 //ALERTS
-Route::middleware(['auth:sanctum', 'admin'])->controller(StockAlertController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(StockAlertController::class)->group(function () {
     Route::get('/alerts/index', 'index')->withoutMiddleware(['admin']);
 });
 
 //LOGS
-Route::middleware(['auth:sanctum', 'admin'])->controller(AuditLogController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(AuditLogController::class)->group(function () {
     Route::get('/logs/index', 'index')->withoutMiddleware(['admin']);
 });
 
-Route::middleware(['auth:sanctum'])->controller(PDFcontroller::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(PDFcontroller::class)->group(function () {
     Route::get('/pdf/inventory', 'generateInventoryValuationReport');
     Route::get('/pdf/movement', 'generateStockMovementsReport');
     Route::get('/pdf/purchase', 'generatePurchaseHistoryReport');
@@ -127,13 +128,13 @@ Route::middleware(['auth:sanctum'])->controller(PDFcontroller::class)->group(fun
     Route::get('/pdf/outOfStock', 'generateOutOfStockReport');
 });
 
-Route::middleware(['auth:sanctum', 'staff'])->controller(StaffController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'staff', 'authenticated'])->controller(StaffController::class)->group(function () {
     Route::get('/staff/getTransactions', 'getSaleTransactions')->withoutMiddleware(['staff']);
     Route::post('/staff/sale', 'finalizedSale');
     Route::get('/staff/dashboard', 'getDashboardDatas');
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->controller(SystemSettingController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(SystemSettingController::class)->group(function () {
     Route::get('/system/index', 'index');
     Route::post('/system/config', 'create');
 });

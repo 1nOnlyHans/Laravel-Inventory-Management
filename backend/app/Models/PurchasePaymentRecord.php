@@ -8,7 +8,13 @@ class PurchasePaymentRecord extends Model
 {
     //
 
-    protected $guarded = [];
+    protected $fillable = [
+        'purchase_id',
+        'reference_no',
+        'payment_method',
+        'amount_paid',
+        'total_amount'
+    ];
 
     public function purchase()
     {

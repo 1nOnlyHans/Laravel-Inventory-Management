@@ -9,7 +9,14 @@ class SaleTransaction extends Model
     //
     protected $table = 'sales_transactions';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'customer_id',
+        'reference_no',
+        'payment_method',
+        'amount_paid',
+        'total_amount',
+        'notes'
+    ];
 
     public function customer()
     {

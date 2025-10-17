@@ -8,7 +8,10 @@ class Brand extends Model
 {
     //
 
-    protected $guarded = [];
+    protected $fillable = [
+        'brand_name',
+        'brand_description'
+    ];
 
     public function products()
     {

@@ -8,7 +8,11 @@ class AuditLog extends Model
 {
     //
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'action',
+        'details'
+    ];
 
     public function user()
     {

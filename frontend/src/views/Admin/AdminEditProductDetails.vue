@@ -78,7 +78,7 @@ onMounted(async () => {
     </section>
 
     <section v-else class="min-h-screen bg-gray-50 flex justify-center py-10">
-        <div class="w-full max-w-6xl bg-white shadow-lg rounded-2xl p-8">
+        <div class="w-full max-w-6xl p-8">
             <!-- Title -->
             <header class="mb-8 text-center">
                 <h2 class="text-3xl font-semibold text-gray-800">Edit Product Details</h2>
@@ -237,8 +237,7 @@ onMounted(async () => {
 
                 <!-- Submit -->
                 <div class="flex justify-center pt-4">
-                    <Button type="submit"
-                        class="bg-accents hover:bg-accents-hover text-white font-medium px-6 py-2 rounded-lg">
+                    <Button type="submit">
                         Confirm Update
                     </Button>
                 </div>

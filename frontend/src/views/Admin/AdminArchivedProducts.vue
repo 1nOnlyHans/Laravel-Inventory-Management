@@ -186,8 +186,8 @@ onMounted(async () => {
             <!-- Header -->
             <div class="flex flex-wrap justify-between items-center border-b border-gray-200 pb-4">
                 <div>
-                    <h1 class="text-2xl font-semibold text-gray-800">Inventory</h1>
-                    <p class="text-gray-500 text-sm">Manage Products</p>
+                    <h1 class="text-2xl font-semibold text-gray-800">Archived Products</h1>
+                    <p class="text-gray-500 text-sm">Manage Archived Products</p>
                 </div>
             </div>
 

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Vinkla\Hashids\Facades\Hashids;
@@ -25,7 +26,7 @@ class EmployeeController extends Controller
             return $employee;
         });
 
-        //Same shit
+        //Same
         // foreach ($employees as $employee) {
         //     $employee->encrypted_id = Hashids::encode($employee->id);
         // }
@@ -142,8 +143,8 @@ class EmployeeController extends Controller
         );
 
         $user = User::findOrFail($id[0]);
-
-        $user->update(['role' => $validated['role']]);
+        $newPassword = ucfirst($validated['role']);
+        $user->update(['role' => $validated['role'], 'password' => Hash::make($newPassword)]);
 
         return response()->json([
             'icon' => 'success',

@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class StockAlert extends Model
 {
     //
-    protected $guarded = [];
+    protected $fillable = [
+        'product_id',
+        'aler_message',
+        'status'
+    ];
 
     public function product()
     {

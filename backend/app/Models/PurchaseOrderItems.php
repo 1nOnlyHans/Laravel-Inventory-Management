@@ -9,7 +9,13 @@ class PurchaseOrderItems extends Model
     //
     protected $table = 'purchase_order_items';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'purchase_order_id',
+        'product_id',
+        'unit_price',
+        'quantity',
+        'total'
+    ];
 
 
     public function supplier()

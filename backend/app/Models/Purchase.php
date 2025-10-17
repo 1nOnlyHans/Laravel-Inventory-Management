@@ -9,7 +9,14 @@ class Purchase extends Model
     //
     protected $table = 'purchase_orders';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'supplier_id',
+        'reference_no',
+        'order_date',
+        'expected_date',
+        'status',
+        'payment_status'
+    ];
 
     public function items()
     {

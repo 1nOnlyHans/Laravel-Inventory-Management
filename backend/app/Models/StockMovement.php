@@ -8,7 +8,14 @@ class StockMovement extends Model
 {
     //
     protected $table = 'stock_movements';
-    protected $guarded = [];
+    protected $fillable = [
+        'product_id',
+        'user_id',
+        'reference_no',
+        'movement_type',
+        'quantity',
+        'reason'
+    ];
 
     public function product()
     {
