@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CsvImportController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PaymongoController;
 use App\Http\Controllers\PDFcontroller;
@@ -137,4 +138,8 @@ Route::middleware(['auth:sanctum', 'staff', 'authenticated'])->controller(StaffC
 Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(SystemSettingController::class)->group(function () {
     Route::get('/system/index', 'index');
     Route::post('/system/config', 'create');
+});
+
+Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(CsvImportController::class)->group(function () {
+    Route::post('/csv/staff', 'employeeBulkImport');
 });

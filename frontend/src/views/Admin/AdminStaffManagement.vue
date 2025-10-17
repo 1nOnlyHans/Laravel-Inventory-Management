@@ -1,6 +1,7 @@
 <script setup>
 import axios from '@/axios';
 import { getEmployees, manageEmployee } from '@/composables/useEmployee'
+import { CSVImport } from '@/composables/useCsv';
 import { computed, onMounted, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button';
 import EmployeeCard from '@/components/Cards/EmployeeCard.vue'
@@ -9,6 +10,8 @@ import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
 import ErrorLabel from '@/components/Errors/ErrorLabel.vue';
+import CsvStaffModal from '@/components/Modals/CsvStaffModal.vue';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import {
     Select,
     SelectContent,
@@ -32,6 +35,8 @@ import {
 import { RegularSwal } from '@/components/Swals/useSwals';
 const { employees, isLoading, fetchEmployees, pagination } = getEmployees()
 const { employeCred, addEmployee, errors, resetEmployeeCred } = manageEmployee();
+const { loadingImport, importStaff } = CSVImport();
+const openCsvModal = ref(false);
 const searchQuery = ref("");
 const searchedEmployee = ref([]);
 const isSearched = ref(false);
@@ -68,6 +73,22 @@ const handleAddEmployee = async () => {
     }
 }
 
+const handleImportStaff = async (file) => {
+    const success = await importStaff(file);
+    if (success && success.status === 200) {
+        openCsvModal.value = false;
+        await fetchEmployees();
+        RegularSwal(success.data);
+    } else {
+        openCsvModal.value = false;
+        RegularSwal({
+            icon: 'error',
+            title: 'Import Error'
+        });
+    }
+
+}
+
 watch(searchQuery, () => {
     isSearched.value = false
     if (searchQuery.value === '') {
@@ -81,6 +102,13 @@ watch(searchQuery, () => {
         <VueSpinnerOval size="80" color="#3b82f6" />
         <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
             Fetching Employees...
+        </h1>
+    </section>
+
+    <section v-else-if="loadingImport" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+        <VueSpinnerOval size="80" color="#3b82f6" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
+            Importing Data...
         </h1>
     </section>
 
@@ -231,7 +259,10 @@ watch(searchQuery, () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-
+            <Button @click="openCsvModal = true">
+                <FontAwesomeIcon :icon="faFileCsv" /> Bulk Import
+            </Button>
+            <CsvStaffModal @import="handleImportStaff" v-model:open="openCsvModal" />
         </div>
 
         <!-- Employees Grid -->
