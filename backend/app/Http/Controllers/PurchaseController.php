@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SupplierOrderAccepted;
+use App\Events\SupplierOrderRejected;
 use App\Mail\PurchaseOrder;
 use App\Models\Purchase;
 use App\Models\PurchaseOrderItems;
@@ -94,6 +95,16 @@ class PurchaseController extends Controller
         return response()->view('mail.accept', compact('purchase'));
     }
 
+    public function rejectOrder(Purchase $purchase)
+    {
+        $purchase->status = 'Rejected';
+        $purchase->save();
+
+        broadcast(new SupplierOrderRejected($purchase))->toOthers();
+
+        return response()->view('mail.reject', compact('purchase'));
+    }
+
     public function createPaymentRecord(Request $request)
     {
         $validated = $request->validate(['purchase_id' => ['required'], 'payment_method' => ['required'], 'amount_paid' => ['required'], 'total_amount' => ['required']]);
@@ -150,5 +161,13 @@ class PurchaseController extends Controller
         $po->status = 'Delivered';
         $po->save();
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => 'Marked as Delivered!'], Response::HTTP_OK);
+    }
+
+    public function destroy(Request $request)
+    {
+        $purchase = Purchase::findOrFail(Hashids::decode($request->purchase_id)[0]);
+        $purchase->delete();
+
+        return response()->json(['icon' => 'success', 'title' => 'Deleted Successfully', 'text' => 'Purchase Order has been deleted'], Response::HTTP_OK);
     }
 }

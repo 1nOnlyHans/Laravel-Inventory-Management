@@ -191,12 +191,6 @@ class ProductController extends Controller
             }
         }
 
-        // if ($status === 'Low Stock') {
-        //     broadcast(new LowStock($product))->toOthers();
-        // } else if ($status === 'Out of Stock') {
-        //     broadcast(new OutOfStock($product))->toOthers();
-        // }
-
         return response()->json(['icon' => 'success', 'title' => 'Updated Successfully', 'text' => $product . ' has been updated'], Response::HTTP_OK);
     }
 

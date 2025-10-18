@@ -2,6 +2,7 @@
 import { getBrands } from '@/composables/useBrands';
 import { manageBrands } from '@/composables/useBrands';
 import { computed, onMounted, ref, h, reactive } from 'vue';
+import { CSVImport } from '@/composables/useCsv';
 import AddBrandModal from '@/components/Modals/AddBrandModal.vue';
 import BrandModal from '@/components/Modals/BrandModal.vue';
 import Label from '@/components/ui/label/Label.vue';
@@ -17,11 +18,13 @@ import {
 import { RegularSwal, ConfirmationSwal } from '@/components/Swals/useSwals';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import CSVBrandsModal from '@/components/Modals/CSVBrandsModal.vue';
 const { brands, fetchBrands, isLoading } = getBrands();
 const { errors, addBrand, updateBrand, deleteBrand } = manageBrands();
+const { loadingImport, importBrands } = CSVImport();
 const columnHelper = createColumnHelper();
-
+const openCsvModal = ref(false);
 const brandCred = reactive({
     encrypted_id: '',
     brand_name: '',
@@ -159,6 +162,23 @@ const handleDeleteBrand = async (id) => {
         }
     })
 }
+
+const handleImport = async (file) => {
+    const success = await importBrands(file);
+    if (success && success.status === 200) {
+        openCsvModal.value = false;
+        await fetchBrands();
+        RegularSwal(success.data);
+    }
+    else {
+        openCsvModal.value = false;
+        RegularSwal({
+            icon: 'error',
+            title: 'Import Error'
+        });
+    }
+}
+
 onMounted(async () => {
     await fetchBrands();
 });
@@ -175,6 +195,13 @@ onMounted(async () => {
         </p>
     </section>
 
+    <section v-else-if="loadingImport" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+        <VueSpinnerOval size="80" color="#3b82f6" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
+            Importing Data...
+        </h1>
+    </section>
+
     <!-- Brand Management Table -->
     <section v-else class="container mx-auto p-6 min-h-screen">
         <!-- Header -->
@@ -182,7 +209,13 @@ onMounted(async () => {
             <h1 class="text-2xl font-bold text-gray-800 tracking-wide">
                 Product Brands
             </h1>
-            <AddBrandModal @add-brand="handleAddBrand" :errors="errors" />
+            <div class="flex justify-center space-x-3">
+                <AddBrandModal @add-brand="handleAddBrand" :errors="errors" />
+                <Button @click="openCsvModal = true">
+                    <FontAwesomeIcon :icon="faFileCsv" />
+                    Bulk Import
+                </Button>
+            </div>
         </div>
 
         <!-- Search -->
@@ -224,10 +257,12 @@ onMounted(async () => {
                 </tbody>
             </table>
         </div>
+        <!-- Update Modal -->
+        <BrandModal v-model:open="openUpdateModal" :errors="errors" :id="brandCred.encrypted_id"
+            :brand_name="brandCred.brand_name" :brand_description="brandCred.brand_description"
+            @update-brand="handleUpdatebrand" />
+        <CSVBrandsModal v-model:open="openCsvModal" v-on:import="handleImport" />
     </section>
 
-    <!-- Update Modal -->
-    <BrandModal v-model:open="openUpdateModal" :errors="errors" :id="brandCred.encrypted_id"
-        :brand_name="brandCred.brand_name" :brand_description="brandCred.brand_description"
-        @update-brand="handleUpdatebrand" />
+
 </template>

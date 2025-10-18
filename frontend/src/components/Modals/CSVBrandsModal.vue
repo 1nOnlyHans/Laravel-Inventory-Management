@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { faFileCsv } from "@fortawesome/free-solid-svg-icons"
 import { ref } from "vue"
 
 const emit = defineEmits(['import']);
@@ -30,9 +31,9 @@ const handleEmit = async () => {
     <Dialog>
         <DialogContent class="sm:max-w-md">
             <DialogHeader>
-                <DialogTitle>Import Staffs</DialogTitle>
+                <DialogTitle>Import Brands</DialogTitle>
                 <DialogDescription>
-                    Select CSV file to import multiple staff at once.
+                    Select CSV file to import multiple brands at once.
                 </DialogDescription>
             </DialogHeader>
             <form id="import-form" @submit.prevent="handleEmit">

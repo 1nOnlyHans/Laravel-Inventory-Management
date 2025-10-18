@@ -94,6 +94,7 @@ Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(Purcha
     Route::post('/purchase/record', 'createPaymentRecord');
     Route::put('/purchase/updatestatus', 'updateStatus');
     Route::put('/purchase/delivered', 'markAsDelivered');
+    Route::delete('/purchase/destroy', 'destroy');
 });
 
 // PAYMONGO
@@ -142,4 +143,7 @@ Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(System
 
 Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(CsvImportController::class)->group(function () {
     Route::post('/csv/staff', 'employeeBulkImport');
+    Route::post('/csv/suppliers', 'suppliersBulkImport');
+    Route::post('/csv/brands', 'brandsBulkImport');
+    Route::post('/csv/categories', 'categoriesBulkImport');
 });

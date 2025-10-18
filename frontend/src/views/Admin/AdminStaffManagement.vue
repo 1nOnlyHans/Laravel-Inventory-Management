@@ -86,7 +86,6 @@ const handleImportStaff = async (file) => {
             title: 'Import Error'
         });
     }
-
 }
 
 watch(searchQuery, () => {

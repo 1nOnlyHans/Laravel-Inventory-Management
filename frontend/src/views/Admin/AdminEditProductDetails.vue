@@ -92,7 +92,7 @@ onMounted(async () => {
                     <!-- Supplier -->
                     <div>
                         <Label>Supplier</Label>
-                        <Select v-model="productDetails.supplier.id">
+                        <Select v-model="productDetails.supplier_id" required>
                             <SelectTrigger class="w-full">
                                 <SelectValue placeholder="Select supplier" />
                             </SelectTrigger>
@@ -105,31 +105,32 @@ onMounted(async () => {
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <ErrorLabel v-if="errors?.supplier_id" :error="errors.supplier_id" />
                     </div>
 
                     <!-- Category -->
                     <div>
                         <Label>Category</Label>
-                        <Select v-model="productDetails.category.id">
+                        <Select v-model="productDetails.category_id" required>
                             <SelectTrigger class="w-full">
                                 <SelectValue placeholder="Select category" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Categories</SelectLabel>
-                                    <SelectItem v-for="category in categories" :key="category.id"
-                                        :value="category.encrypted_id">
+                                    <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
                                         {{ category.category_name }}
                                     </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <ErrorLabel v-if="errors?.category_id" :error="errors.category_id" />
                     </div>
 
                     <!-- Brand -->
                     <div>
                         <Label>Brand</Label>
-                        <Select v-model="productDetails.brand.id">
+                        <Select v-model="productDetails.brand_id" required>
                             <SelectTrigger class="w-full">
                                 <SelectValue placeholder="Select brand" />
                             </SelectTrigger>
@@ -142,57 +143,66 @@ onMounted(async () => {
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <ErrorLabel v-if="errors?.brand_id" :error="errors.brand_id" />
                     </div>
 
                     <!-- SKU -->
                     <div>
                         <Label>SKU</Label>
-                        <Input type="text" placeholder="e.g., SKU-12345" v-model="productDetails.SKU" />
+                        <Input type="text" placeholder="e.g., SKU-12345" v-model="productDetails.SKU" required />
+                        <ErrorLabel v-if="errors?.SKU" :error="errors.SKU" />
                     </div>
 
                     <!-- Model -->
                     <div>
                         <Label>Model</Label>
-                        <Input type="text" placeholder="e.g., Inspiron 15 3000" v-model="productDetails.model" />
+                        <Input type="text" placeholder="e.g., Inspiron 15 3000" v-model="productDetails.model"
+                            required />
+                        <ErrorLabel v-if="errors?.model" :error="errors.model" />
                     </div>
 
                     <!-- Product Name -->
                     <div>
                         <Label>Product Name</Label>
                         <Input type="text" placeholder="e.g., Dell Inspiron Laptop"
-                            v-model="productDetails.product_name" />
+                            v-model="productDetails.product_name" required />
+                        <ErrorLabel v-if="errors?.product_name" :error="errors.product_name" />
                     </div>
 
                     <!-- Quantity -->
                     <div>
                         <Label for="quantity">Quantity</Label>
-                        <NumberField id="quantity" :default-value="0" :min="0"
-                            v-model="productDetails.product_quantity">
+                        <NumberField id="quantity" :default-value="0" :min="0" v-model="productDetails.product_quantity"
+                            required="">
                             <NumberFieldContent>
                                 <NumberFieldDecrement />
                                 <NumberFieldInput />
                                 <NumberFieldIncrement />
                             </NumberFieldContent>
                         </NumberField>
+                        <ErrorLabel v-if="errors?.product_quantity" :error="errors.product_quantity" />
                     </div>
 
                     <!-- Unit Price -->
                     <div>
                         <Label>Unit Price</Label>
-                        <Input type="number" min="1" placeholder="Price per unit" v-model="productDetails.unit_price" />
+                        <Input type="number" placeholder="Price per unit" v-model="productDetails.unit_price"
+                            pattern="^\d*\.?\d*$" inputmode="decimal" required />
+                        <ErrorLabel v-if="errors?.unit_price" :error="errors.unit_price" />
                     </div>
 
                     <!-- Reorder Level -->
                     <div>
                         <Label>Reorder Level</Label>
                         <NumberField id="reorder_level" :default-value="0" :min="0"
-                            v-model="productDetails.reorder_level">
+                            v-model="productDetails.reorder_level" required="">
                             <NumberFieldContent>
                                 <NumberFieldDecrement />
                                 <NumberFieldInput />
                                 <NumberFieldIncrement />
                             </NumberFieldContent>
                         </NumberField>
+                        <ErrorLabel v-if="errors?.reorder_level" :error="errors.reorder_level" />
                     </div>
                 </div>
 

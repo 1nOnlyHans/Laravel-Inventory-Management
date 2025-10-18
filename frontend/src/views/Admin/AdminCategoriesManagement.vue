@@ -1,10 +1,11 @@
 <script setup>
 import { getCategories } from '@/composables/useCategories';
 import { manageCategories } from '@/composables/useCategories';
+import { CSVImport } from '@/composables/useCsv';
 import { computed, onMounted, ref, h } from 'vue';
 import { RouterLink } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faGear, faPen, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPen, faEye, faTrash, faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/ui/button/Button.vue';
 import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -20,10 +21,13 @@ import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import AddCategoryModal from '@/components/Modals/AddCategoryModal.vue';
 import CategoryModal from '@/components/Modals/CategoryModal.vue';
 import { ConfirmationSwal, RegularSwal } from '@/components/Swals/useSwals';
+import CSVCategoriesModal from '@/components/Modals/CSVCategoriesModal.vue';
 const { categories, isLoading, fetchCategories } = getCategories();
 const { categoryCred, addCategory, deleteCategory, updateCategory, errors } = manageCategories();
+const { loadingImport, importCategories } = CSVImport();
 const columnHelper = createColumnHelper();
 const openUpdateModal = ref(false);
+const openCsvModal = ref(false);
 const columns = [
     columnHelper.accessor('category_name', {
         id: "Category",
@@ -154,6 +158,22 @@ const handleDeleteCategory = async (id) => {
         }
     })
 }
+
+const handleImport = async (file) => {
+    const success = await importCategories(file);
+    if (success && success.status === 200) {
+        openCsvModal.value = false;
+        await fetchCategories();
+        RegularSwal(success.data);
+    } else {
+        openCsvModal.value = false;
+        RegularSwal({
+            icon: 'error',
+            title: 'Import Error'
+        });
+    }
+}
+
 onMounted(() => {
     fetchCategories();
 })
@@ -161,10 +181,7 @@ onMounted(() => {
 </script>
 <template>
     <!-- Loading State -->
-    <section
-        v-if="isLoading"
-        class="min-h-screen flex flex-col items-center justify-center text-center p-4"
-    >
+    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
         <VueSpinnerOval size="80" color="#3b82f6" />
         <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-accents">
             Fetching Product Categories...
@@ -174,6 +191,13 @@ onMounted(() => {
         </p>
     </section>
 
+    <section v-else-if="loadingImport" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+        <VueSpinnerOval size="80" color="#3b82f6" />
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
+            Importing Data...
+        </h1>
+    </section>
+
     <!-- Category Management Table -->
     <section v-else class="container mx-auto p-6">
         <!-- Header -->
@@ -181,62 +205,41 @@ onMounted(() => {
             <h1 class="text-2xl font-bold text-gray-800 tracking-wide">
                 Product Categories
             </h1>
-            <AddCategoryModal
-                @add-category="handleAddCategory"
-                :errors="errors"
-            />
+            <div class="flex justify-center space-x-3">
+                <AddCategoryModal @add-category="handleAddCategory" :errors="errors" />
+                <Button @click="openCsvModal = true">
+                    <FontAwesomeIcon :icon="faFileCsv" />
+                    Bulk Import
+                </Button>
+            </div>
+
         </div>
 
         <!-- Search -->
         <div class="flex flex-row items-center gap-3 mb-5 w-full sm:w-1/2">
             <Label>Search:</Label>
-            <Input
-                type="text"
-                placeholder="Search category..."
-                v-model="globalFilter"
-                class="w-full"
-            />
+            <Input type="text" placeholder="Search category..." v-model="globalFilter" class="w-full" />
         </div>
 
         <!-- Table Card -->
-        <div
-            class="overflow-x-auto rounded-2xl bg-white shadow-md border border-gray-200"
-        >
+        <div class="overflow-x-auto rounded-2xl bg-white shadow-md border border-gray-200">
             <table class="w-full text-sm text-gray-700">
                 <!-- Table Head -->
-                <thead
-                    class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide"
-                >
+                <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
                     <tr>
-                        <th
-                            v-for="header in categoriesTable.getFlatHeaders()"
-                            :key="header.id"
-                            class="px-4 py-3 text-center font-semibold border-b border-gray-300"
-                        >
-                            <FlexRender
-                                :render="header.column.columnDef.header"
-                                :props="header.getContext()"
-                            />
+                        <th v-for="header in categoriesTable.getFlatHeaders()" :key="header.id"
+                            class="px-4 py-3 text-center font-semibold border-b border-gray-300">
+                            <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                         </th>
                     </tr>
                 </thead>
 
                 <!-- Table Body -->
                 <tbody v-if="categories.length > 0" class="divide-y divide-gray-100">
-                    <tr
-                        v-for="row in categoriesTable.getRowModel().rows"
-                        :key="row.id"
-                        class="hover:bg-gray-50 transition-all duration-150 text-center"
-                    >
-                        <td
-                            v-for="cell in row.getVisibleCells()"
-                            :key="cell.id"
-                            class="px-4 py-2 border-b"
-                        >
-                            <FlexRender
-                                :render="cell.column.columnDef.cell"
-                                :props="cell.getContext()"
-                            />
+                    <tr v-for="row in categoriesTable.getRowModel().rows" :key="row.id"
+                        class="hover:bg-gray-50 transition-all duration-150 text-center">
+                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-2 border-b">
+                            <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                         </td>
                     </tr>
                 </tbody>
@@ -251,15 +254,12 @@ onMounted(() => {
                 </tbody>
             </table>
         </div>
+        <!-- Update Modal -->
+        <CategoryModal @update-category="handleUpdateCategory" v-model:open="openUpdateModal"
+            :id="categoryCred.encrypted_id" :category_name="categoryCred.category_name"
+            :category_description="categoryCred.category_description" :errors="errors" />
+        <CSVCategoriesModal v-model:open="openCsvModal" v-on:import="handleImport" />
     </section>
 
-    <!-- Update Modal -->
-    <CategoryModal
-        @update-category="handleUpdateCategory"
-        v-model:open="openUpdateModal"
-        :id="categoryCred.encrypted_id"
-        :category_name="categoryCred.category_name"
-        :category_description="categoryCred.category_description"
-        :errors="errors"
-    />
+
 </template>

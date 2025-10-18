@@ -23,10 +23,11 @@ import {
     getFilteredRowModel,
 } from '@tanstack/vue-table';
 import { RegularSwal, ConfirmationSwal } from '@/components/Swals/useSwals';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 const { purchases, isLoading, fetchPurchases } = getPurchases();
 const { createPaymentRecord, updatePaymentStatus } = onlinePayment();
-const { markAsDelivered } = managePO();
+const { markAsDelivered, deleteOrder } = managePO();
 const { stockIn } = manageStock();
 const openPayment = ref(false);
 const receivedItemsModal = ref(false);
@@ -82,6 +83,23 @@ const handleCOD = async (purchase_id, payment_method, reference_no, amount_paid,
         }
     })
 }
+
+const handleDelete = async (purchase_id) => {
+    ConfirmationSwal({
+        icon: 'warning',
+        title: 'Delete Purchase Order?',
+        message: 'This action will permanently remove the purchase order and all related details from the system. Are you sure you want to proceed?',
+        confirm_text: 'Yes, delete it',
+        callBack: async () => {
+            const success = await deleteOrder(purchase_id);
+            if (success && success.status === 200) {
+                await fetchPurchases();
+                RegularSwal(success.data);
+            }
+        }
+    })
+}
+
 
 onMounted(() => {
     fetchPurchases();
@@ -159,6 +177,11 @@ const columns = [
         header: "Status",
         cell: info => info.getValue()
     }),
+    columnHelper.accessor('payment_status', {
+        id: "Payment Status",
+        header: "Payment Status",
+        cell: info => info.getValue()
+    }),
     {
         id: "Actions",
         header: "Actions",
@@ -216,8 +239,8 @@ const columns = [
                                 variant: "none",
                                 class: "bg-blue-500 text-white hover:bg-blue-700",
                                 onClick: () => {
-                                    payment_record.value = row.original.payment_record
-                                    openReceipt.value = true
+                                    payment_record.value = row.original.payment_record;
+                                    openReceipt.value = true;
                                 },
                             },
                             () => h("p", "Print Receipt")
@@ -244,16 +267,29 @@ const columns = [
                             variant: "none",
                             class: "bg-blue-500 text-white hover:bg-blue-700",
                             onClick: () => {
-                                payment_record.value = row.original.payment_record
-                                openReceipt.value = true
+                                payment_record.value = row.original.payment_record;
+                                openReceipt.value = true;
                             },
                         },
                         () => h("p", "Print Receipt")
+                    ),
+
+                    // ❌ Delete button (always visible)
+                    h(
+                        Button,
+                        {
+                            variant: "none",
+                            class: "text-red-600 hover:text-red-700",
+                            onClick: () => handleDelete(record.encrypted_id),
+                        },
+                        () => h(FontAwesomeIcon, { icon: faTrash })
                     ),
                 ]
             );
         },
     }
+
+
 ];
 
 const globalFilter = ref("");

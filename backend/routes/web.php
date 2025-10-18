@@ -12,3 +12,4 @@ Route::view('/test', 'mail.purchase-order');
 
 
 Route::get('/purchase/accept/{purchase}', [PurchaseController::class, 'acceptOrder']);
+Route::get('/purchase/reject/{purchase}', [PurchaseController::class, 'rejectOrder']);

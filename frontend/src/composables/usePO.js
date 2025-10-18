@@ -50,7 +50,20 @@ export function managePO() {
       console.log(error);
     }
   };
-  return { orderItems, itemCred, purchaseCred, markAsDelivered };
+
+  const deleteOrder = async (purchase_id) => {
+    try {
+      const response = await axios.delete("/api/purchase/destroy", {
+        data: {
+          purchase_id: purchase_id,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return { orderItems, itemCred, purchaseCred, markAsDelivered, deleteOrder };
 }
 
 export function getPurchases() {

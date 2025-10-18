@@ -25,7 +25,7 @@ class CategoryController extends Controller
         $categories = Category::with('products')->latest()->get();
 
         foreach ($categories as $category) {
-            $category->makeHidden(['id']);
+            // $category->makeHidden(['id']);
             $category->encrypted_id = Hashids::encode($category->id);
         }
 

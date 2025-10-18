@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('reference_no');
             $table->date('order_date');
             $table->date('expected_date');
-            $table->enum('status', ['Pending', 'Approved', 'Delivered']);
+            $table->enum('status', ['Pending', 'Approved', 'Delivered', 'Rejected']);
             $table->enum('payment_status', ['Pending', 'Paid'])->default('Pending');
             $table->foreign('supplier_id')->references('id')->on('suppliers')->cascadeOnDelete();
             $table->timestamps();
@@ -34,6 +34,7 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->timestamps();
         });
+        
     }
 
     /**

@@ -67,7 +67,17 @@ window.Echo.channel("purchase").listen(".purchase.accept", (event) => {
       theme: "colored",
     }
   );
-  console.log(event);
+});
+
+window.Echo.channel("purchase").listen(".purchase.reject", (event) => {
+  toast.error(
+    `Your Order Has been Rejected By: ${event.purchase.supplier_name}`,
+    {
+      position: "bottom-right",
+      autoClose: 3000,
+      theme: "colored",
+    }
+  );
 });
 
 app.component("GuestLayout", GuestLayout);
