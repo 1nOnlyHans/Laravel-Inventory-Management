@@ -5,29 +5,30 @@ import { faArrowDown, faArrowTrendUp, faBoxesStacked, faExclamation, faHistory, 
 
 const { generateInventoryReports, generateMovementReport, generatePurchaseHistoryReport, generateSalesReport, generateLowStockReport, generateOutOfstockReport } = generateReports();
 
-const handleInventory = async () => {
-    await generateInventoryReports()
+const handleInventory = async (filter) => {
+    await generateInventoryReports(filter)
 }
 
-const handleMovement = async () => {
-    await generateMovementReport()
+const handleMovement = async (filter) => {
+    await generateMovementReport(filter)
 }
 
-const handlePurchase = async () => {
-    await generatePurchaseHistoryReport()
+const handlePurchase = async (filter) => {
+    await generatePurchaseHistoryReport(filter)
 }
 
-const handleSales = async () => {
-    await generateSalesReport()
+const handleSales = async (filter) => {
+    await generateSalesReport(filter)
 }
 
-const handleLowStock = async () => {
-    await generateLowStockReport()
+const handleLowStock = async (filter) => {
+    await generateLowStockReport(filter)
 }
 
-const handleOutOfStock = async () => {
-    await generateOutOfstockReport()
+const handleOutOfStock = async (filter) => {
+    await generateOutOfstockReport(filter)
 }
+
 </script>
 <template>
     <section class="bg-gray-50 py-12">

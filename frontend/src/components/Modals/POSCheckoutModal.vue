@@ -148,8 +148,8 @@ watch(() => props.items, (newItem) => {
                         <Label for="amount" class="text-sm font-medium text-gray-700">
                             Amount Received
                         </Label>
-                        <Input id="amount" type="number" placeholder="₱0.00" v-model="saleCred.amount_received" required
-                            min="0" />
+                        <Input id="amount" type="number" placeholder="₱0.00" pattern="^\d*\.?\d*$"
+                            v-model="saleCred.amount_received" required min="0" />
                     </div>
 
                     <!-- Notes -->

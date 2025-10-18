@@ -122,12 +122,12 @@ Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(AuditL
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(PDFcontroller::class)->group(function () {
-    Route::get('/pdf/inventory', 'generateInventoryValuationReport');
-    Route::get('/pdf/movement', 'generateStockMovementsReport');
-    Route::get('/pdf/purchase', 'generatePurchaseHistoryReport');
-    Route::get('/pdf/sales', 'generateSalesReport');
-    Route::get('/pdf/lowStock', 'generateLowStockReport');
-    Route::get('/pdf/outOfStock', 'generateOutOfStockReport');
+    Route::post('/pdf/inventory', 'generateInventoryValuationReport');
+    Route::post('/pdf/movement', 'generateStockMovementsReport');
+    Route::post('/pdf/purchase', 'generatePurchaseHistoryReport');
+    Route::post('/pdf/sales', 'generateSalesReport');
+    Route::post('/pdf/lowStock', 'generateLowStockReport');
+    Route::post('/pdf/outOfStock', 'generateOutOfStockReport');
 });
 
 Route::middleware(['auth:sanctum', 'staff', 'authenticated'])->controller(StaffController::class)->group(function () {

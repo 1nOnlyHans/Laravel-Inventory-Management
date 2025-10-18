@@ -82,149 +82,174 @@ onMounted(async () => {
 
 </script>
 <template>
-    <section class="min-h-screen bg-gray-50 flex justify-center py-10">
-        <div class="w-full max-w-6xl bg-white shadow-lg rounded-2xl p-8">
+    <section class="min-h-screen bg-gray-50 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Title -->
-            <header class="mb-8 text-center">
-                <h2 class="text-3xl font-semibold text-gray-800">Add New Product</h2>
-                <p class="text-gray-500 mt-1 text-sm">Fill out the details below to add a new product to the inventory.
-                </p>
+            <header class="mb-10 text-center">
+                <h2 class="text-4xl font-bold text-gray-900 mb-2">Add New Product</h2>
+                <p class="text-gray-600">Fill out the details below to add a new product to the inventory.</p>
             </header>
 
             <!-- Form -->
-            <form id="addProduct" class="space-y-8" @submit.prevent="handleAddProduct(productCred)">
-                <!-- Grid Section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Supplier -->
-                    <div>
-                        <Label>Supplier</Label>
-                        <Select v-model="productCred.supplier_id">
-                            <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select supplier" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Suppliers</SelectLabel>
-                                    <SelectItem v-for="supplier in suppliers" :key="supplier.encrypted_id"
-                                        :value="supplier.encrypted_id">
-                                        {{ supplier.supplier_name }}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+            <form id="addProduct" class="bg-white shadow-lg rounded-lg p-8 space-y-8"
+                @submit.prevent="handleAddProduct(productCred)">
+                <!-- Product Information Section -->
+                <div class="border-b border-gray-200 pb-6 mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Product Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Supplier -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Supplier</Label>
+                            <Select v-model="productCred.supplier_id">
+                                <SelectTrigger
+                                    class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md">
+                                    <SelectValue placeholder="Select supplier" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Suppliers</SelectLabel>
+                                        <SelectItem v-for="supplier in suppliers" :key="supplier.encrypted_id"
+                                            :value="supplier.encrypted_id">
+                                            {{ supplier.supplier_name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <!-- Category -->
-                    <div>
-                        <Label>Category</Label>
-                        <Select v-model="productCred.category_id">
-                            <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Categories</SelectLabel>
-                                    <SelectItem v-for="category in categories" :key="category.encrypted_id"
-                                        :value="category.encrypted_id">
-                                        {{ category.category_name }}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        <!-- Category -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Category</Label>
+                            <Select v-model="productCred.category_id">
+                                <SelectTrigger
+                                    class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Categories</SelectLabel>
+                                        <SelectItem v-for="category in categories" :key="category.encrypted_id"
+                                            :value="category.encrypted_id">
+                                            {{ category.category_name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <!-- Brand -->
-                    <div>
-                        <Label>Brand</Label>
-                        <Select v-model="productCred.brand_id">
-                            <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select brand" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Brands</SelectLabel>
-                                    <SelectItem v-for="brand in brands" :key="brand.encrypted_id"
-                                        :value="brand.encrypted_id">
-                                        {{ brand.brand_name }}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        <!-- Brand -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Brand</Label>
+                            <Select v-model="productCred.brand_id">
+                                <SelectTrigger
+                                    class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md">
+                                    <SelectValue placeholder="Select brand" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Brands</SelectLabel>
+                                        <SelectItem v-for="brand in brands" :key="brand.encrypted_id"
+                                            :value="brand.encrypted_id">
+                                            {{ brand.brand_name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <!-- SKU -->
-                    <div>
-                        <Label>SKU</Label>
-                        <Input type="text" placeholder="e.g., SKU-12345" v-model="productCred.SKU" />
-                    </div>
+                        <!-- SKU -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">SKU</Label>
+                            <Input type="text" placeholder="e.g., SKU-12345" v-model="productCred.SKU"
+                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                        </div>
 
-                    <!-- Model -->
-                    <div>
-                        <Label>Model</Label>
-                        <Input type="text" placeholder="e.g., Inspiron 15 3000" v-model="productCred.model" />
-                    </div>
+                        <!-- Model -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Model</Label>
+                            <Input type="text" placeholder="e.g., Inspiron 15 3000" v-model="productCred.model"
+                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                        </div>
 
-                    <!-- Product Name -->
-                    <div>
-                        <Label>Product Name</Label>
-                        <Input type="text" placeholder="e.g., Dell Inspiron Laptop"
-                            v-model="productCred.product_name" />
-                    </div>
+                        <!-- Product Name -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Product Name</Label>
+                            <Input type="text" placeholder="e.g., Dell Inspiron Laptop"
+                                v-model="productCred.product_name"
+                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                        </div>
 
-                    <!-- Quantity -->
-                    <div>
-                        <Label for="quantity">Quantity</Label>
-                        <NumberField id="quantity" :default-value="0" :min="0" v-model="productCred.product_quantity">
-                            <NumberFieldContent>
-                                <NumberFieldDecrement />
-                                <NumberFieldInput />
-                                <NumberFieldIncrement />
-                            </NumberFieldContent>
-                        </NumberField>
-                    </div>
+                        <!-- Quantity -->
+                        <div class="space-y-2">
+                            <Label for="quantity" class="text-sm font-medium text-gray-700">Quantity</Label>
+                            <NumberField id="quantity" :default-value="0" :min="0"
+                                v-model="productCred.product_quantity">
+                                <NumberFieldContent
+                                    class="border border-gray-300 rounded-md focus-within:border-blue-500 focus-within:ring-blue-500">
+                                    <NumberFieldDecrement class="px-3 py-2 bg-gray-100 hover:bg-gray-200" />
+                                    <NumberFieldInput class="text-center flex-1" />
+                                    <NumberFieldIncrement class="px-3 py-2 bg-gray-100 hover:bg-gray-200" />
+                                </NumberFieldContent>
+                            </NumberField>
+                        </div>
 
-                    <!-- Unit Price -->
-                    <div>
-                        <Label>Unit Price</Label>
-                        <Input type="number" min="1" placeholder="Price per unit" v-model="productCred.unit_price" />
-                    </div>
+                        <!-- Unit Price -->
+                        <div class="space-y-2">
+                            <Label class="text-sm font-medium text-gray-700">Unit Price</Label>
+                            <Input type="number" min="1" placeholder="Price per unit" v-model="productCred.unit_price"
+                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                        </div>
 
-                    <!-- Reorder Level -->
-                    <div>
-                        <Label>Reorder Level</Label>
-                        <NumberField id="reorder_level" :default-value="0" :min="0" v-model="productCred.reorder_level">
-                            <NumberFieldContent>
-                                <NumberFieldDecrement />
-                                <NumberFieldInput />
-                                <NumberFieldIncrement />
-                            </NumberFieldContent>
-                        </NumberField>
+                        <!-- Reorder Level -->
+                        <div class="space-y-2">
+                            <Label for="reorder_level" class="text-sm font-medium text-gray-700">Reorder Level</Label>
+                            <NumberField id="reorder_level" :default-value="0" :min="0"
+                                v-model="productCred.reorder_level">
+                                <NumberFieldContent
+                                    class="border border-gray-300 rounded-md focus-within:border-blue-500 focus-within:ring-blue-500">
+                                    <NumberFieldDecrement class="px-3 py-2 bg-gray-100 hover:bg-gray-200" />
+                                    <NumberFieldInput class="text-center flex-1" />
+                                    <NumberFieldIncrement class="px-3 py-2 bg-gray-100 hover:bg-gray-200" />
+                                </NumberFieldContent>
+                            </NumberField>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Description -->
-                <div>
-                    <Label>Description</Label>
-                    <Editor api-key="dydc6b7t1h4typ0ffyqdvd15j2ovv325cefo8jwipqlem5qz"
-                        v-model="productCred.product_description" :init="{
-                            height: 400,
-                            menubar: true,
-                            plugins: 'link image code lists table',
-                            toolbar:
-                                'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
-                            branding: false,
-                        }" />
+                <!-- Description Section -->
+                <div class="border-b border-gray-200 pb-6 mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Product Description</h3>
+                    <div class="space-y-2">
+                        <Label class="text-sm font-medium text-gray-700">Description</Label>
+                        <Editor api-key="dydc6b7t1h4typ0ffyqdvd15j2ovv325cefo8jwipqlem5qz"
+                            v-model="productCred.product_description" :init="{
+                                height: 400,
+                                menubar: true,
+                                plugins: 'link image code lists table',
+                                toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
+                                branding: false,
+                                skin: 'oxide',
+                                content_css: 'default'
+                            }"
+                            class="border border-gray-300 rounded-md focus-within:border-blue-500 focus-within:ring-blue-500" />
+                    </div>
                 </div>
 
-                <!-- Product Photo -->
-                <div>
-                    <Label>Product Photo</Label>
-                    <Input type="file" accept="image/*" class="cursor-pointer" multiple @change="onfileChange" />
+                <!-- Product Photos Section -->
+                <div class="border-b border-gray-200 pb-6 mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Product Photos</h3>
+                    <div class="space-y-2">
+                        <Label class="text-sm font-medium text-gray-700">Attach Photos</Label>
+                        <Input type="file" accept="image/*"
+                            class="cursor-pointer w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md"
+                            multiple @change="onfileChange" />
+                    </div>
                 </div>
 
                 <!-- Submit -->
-                <div class="flex justify-center pt-4">
-                    <Button type="submit">
+                <div class="flex justify-center pt-6">
+                    <Button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors">
                         Add Product
                     </Button>
                 </div>

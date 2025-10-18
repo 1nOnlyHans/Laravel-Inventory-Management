@@ -1,11 +1,17 @@
 import axios from "@/axios";
 
 export function generateReports() {
-  const generateInventoryReports = async () => {
+  const generateInventoryReports = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/inventory", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/inventory",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);
@@ -14,11 +20,17 @@ export function generateReports() {
     }
   };
 
-  const generateMovementReport = async () => {
+  const generateMovementReport = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/movement", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/movement",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);
@@ -27,11 +39,17 @@ export function generateReports() {
     }
   };
 
-  const generatePurchaseHistoryReport = async () => {
+  const generatePurchaseHistoryReport = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/purchase", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/purchase",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);
@@ -40,11 +58,17 @@ export function generateReports() {
     }
   };
 
-  const generateSalesReport = async () => {
+  const generateSalesReport = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/sales", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/sales",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);
@@ -53,11 +77,17 @@ export function generateReports() {
     }
   };
 
-  const generateLowStockReport = async () => {
+  const generateLowStockReport = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/lowStock", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/lowStock",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);
@@ -66,11 +96,17 @@ export function generateReports() {
     }
   };
 
-  const generateOutOfstockReport = async () => {
+  const generateOutOfstockReport = async (filter) => {
     try {
-      const response = await axios.get("/api/pdf/outOfStock", {
-        responseType: "blob",
-      });
+      const response = await axios.post(
+        "/api/pdf/outOfStock",
+        {
+          filter: filter,
+        },
+        {
+          responseType: "blob",
+        }
+      );
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileUrl = window.URL.createObjectURL(file);
       window.open(fileUrl);

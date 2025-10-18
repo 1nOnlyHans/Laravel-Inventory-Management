@@ -33,15 +33,82 @@ const printReceipt = (elementId) => {
                 <head>
                     <title>Order Receipt</title>
                     <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h1, h2, h3, h4, h5, h6 { margin: 0; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                        .text-center { text-align: center; }
-                        .border-t { border-top: 1px solid #ccc; }
+                        body {
+                            font-family: 'Courier New', monospace; /* Receipt-like font */
+                            font-size: 12px;
+                            line-height: 1.4;
+                            margin: 0;
+                            padding: 20px;
+                            color: #333;
+                            background-color: #fff;
+                            max-width: 300px; /* Narrow width for receipt */
+                            margin: 0 auto;
+                        }
+                        h1, h2, h3, h4, h5, h6 {
+                            margin: 0 0 10px 0;
+                            font-weight: bold;
+                            text-align: center;
+                        }
+                        h1 {
+                            font-size: 18px;
+                            border-bottom: 2px solid #000;
+                            padding-bottom: 5px;
+                            margin-bottom: 15px;
+                        }
+                        p {
+                            margin: 5px 0;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 15px 0;
+                            font-size: 11px;
+                        }
+                        th, td {
+                            padding: 5px 0;
+                            text-align: left;
+                            border-bottom: 1px dashed #ccc;
+                        }
+                        th {
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            font-size: 10px;
+                        }
+                        .text-center {
+                            text-align: center;
+                        }
+                        .text-right {
+                            text-align: right;
+                        }
+                        .border-t {
+                            border-top: 2px solid #000;
+                            margin-top: 10px;
+                            padding-top: 10px;
+                        }
+                        .total-row {
+                            font-weight: bold;
+                            font-size: 13px;
+                        }
+                        .footer {
+                            text-align: center;
+                            margin-top: 20px;
+                            font-size: 10px;
+                            color: #666;
+                        }
+                        @media print {
+                            body {
+                                margin: 0;
+                                padding: 10px;
+                            }
+                        }
                     </style>
                 </head>
                 <body>
                     ${elementToPrint.innerHTML}
+                    <div class="footer">
+                        Thank you for your order!<br>
+                        Printed on ${new Date().toLocaleDateString()}
+                    </div>
                 </body>
             </html>
         `);
@@ -60,6 +127,7 @@ const printReceipt = (elementId) => {
         console.error(`Element with ID '${elementId}' not found.`);
     }
 };
+
 </script>
 <template>
     <Dialog>

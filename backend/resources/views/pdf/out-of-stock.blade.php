@@ -79,6 +79,7 @@
 
 <body>
     <h2>Low Stock Report</h2>
+    <h2>{{ $filter }} Report</h2>
     <p>Date: {{ now()->format('F d, Y') }}</p>
 
     @if (count($datas) > 0)

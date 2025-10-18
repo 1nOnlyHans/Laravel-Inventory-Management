@@ -185,84 +185,103 @@ onMounted(async () => {
 </script>
 <template>
     <!-- Loading State -->
-    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+    <section v-if="isLoading" class="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-gray-50">
         <VueSpinnerOval size="80" color="#3b82f6" />
-        <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-accents">
+        <h1 class="mt-6 font-semibold text-xl sm:text-2xl text-gray-800">
             Fetching Product Brands...
         </h1>
-        <p class="mt-2 text-gray-500 text-sm">
-            Please wait while we load the latest brands records.
+        <p class="mt-2 text-gray-600 text-sm">
+            Please wait while we load the latest brand records.
         </p>
     </section>
 
-    <section v-else-if="loadingImport" class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+    <section v-else-if="loadingImport"
+        class="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-gray-50">
         <VueSpinnerOval size="80" color="#3b82f6" />
-        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-accents">
+        <h1 class="mt-4 font-bold text-xl sm:text-2xl text-gray-800">
             Importing Data...
         </h1>
+        <p class="mt-2 text-gray-600 text-sm">
+            Please wait while we process your import.
+        </p>
     </section>
 
     <!-- Brand Management Table -->
-    <section v-else class="container mx-auto p-6 min-h-screen">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 tracking-wide">
-                Product Brands
-            </h1>
-            <div class="flex justify-center space-x-3">
-                <AddBrandModal @add-brand="handleAddBrand" :errors="errors" />
-                <Button @click="openCsvModal = true">
-                    <FontAwesomeIcon :icon="faFileCsv" />
-                    Bulk Import
-                </Button>
+    <section v-else class="min-h-screen bg-gray-50 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div class="mb-4 sm:mb-0">
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-wide">
+                        Product Brands
+                    </h1>
+                    <p class="text-sm text-gray-600 mt-1">Manage and oversee your product brand records.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <AddBrandModal @add-brand="handleAddBrand" :errors="errors" />
+                    <Button @click="openCsvModal = true"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+                        <FontAwesomeIcon :icon="faFileCsv" class="mr-2" />
+                        Bulk Import
+                    </Button>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="mb-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-1/2">
+                    <Label class="text-sm font-medium text-gray-700">Search:</Label>
+                    <Input type="text" placeholder="Search brands..." v-model="globalFilter"
+                        class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-gray-700">
+                        <!-- Table Head -->
+                        <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
+                            <tr>
+                                <th v-for="header in brandsTable.getFlatHeaders()" :key="header.id"
+                                    class="px-4 py-3 text-center font-semibold border-b border-gray-300">
+                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <!-- Table Body -->
+                        <tbody v-if="brands.length > 0" class="divide-y divide-gray-100">
+                            <tr v-for="row in brandsTable.getRowModel().rows" :key="row.id"
+                                class="hover:bg-gray-50 transition-colors duration-150 text-center">
+                                <td v-for="cell in row.getVisibleCells()" :key="cell.id"
+                                    class="px-4 py-3 border-b border-gray-200">
+                                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                                </td>
+                            </tr>
+                        </tbody>
+
+                        <!-- Empty State -->
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="6" class="text-center py-12 text-gray-500">
+                                    <div class="flex flex-col items-center">
+                                        <FontAwesomeIcon :icon="faTag" class="text-4xl text-gray-300 mb-4" />
+                                        <p class="text-lg font-medium">No brands found.</p>
+                                        <p class="text-sm">Try adjusting your search or add a new brand.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Search -->
-        <div class="flex flex-row items-center gap-3 mb-5 w-full sm:w-1/2">
-            <Label>Search:</Label>
-            <Input type="text" placeholder="Search brand..." v-model="globalFilter" class="w-full" />
-        </div>
-
-        <!-- Table Card -->
-        <div class="overflow-x-auto rounded-2xl bg-white shadow-md border border-gray-200">
-            <table class="w-full text-sm text-gray-700">
-                <!-- Table Head -->
-                <thead class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wide">
-                    <tr>
-                        <th v-for="header in brandsTable.getFlatHeaders()" :key="header.id"
-                            class="px-4 py-3 text-center font-semibold border-b border-gray-300">
-                            <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
-                        </th>
-                    </tr>
-                </thead>
-
-                <!-- Table Body -->
-                <tbody v-if="brands.length > 0" class="divide-y divide-gray-100">
-                    <tr v-for="row in brandsTable.getRowModel().rows" :key="row.id"
-                        class="hover:bg-gray-50 transition-all duration-150 text-center">
-                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-2 border-b">
-                            <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                        </td>
-                    </tr>
-                </tbody>
-
-                <!-- Empty State -->
-                <tbody v-else>
-                    <tr>
-                        <td colspan="6" class="text-center py-8 text-gray-400">
-                            No brands found.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
         <!-- Update Modal -->
         <BrandModal v-model:open="openUpdateModal" :errors="errors" :id="brandCred.encrypted_id"
             :brand_name="brandCred.brand_name" :brand_description="brandCred.brand_description"
             @update-brand="handleUpdatebrand" />
         <CSVBrandsModal v-model:open="openCsvModal" v-on:import="handleImport" />
     </section>
-
-
 </template>

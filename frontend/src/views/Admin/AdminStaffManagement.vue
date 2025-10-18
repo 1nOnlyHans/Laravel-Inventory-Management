@@ -258,8 +258,10 @@ watch(searchQuery, () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            <Button @click="openCsvModal = true">
-                <FontAwesomeIcon :icon="faFileCsv" /> Bulk Import
+            <Button @click="openCsvModal = true"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+                <FontAwesomeIcon :icon="faFileCsv" class="mr-2" />
+                Bulk Import
             </Button>
             <CsvStaffModal @import="handleImportStaff" v-model:open="openCsvModal" />
         </div>

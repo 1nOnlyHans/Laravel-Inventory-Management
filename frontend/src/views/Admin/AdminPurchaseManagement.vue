@@ -154,69 +154,81 @@ watch(
 
     <!-- Main Content -->
     <section v-else class="container-xl mx-auto p-6">
-        <div class="bg-white shadow-lg rounded-lg border">
+        <div class="bg-white shadow-lg rounded-lg border border-gray-200">
             <!-- Header -->
-            <div class=" text-xs uppercase tracking-wide px-6 py-4 flex justify-between items-center rounded-t-lg">
-                <h1 class="font-bold text-2xl tracking-wide">Purchase Order</h1>
-                <span class="text-sm opacity-80">Generated: {{ new Date().toLocaleDateString() }}</span>
+            <div
+                class="bg-gray-50 text-xs uppercase tracking-wide px-6 py-4 flex justify-between items-center rounded-t-lg border-b border-gray-200">
+                <h1 class="font-bold text-2xl tracking-wide text-gray-900">Purchase Order</h1>
+                <span class="text-sm text-gray-600">Generated: {{ new Date().toLocaleDateString() }}</span>
             </div>
 
             <form class="space-y-8">
                 <!-- Supplier and Order Info -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-                    <!-- Supplier -->
-                    <div class="space-y-2">
-                        <Label for="supplier_id">Supplier</Label>
-                        <Select id="supplier_id" v-model="purchaseCred.supplier_id" required>
-                            <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Select Supplier" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Suppliers</SelectLabel>
-                                    <SelectItem v-for="supplier in suppliers" :key="supplier.encrypted_id"
-                                        :value="supplier.encrypted_id">
-                                        {{ supplier.supplier_name }}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Order Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Supplier -->
+                        <div class="space-y-2">
+                            <Label for="supplier_id" class="text-sm font-medium text-gray-700">Supplier</Label>
+                            <Select id="supplier_id" v-model="purchaseCred.supplier_id" required>
+                                <SelectTrigger
+                                    class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md">
+                                    <SelectValue placeholder="Select Supplier" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Suppliers</SelectLabel>
+                                        <SelectItem v-for="supplier in suppliers" :key="supplier.encrypted_id"
+                                            :value="supplier.encrypted_id">
+                                            {{ supplier.supplier_name }}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <!-- Order Date -->
-                    <div class="space-y-2">
-                        <Label for="order_date">Order Date</Label>
-                        <input type="date" id="order_date"
-                            class="border p-2 w-full rounded focus:ring-2 focus:ring-blue-500" required
-                            v-model="purchaseCred.order_date" />
-                    </div>
+                        <!-- Order Date -->
+                        <div class="space-y-2">
+                            <Label for="order_date" class="text-sm font-medium text-gray-700">Order Date</Label>
+                            <input type="date" id="order_date"
+                                class="border border-gray-300 p-3 w-full rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required v-model="purchaseCred.order_date" />
+                        </div>
 
-                    <!-- Expected Delivery -->
-                    <div class="space-y-2">
-                        <Label for="delivery_date">Expected Delivery</Label>
-                        <input type="date" id="delivery_date"
-                            class="border p-2 w-full rounded focus:ring-2 focus:ring-blue-500" required
-                            v-model="purchaseCred.expected_date" />
+                        <!-- Expected Delivery -->
+                        <div class="space-y-2">
+                            <Label for="delivery_date" class="text-sm font-medium text-gray-700">Expected
+                                Delivery</Label>
+                            <input type="date" id="delivery_date"
+                                class="border border-gray-300 p-3 w-full rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required v-model="purchaseCred.expected_date" />
+                        </div>
                     </div>
                 </div>
 
                 <!-- Products Table -->
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-semibold text-lg">Products to Order</h2>
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Products to Order</h2>
                         <Button type="button" :disabled="purchaseCred.supplier_id === ''" @click="handleAddProduct">
                             + Add Product
                         </Button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
+                        <table
+                            class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm bg-white shadow-sm">
                             <thead class="bg-gray-100 text-gray-700 uppercase tracking-wide">
                                 <tr>
-                                    <th class="border px-4 py-3 text-left w-2/5">Product</th>
-                                    <th class="border px-3 py-3 text-center w-1/6">Qty</th>
-                                    <th class="border px-3 py-3 text-center w-1/6">Unit Price</th>
-                                    <th class="border px-3 py-3 text-center w-1/6">Total</th>
-                                    <th class="border px-3 py-3 text-center w-1/6">Action</th>
+                                    <th class="border border-gray-300 px-4 py-3 text-left w-2/5 font-semibold">Product
+                                    </th>
+                                    <th class="border border-gray-300 px-3 py-3 text-center w-1/6 font-semibold">Qty
+                                    </th>
+                                    <th class="border border-gray-300 px-3 py-3 text-center w-1/6 font-semibold">Unit
+                                        Price</th>
+                                    <th class="border border-gray-300 px-3 py-3 text-center w-1/6 font-semibold">Total
+                                    </th>
+                                    <th class="border border-gray-300 px-3 py-3 text-center w-1/6 font-semibold">Action
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -224,9 +236,9 @@ watch(
                                 <tr v-for="(item, index) in orderItems" :key="index"
                                     class="hover:bg-gray-50 transition-colors">
                                     <!-- Product -->
-                                    <td class="border px-3 py-2">
+                                    <td class="border border-gray-300 px-3 py-2">
                                         <select
-                                            class="border border-gray-300 p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+                                            class="border border-gray-300 p-2 w-full rounded-md focus:ring-2 focus:ring-brand focus:outline-none text-gray-700 bg-white"
                                             v-model="item.product_id" @change="
                                                 item.product_name =
                                                 products.find((p) => p.encrypted_id === item.product_id)?.product_name
@@ -240,33 +252,37 @@ watch(
                                     </td>
 
                                     <!-- Quantity -->
-                                    <td class="border px-3 py-2 text-center">
+                                    <td class="border border-gray-300 px-3 py-2 text-center">
                                         <NumberField id="quantity" :default-value="0" :min="0" v-model="item.quantity">
                                             <Label for="quantity" class="hidden">Quantity</Label>
                                             <NumberFieldContent class="flex items-center justify-center gap-1">
-                                                <NumberFieldDecrement />
-                                                <NumberFieldInput class="text-center w-16 border-gray-300" />
-                                                <NumberFieldIncrement />
+                                                <NumberFieldDecrement
+                                                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" />
+                                                <NumberFieldInput
+                                                    class="text-center w-16 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
+                                                <NumberFieldIncrement
+                                                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" />
                                             </NumberFieldContent>
                                         </NumberField>
                                     </td>
 
                                     <!-- Unit Price -->
-                                    <td class="border px-3 py-2 text-center">
+                                    <td class="border border-gray-300 px-3 py-2 text-center">
                                         <Input type="number"
-                                            class="border border-gray-300 rounded-md text-center focus:ring-2 focus:ring-blue-500 w-24"
+                                            class="border border-gray-300 rounded-md text-center focus:ring-2 focus:ring-blue-500 w-24 p-2 bg-white"
                                             step="0.01" required v-model="item.unit_price" />
                                     </td>
 
                                     <!-- Total -->
-                                    <td class="border px-3 py-2 text-center font-semibold text-gray-800">
+                                    <td
+                                        class="border border-gray-300 px-3 py-2 text-center font-semibold text-gray-800">
                                         ₱{{ (item.unit_price * item.quantity).toFixed(2) }}
                                     </td>
 
                                     <!-- Action -->
-                                    <td class="border px-3 py-2 text-center">
+                                    <td class="border border-gray-300 px-3 py-2 text-center">
                                         <button type="button" @click="handleRemoveProduct(index)"
-                                            class="text-red-500 hover:text-red-700 font-medium transition">
+                                            class="text-red-500 hover:text-red-700 font-medium transition-colors px-2 py-1 rounded hover:bg-red-50">
                                             Remove
                                         </button>
                                     </td>
@@ -275,26 +291,32 @@ watch(
 
                             <tfoot class="bg-gray-50 text-sm">
                                 <tr>
-                                    <th colspan="3" class="text-right px-4 py-2 font-medium">Total Items:</th>
-                                    <td class="px-4 py-2 text-center">{{ orderItems.length }}</td>
-                                    <td></td>
+                                    <th colspan="3"
+                                        class="text-right px-4 py-3 font-medium text-gray-700 border border-gray-300">
+                                        Total Items:</th>
+                                    <td
+                                        class="px-4 py-3 text-center font-semibold text-gray-800 border border-gray-300">
+                                        {{ orderItems.length }}</td>
+                                    <td class="border border-gray-300"></td>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" class="text-right px-4 py-2 font-medium">Total Amount:</th>
-                                    <td class="px-4 py-2 text-center font-bold text-green-600">
+                                    <th colspan="3"
+                                        class="text-right px-4 py-3 font-medium text-gray-700 border border-gray-300">
+                                        Total Amount:</th>
+                                    <td class="px-4 py-3 text-center font-bold text-green-600 border border-gray-300">
                                         ₱{{ totalAmount.toFixed(2) }}
                                     </td>
-                                    <td></td>
+                                    <td class="border border-gray-300"></td>
                                 </tr>
                             </tfoot>
                         </table>
-
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="p-6 flex justify-end gap-4 border-t bg-gray-50">
-                    <Button type="reset" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
+                <div class="p-6 flex justify-end gap-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+                    <Button type="reset"
+                        class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors">
                         Cancel
                     </Button>
                     <Button type="button" @click="toggleLetter" :disabled="purchaseCred.items.length <= 0">

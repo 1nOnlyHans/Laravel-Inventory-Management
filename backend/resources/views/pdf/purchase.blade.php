@@ -58,6 +58,7 @@
 
 <body>
     <h2>Stock Movements Report</h2>
+    <h2>{{ $filter }} Report</h2>
     <p>Date: {{ now()->format('F d, Y') }}</p>
 
     <table>
@@ -75,12 +76,16 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $total_purchase_value = 0;
+            @endphp
             @foreach ($datas as $purchase)
                 @php
                     $totalQuantity = $purchase->items->sum('quantity');
                     $totalAmount = $purchase->items->sum(function ($item) {
                         return $item->quantity * $item->unit_price;
                     });
+                    $total_purchase_value += floatval($totalAmount);
                 @endphp
                 <tr>
                     <td>{{ $purchase->reference_no }}</td>
@@ -95,6 +100,9 @@
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <p>Total Purchase Value: {{ number_format($total_purchase_value, 2) }}</p>
+        </tfoot>
     </table>
 </body>
 

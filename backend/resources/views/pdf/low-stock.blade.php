@@ -64,7 +64,8 @@
         }
 
         .low-stock {
-            background-color: #ffe5e5; /* light red for critical stock */
+            background-color: #ffe5e5;
+            /* light red for critical stock */
         }
 
         .no-data {
@@ -78,9 +79,10 @@
 
 <body>
     <h2>Low Stock Report</h2>
+    <h2>{{ $filter }} Report</h2>
     <p>Date: {{ now()->format('F d, Y') }}</p>
 
-    @if(count($datas) > 0)
+    @if (count($datas) > 0)
         @php
             $totalItems = count($datas);
             $totalQuantity = $datas->sum('product_quantity');
@@ -104,15 +106,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($datas as $product)
-                    <tr @if($product->product_quantity <= 5) class="low-stock" @endif>
+                @foreach ($datas as $product)
+                    <tr @if ($product->product_quantity <= 5) class="low-stock" @endif>
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->brand->brand_name ?? 'N/A' }}</td>
                         <td>{{ $product->category->category_name ?? 'N/A' }}</td>
                         <td>{{ $product->supplier->supplier_name ?? 'N/A' }}</td>
                         <td class="text-center">{{ $product->product_quantity }}</td>
                         <td class="text-right">{{ number_format($product->unit_price, 2) }}</td>
-                        <td>@if($product->product_quantity <= 5) Reorder Soon @else - @endif</td>
+                        <td>
+                            @if ($product->product_quantity <= 5)
+                                Reorder Soon
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

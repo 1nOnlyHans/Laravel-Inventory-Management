@@ -58,7 +58,15 @@
 </head>
 
 <body>
+    @php
+        $total_amount = 0;
+
+        foreach ($datas as $sale) {
+            $total_amount += floatval($sale->total_amount);
+        }
+    @endphp
     <h2>Sales Report</h2>
+    <h2>{{ $filter }} Report</h2>
     <p>Date: {{ now()->format('F d, Y') }}</p>
 
     <table>
@@ -82,6 +90,9 @@
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <p>Total Sales: {{ number_format($total_amount, 2) }}</p>
+        </tfoot>
     </table>
 </body>
 

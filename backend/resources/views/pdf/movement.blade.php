@@ -57,6 +57,7 @@
 <body>
 
     <h2>Stock Movements Report</h2>
+    <h2>{{ $filter }} Report</h2>
     <p>Date: {{ now()->format('F d, Y') }}</p>
 
     <table>
