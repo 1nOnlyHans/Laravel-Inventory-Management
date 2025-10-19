@@ -87,7 +87,6 @@ export function manageProducts() {
     formData.append("supplier_id", productCred.supplier_id);
     formData.append("category_id", productCred.category_id);
     formData.append("brand_id", productCred.brand_id);
-    formData.append("SKU", productCred.SKU);
     formData.append("model", productCred.model);
     formData.append("product_name", productCred.product_name);
     formData.append("product_description", productCred.product_description);

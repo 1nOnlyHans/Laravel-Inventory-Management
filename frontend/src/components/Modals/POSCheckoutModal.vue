@@ -72,7 +72,7 @@ watch(() => props.items, (newItem) => {
         <DialogContent class="sm:max-w-[600px] rounded-2xl">
             <DialogHeader>
                 <DialogTitle class="text-xl font-semibold text-gray-800">
-                    Edit Profile
+                    Checkout
                 </DialogTitle>
                 <DialogDescription class="text-gray-500 text-sm">
 

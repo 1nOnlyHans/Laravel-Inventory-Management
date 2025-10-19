@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductPhoto;
 use App\Models\SystemSetting;
@@ -26,6 +28,7 @@ class ProductController extends Controller
 
         return response()->json($products, Response::HTTP_OK);
     }
+
     public function archived()
     {
         $products = Product::with(['supplier', 'category', 'brand', 'photos'])->onlyTrashed()->latest()->get();
@@ -45,7 +48,6 @@ class ProductController extends Controller
             'supplier_id' => ['required'],
             'category_id' => ['required'],
             'brand_id' => ['required'],
-            'SKU' => ['required', Rule::unique('products', 'SKU')],
             'model' => ['required'],
             'product_name' => ['required', Rule::unique('products', 'product_name')],
             'product_description' => ['required'],
@@ -56,9 +58,17 @@ class ProductController extends Controller
             'photos.*' => [File::types(['jpg', 'jpeg', 'png', 'svg', 'webp'])]
         ]);
 
-        $supplier_id = Hashids::decode($validated['supplier_id']);
-        $category_id = Hashids::decode($validated['category_id']);
-        $brand_id = Hashids::decode($validated['brand_id']);
+        $supplier_id = Hashids::decode($validated['supplier_id'])[0];
+        $category_id = Hashids::decode($validated['category_id'])[0];
+        $brand_id = Hashids::decode($validated['brand_id'])[0];
+
+        //SKU Pattern BRAND-NUMBERS;
+        $brand = Brand::findOrFail($brand_id);
+        $prefix = 'LAP';
+        $brandCode = strtoupper(substr(preg_replace('/\s+/', '', $brand->brand_name), 0, 3)); // first 3 letters of brand
+        $uniqueId = strtoupper(substr(uniqid(), -5)); // shorter unique suffix
+
+        $SKU = "{$prefix}-{$brandCode}-{$uniqueId}";
 
         $status = intval($validated['product_quantity']) === 0
             ? 'Out of Stock'
@@ -75,10 +85,10 @@ class ProductController extends Controller
         $sellingPrice = $cost + $profitAmount + $taxAmount;
 
         $product = Product::create([
-            'supplier_id' => $supplier_id[0],
-            'category_id' => $category_id[0],
-            'brand_id' => $brand_id[0],
-            'SKU' => $validated['SKU'],
+            'supplier_id' => $supplier_id,
+            'category_id' => $category_id,
+            'brand_id' => $brand_id,
+            'SKU' => $SKU,
             'model' => $validated['model'],
             'product_name' => $validated['product_name'],
             'product_description' => $validated['product_description'],
@@ -99,10 +109,6 @@ class ProductController extends Controller
                 ]);
             }
         }
-
-        // if ($status === 'Low Stock') {
-        //     broadcast(new LowStock($product))->toOthers();
-        // }
 
         return response()->json(['icon' => 'success', 'title' => 'Added Successfully', 'text' => $product->product_name . ' has been added'], Response::HTTP_OK);
     }
@@ -145,6 +151,12 @@ class ProductController extends Controller
 
         //FIND INSTANCE
         $product = Product::findOrFail($id[0]);
+        $brand = Brand::findOrFail($validated['brand_id']);
+        $prefix = 'LAP';
+        $brandCode = strtoupper(substr(preg_replace('/\s+/', '', $brand->brand_name), 0, 3)); // first 3 letters of brand
+        $uniqueId = strtoupper(substr(uniqid(), -5)); // shorter unique suffix
+
+        $SKU = "{$prefix}-{$brandCode}-{$uniqueId}";
 
         //Check Status
         $status = intval($validated['product_quantity']) === 0
@@ -158,7 +170,7 @@ class ProductController extends Controller
             'supplier_id' => $validated['supplier_id'],
             'category_id' => $validated['category_id'],
             'brand_id' => $validated['brand_id'],
-            'SKU' => $validated['SKU'],
+            'SKU' => $SKU,
             'model' => $validated['model'],
             'product_name' => $validated['product_name'],
             'product_description' => $validated['product_description'],

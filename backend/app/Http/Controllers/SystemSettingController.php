@@ -30,13 +30,23 @@ class SystemSettingController extends Controller
         $profit = SystemSetting::where('config_key', 'profit')->first();
 
         foreach ($products as $product) {
-            $latest = PurchaseOrderItems::with(['product'])->where('product_id', $product->id)->limit(1)->latest()->get();
-            $cost = $latest[0]->unit_price;
-            $profitAmount = $cost * ($profit->config_value / 100); //30%
-            $taxAmount = $cost * ($tax->config_value / 100); //5%
-            $sellingPrice = $cost + $profitAmount + $taxAmount;
-            $product->unit_price = $sellingPrice;
-            $product->save();
+            $latest = PurchaseOrderItems::where('product_id', $product->id)
+                ->orderByDesc('created_at')
+                ->first();
+
+            if (!$latest || !$latest->unit_price) {
+                $cost = $product->unit_cost ?? 0;
+            } else {
+                $cost = $latest->unit_price;
+            }
+
+            if ($cost > 0) {
+                $profitAmount = $cost * ($profit->config_value / 100); //30%
+                $taxAmount = $cost * ($tax->config_value / 100); //5%
+                $sellingPrice = $cost + $profitAmount + $taxAmount;
+                $product->unit_price = $sellingPrice;
+                $product->save();
+            }
         }
 
         return response()->json(['icon' => 'success', 'title' => 'System Updated', 'text' => 'System Setting has been updated'], Response::HTTP_OK);

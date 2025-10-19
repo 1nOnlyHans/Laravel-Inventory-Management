@@ -157,7 +157,8 @@ onMounted(async () => {
                         <div class="space-y-2">
                             <Label class="text-sm font-medium text-gray-700">SKU</Label>
                             <Input type="text" placeholder="e.g., SKU-12345" v-model="productDetails.SKU" required
-                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
+                                class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md"
+                                readonly />
                             <ErrorLabel v-if="errors?.SKU" :error="errors.SKU" class="text-red-600 text-sm" />
                         </div>
 
@@ -200,7 +201,7 @@ onMounted(async () => {
                         <div class="space-y-2">
                             <Label class="text-sm font-medium text-gray-700">Unit Price</Label>
                             <Input type="number" placeholder="Price per unit" v-model="productDetails.unit_price"
-                                pattern="^\d*\.?\d*$" required
+                                step="0.01" min="0" required
                                 class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
                             <ErrorLabel v-if="errors?.unit_price" :error="errors.unit_price"
                                 class="text-red-600 text-sm" />

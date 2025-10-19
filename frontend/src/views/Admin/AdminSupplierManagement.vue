@@ -218,7 +218,8 @@ onMounted(() => {
         </p>
     </section>
 
-    <section v-else-if="loadingImport" class="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-gray-50">
+    <section v-else-if="loadingImport"
+        class="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-gray-50">
         <VueSpinnerOval size="80" color="#3b82f6" />
         <h1 class="mt-4 font-bold text-xl sm:text-2xl text-gray-800">
             Importing Data...
@@ -241,7 +242,8 @@ onMounted(() => {
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <AddSupplierModal @add-supplier="handleAddSupplier" :errors="errors" :supplier="supplierCred" />
-                    <Button @click="openCsvModal = true" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+                    <Button @click="openCsvModal = true"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
                         <FontAwesomeIcon :icon="faFileCsv" class="mr-2" />
                         Bulk Import
                     </Button>
@@ -275,7 +277,8 @@ onMounted(() => {
                         <tbody v-if="suppliers.length > 0" class="divide-y divide-gray-100">
                             <tr v-for="row in suppliersTable.getRowModel().rows" :key="row.id"
                                 class="hover:bg-gray-50 transition-colors duration-150 text-center">
-                                <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-3 border-b border-gray-200">
+                                <td v-for="cell in row.getVisibleCells()" :key="cell.id"
+                                    class="px-4 py-3 border-b border-gray-200">
                                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                 </td>
                             </tr>
@@ -284,7 +287,8 @@ onMounted(() => {
                         <!-- Empty State -->
                         <tbody v-else>
                             <tr>
-                                <td :colspan="suppliersTable.getFlatHeaders().length" class="text-center py-12 text-gray-500">
+                                <td :colspan="suppliersTable.getFlatHeaders().length"
+                                    class="text-center py-12 text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <FontAwesomeIcon :icon="faInbox" class="text-4xl text-gray-300 mb-4" />
                                         <p class="text-lg font-medium">No suppliers found.</p>

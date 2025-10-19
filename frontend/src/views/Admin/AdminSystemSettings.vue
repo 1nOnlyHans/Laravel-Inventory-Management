@@ -26,7 +26,7 @@ onMounted(() => {
 
 <template>
     <section class="min-h-screen bg-gray-50 py-12">
-        <div class="container-xl mx-auto px-8 py-10 bg-white rounded-2xl shadow-lg space-y-10">
+        <div class="container-xl mx-auto px-8 py-10 space-y-10">
             <!-- Page Header -->
             <header class="border-b pb-4">
                 <h1 class="text-3xl font-bold text-gray-800">System Configuration</h1>

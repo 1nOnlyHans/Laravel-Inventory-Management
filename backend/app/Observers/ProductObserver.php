@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Events\LowStock;
+use App\Events\newProduct;
 use App\Events\OutOfStock;
 use App\Models\AuditLog;
 use App\Models\Product;
@@ -17,6 +18,7 @@ class ProductObserver
     public function created(Product $product): void
     {
         //
+        broadcast(new newProduct($product))->toOthers();
         if ($product->status === 'Low Stock') {
             broadcast(new LowStock($product))->toOthers();
         } else if ($product->status === 'Out of Stock') {

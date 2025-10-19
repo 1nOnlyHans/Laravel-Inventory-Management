@@ -40,7 +40,6 @@ const productCred = ref({
     supplier_id: "",
     category_id: "",
     brand_id: "",
-    SKU: "",
     model: "",
     product_name: "",
     product_description: "",
@@ -58,7 +57,6 @@ const handleAddProduct = async (productCred) => {
         productCred.supplier_id = ""
         productCred.category_id = ""
         productCred.brand_id = ""
-        productCred.SKU = ""
         productCred.model = ""
         productCred.product_name = ""
         productCred.product_description = ""
@@ -158,11 +156,11 @@ onMounted(async () => {
                         </div>
 
                         <!-- SKU -->
-                        <div class="space-y-2">
+                        <!-- <div class="space-y-2">
                             <Label class="text-sm font-medium text-gray-700">SKU</Label>
                             <Input type="text" placeholder="e.g., SKU-12345" v-model="productCred.SKU"
                                 class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
-                        </div>
+                        </div> -->
 
                         <!-- Model -->
                         <div class="space-y-2">
@@ -196,7 +194,8 @@ onMounted(async () => {
                         <!-- Unit Price -->
                         <div class="space-y-2">
                             <Label class="text-sm font-medium text-gray-700">Unit Price</Label>
-                            <Input type="number" min="1" placeholder="Price per unit" v-model="productCred.unit_price"
+                            <Input type="number" placeholder="Price per unit" v-model="productCred.unit_price"
+                                step="0.01" min="0" required
                                 class="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md" />
                         </div>
 

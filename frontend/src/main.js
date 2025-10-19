@@ -22,6 +22,14 @@ window.Echo = new Echo({
   forceTLS: true,
 });
 
+window.Echo.channel("inventory").listen(".inventory.newProduct", (event) => {
+  toast.success(`New Product Added: ${event.product.product_name}`, {
+    position: "bottom-right",
+    autoClose: 3000,
+    theme: "colored",
+  });
+});
+
 window.Echo.channel("stock").listen(".stock.stockin", (event) => {
   toast.success(`Stock In: ${event.product.product_name}`, {
     position: "bottom-right",

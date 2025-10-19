@@ -207,8 +207,9 @@ onMounted(() => {
             </h1>
             <div class="flex justify-center space-x-3">
                 <AddCategoryModal @add-category="handleAddCategory" :errors="errors" />
-                <Button @click="openCsvModal = true">
-                    <FontAwesomeIcon :icon="faFileCsv" />
+                <Button @click="openCsvModal = true"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+                    <FontAwesomeIcon :icon="faFileCsv" class="mr-2" />
                     Bulk Import
                 </Button>
             </div>
@@ -260,6 +261,4 @@ onMounted(() => {
             :category_description="categoryCred.category_description" :errors="errors" />
         <CSVCategoriesModal v-model:open="openCsvModal" v-on:import="handleImport" />
     </section>
-
-
 </template>

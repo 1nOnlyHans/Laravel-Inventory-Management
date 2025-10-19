@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(Employ
 
 //PRODUCT LOGIC
 Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(ProductController::class)->group(function () {
-    Route::get('/products/index', 'index')->withoutMiddleware(['admin']);;
+    Route::get('/products/index', 'index')->withoutMiddleware(['admin']);
     Route::get('/products/show/{product_id}', 'show')->withoutMiddleware(['admin']);
     Route::get('/products/archived', 'archived');
     Route::post('/products/productSupplier', 'getProductsBySupplier');
@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(Produc
 
 //SUPPLIER, CATEGORIES, AND BRANDS CRUD
 Route::middleware(['auth:sanctum', 'admin', 'authenticated'])->controller(SupplierController::class)->group(function () {
-    Route::get('/suppliers/index', 'index')->withoutMiddleware(['admin']);;
+    Route::get('/suppliers/index', 'index')->withoutMiddleware(['admin']);
     Route::post('/suppliers/store', 'store');
     Route::get('/suppliers/show', 'show');
     Route::put('/suppliers/update', 'update');
