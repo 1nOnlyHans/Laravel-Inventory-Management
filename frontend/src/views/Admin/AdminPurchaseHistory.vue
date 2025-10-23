@@ -192,26 +192,27 @@ const columns = [
             const isPaid = record.payment_status === "Paid";
             const isDelivered = record.status === "Delivered";
 
-            return h(
-                "div",
-                { class: "flex justify-center items-center space-x-3" },
-                [
-                    // 👁 View button (always visible)
-                    h(
-                        Button,
-                        {
-                            variant: "none",
-                            class: "text-accents hover:text-accents-hovered",
-                            onClick: () => {
-                                purchaseData.value = record;
-                                openLetter.value = true;
-                            },
-                        },
-                        () => h(FontAwesomeIcon, { icon: faEye })
-                    ),
+            const buttons = [];
 
-                    // 🟢 Case 1: Approved but Not Paid → Pay Now
-                    isApproved && !isPaid &&
+            // 👁 View button (always visible)
+            buttons.push(
+                h(
+                    Button,
+                    {
+                        variant: "none",
+                        class: "text-accents hover:text-accents-hovered",
+                        onClick: () => {
+                            purchaseData.value = record;
+                            openLetter.value = true;
+                        },
+                    },
+                    () => h(FontAwesomeIcon, { icon: faEye })
+                )
+            );
+
+            // 🟢 Case 1: Approved but Not Paid → Pay Now
+            if (isApproved && !isPaid) {
+                buttons.push(
                     h(
                         Button,
                         {
@@ -229,38 +230,27 @@ const columns = [
                             },
                         },
                         () => h("p", "Pay Now")
-                    ),
+                    )
+                );
+            }
 
-                    // 🔵 Case 2: Paid but Not Delivered → Print + Mark as Delivered
-                    isPaid && record.status !== "Delivered" && [
-                        h(
-                            Button,
-                            {
-                                variant: "none",
-                                class: "bg-blue-500 text-white hover:bg-blue-700",
-                                onClick: () => {
-                                    payment_record.value = row.original.payment_record;
-                                    openReceipt.value = true;
-                                },
+            // 🔵 Case 2: Paid but Not Delivered → Mark as Delivered + Print
+            if (isPaid && record.status !== "Delivered") {
+                buttons.push(
+                    h(
+                        Button,
+                        {
+                            variant: "none",
+                            class: "bg-yellow-500 text-white hover:bg-yellow-700",
+                            onClick: () => {
+                                receivedItemsModal.value = true;
+                                purchaseData.value = record;
                             },
-                            () => h("p", "Print Receipt")
-                        ),
-                        h(
-                            Button,
-                            {
-                                variant: "none",
-                                class: "bg-yellow-500 text-white hover:bg-yellow-700",
-                                onClick: () => {
-                                    receivedItemsModal.value = true;
-                                    purchaseData.value = record;
-                                },
-                            },
-                            () => h("p", "Mark as Delivered")
-                        ),
-                    ],
-
-                    // 🧾 Case 3: Paid + Delivered → Print Receipt only
-                    isPaid && isDelivered &&
+                        },
+                        () => h("p", "Mark as Delivered")
+                    )
+                );
+                buttons.push(
                     h(
                         Button,
                         {
@@ -272,22 +262,49 @@ const columns = [
                             },
                         },
                         () => h("p", "Print Receipt")
-                    ),
+                    )
+                );
+            }
 
-                    // ❌ Delete button (always visible)
+            // 🧾 Case 3: Paid + Delivered → Print Receipt only
+            if (isPaid && isDelivered) {
+                buttons.push(
                     h(
                         Button,
                         {
                             variant: "none",
-                            class: "text-red-600 hover:text-red-700",
-                            onClick: () => handleDelete(record.encrypted_id),
+                            class: "bg-blue-500 text-white hover:bg-blue-700",
+                            onClick: () => {
+                                payment_record.value = row.original.payment_record;
+                                openReceipt.value = true;
+                            },
                         },
-                        () => h(FontAwesomeIcon, { icon: faTrash })
-                    ),
-                ]
+                        () => h("p", "Print Receipt")
+                    )
+                );
+            }
+
+            // ❌ Delete button (always visible)
+            buttons.push(
+                h(
+                    Button,
+                    {
+                        variant: "none",
+                        class: "text-red-600 hover:text-red-700",
+                        onClick: () => handleDelete(record.encrypted_id),
+                    },
+                    () => h(FontAwesomeIcon, { icon: faTrash })
+                )
+            );
+
+            return h(
+                "div",
+                { class: "flex justify-center items-center space-x-3" },
+                buttons
             );
         },
-    }
+    },
+
 
 
 ];

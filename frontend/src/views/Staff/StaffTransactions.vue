@@ -120,8 +120,8 @@ onMounted(() => {
     </section>
 
     <!-- Main Content -->
-    <section v-else class="container-xl mx-auto p-6">
-        <div class="bg-white shadow-lg rounded-lg border">
+    <section v-else class="mx-auto p-6">
+        <div class="border">
             <!-- Header -->
             <div class="text-xs uppercase tracking-wide px-6 py-4 flex justify-between items-center rounded-t-lg">
                 <h1 class="font-bold text-2xl tracking-wide text-gray-800">
